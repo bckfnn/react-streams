@@ -124,23 +124,14 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
         return new Builder<Tuple<T1, T2>>(new ZipOp<T1, T2>(p1, p2));
     }
 
-    /**
-     * Chain the publisher in this builder to the specified processor.
-     * Return a new builder with the processor as the publisher.
-     * @param processor the subscriber / publisher that is chained to this.
-     * @param <R> type the new builder that is returned.
-     * @return a new builder that wraps the processor.
-     */
+
     @Override
     public <R> Operations<R> then(Processor<T, R> processor) {
         publisher.subscribe(processor);
         return new Builder<R>(processor);
     }
 
-    /**
-     * Add a subscriber to this publisher.
-     * @param subscriber the subscriber to add.
-     */
+
     @Override
     public void then(Subscriber<T> subscriber) {
         publisher.subscribe(subscriber);
@@ -150,12 +141,6 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
      * map operations.
      */
 
-    /**
-     * Add a map operation to the output from this publisher.
-     * @param mapFunc a function that transform each value.
-     * @param <R> type the output from the transform.
-     * @return a new builder that wraps the output.
-     */
     @Override
     public <R> Operations<R> map(final Func1<T, R> mapFunc) {
         return then(new MapOp<T, R>() {
