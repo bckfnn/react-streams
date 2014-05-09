@@ -58,6 +58,10 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
         this.publisher = publisher;
     }
 
+    public static <T> Operations<T> as(Publisher<T> publisher) {
+    	return new Builder<T>(publisher);
+    }
+
     /**
      * Create and return a new <code>Builder</code> that emit a single value.
      * @param value the value.
