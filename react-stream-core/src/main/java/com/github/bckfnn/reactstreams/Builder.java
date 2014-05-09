@@ -1,5 +1,6 @@
 package com.github.bckfnn.reactstreams;
 
+import java.io.PrintStream;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import com.github.bckfnn.reactstreams.ops.LastOp;
 import com.github.bckfnn.reactstreams.ops.MapManyOp;
 import com.github.bckfnn.reactstreams.ops.MapOp;
 import com.github.bckfnn.reactstreams.ops.NopOp;
+import com.github.bckfnn.reactstreams.ops.PrintStreamOp;
 import com.github.bckfnn.reactstreams.ops.SkipOp;
 import com.github.bckfnn.reactstreams.ops.TakeOp;
 import com.github.bckfnn.reactstreams.ops.WhenDoneValueOp;
@@ -221,9 +223,8 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
     }
 
     @Override
-    public Operations<T> stdout(String name) {
-        // TODO Auto-generated method stub
-        return null;
+    public Operations<T> printStream(String prefix, PrintStream printStream) {
+        return then(new PrintStreamOp<T>(prefix, printStream));
     }
 
     @Override
@@ -247,6 +248,7 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
         publisher.subscribe(s);
     }
 
+    @Override
     public void start(int elements) {
         subscribe(new NopOp<T>() {
             @Override

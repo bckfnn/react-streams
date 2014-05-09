@@ -1,5 +1,6 @@
 package com.github.bckfnn.reactstreams;
 
+import java.io.PrintStream;
 import java.util.List;
 
 import org.reactivestreams.Publisher;
@@ -144,13 +145,14 @@ public interface Operations<T> extends Publisher<T> {
     public Operations<T> accumulate(T initial, Func2<T, T, T> func);
 
     /**
-     * Add a <code>stdout</code> operation to the output from this publisher. 
-     * The stdout operation output debug information about all events that pass through this step
-     * to the standard output. The output is prefixed with the <code>name</code>.
+     * Add a <code>printStream</code> operation to the output from this publisher. 
+     * The printStream operation output debug information about all events that 
+     * pass through this step to the specified <code>PrintStream</code>.
+     * The output is prefixed with the <code>name</code>.
  	 * @param name the prefix in the output.
      * @return a new builder that wraps the output.
      */ 
-    public Operations<T> stdout(String name);
+    public Operations<T> printStream(String name, PrintStream stream);
 
     /**
      * Add a <code>start</code> operation that will send a <code>request(n)</code> up the 
