@@ -189,8 +189,6 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
         return then(new DoneOp<T>());
     }
 
-
-
     @Override
     public Operations<T> filter(Func1<T, Boolean> func) {
         return then(new FilterOp<T>() {
@@ -201,17 +199,13 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
         });
     }
 
-
-    /*
-     * Flow operations.
-     */
     @Override
     public <R> Operations<R> whenDone(R value) {
         return then(new WhenDoneValueOp<T, R>(value));
     }
 
     @Override
-    public <R> Operations<R> whenDone(Operations<R> observable) {
+    public <R> Operations<R> whenDone(Publisher<R> publisher) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -231,10 +225,6 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
         // TODO Auto-generated method stub
         return null;
     }
-
-    /*
-     * Transform operations.
-     */
 
     @Override
     public Operations<List<T>> toList() {
