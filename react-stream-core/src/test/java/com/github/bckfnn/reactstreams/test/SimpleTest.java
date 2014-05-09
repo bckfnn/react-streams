@@ -3,6 +3,7 @@ package com.github.bckfnn.reactstreams.test;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.Test;
 import org.reactivestreams.Subscriber;
@@ -666,6 +667,21 @@ public class SimpleTest {
         keep.assertEquals(1, 2, 3);
         keep2.assertEquals(1, 2, 3);
     }
+    
+    @SuppressWarnings("unchecked")
+	@Test
+    public void testToList1() {
+        Keep<List<Integer>> keep = new Keep<>();
+
+        Builder
+        .from(1, 2, 3)
+        .toList()
+        .then(keep)
+        .start(1);
+
+        keep.assertEquals(Arrays.asList(1, 2, 3));
+    }
+    
     /*    
     @Test
     public void testQueue() {

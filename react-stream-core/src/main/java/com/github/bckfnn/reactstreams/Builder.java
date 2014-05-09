@@ -39,6 +39,7 @@ import com.github.bckfnn.reactstreams.ops.NopOp;
 import com.github.bckfnn.reactstreams.ops.PrintStreamOp;
 import com.github.bckfnn.reactstreams.ops.SkipOp;
 import com.github.bckfnn.reactstreams.ops.TakeOp;
+import com.github.bckfnn.reactstreams.ops.ToListOp;
 import com.github.bckfnn.reactstreams.ops.WhenDoneValueOp;
 import com.github.bckfnn.reactstreams.ops.ZipOp;
 
@@ -242,8 +243,7 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
 
     @Override
     public Operations<List<T>> toList() {
-        // TODO Auto-generated method stub
-        return null;
+        return then(new ToListOp<T>());
     }
 
     @Override
