@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <groupId>com.github.bckfnn</groupId>
+  <artifactId>react-streams</artifactId>
+  <version>0.1</version>
+  <packaging>pom</packaging>
+  <name>react-streams</name>
+
+  <description>
+    An reactive-extension library for java inspired by the reactive-streams.org initiative
+  </description>
+
+  <developers>
+    <developer>
+      <id>fb</id>
+      <name>Finn Bock</name>
+      <email>bckfnn@gmail.com</email>
+    </developer>
+  </developers>
+
+
+  <modules>
+	  <module>react-streams-core</module>
+	  <module>react-streams-vertx</module>
+  </modules>
+
+</project>
+
+
