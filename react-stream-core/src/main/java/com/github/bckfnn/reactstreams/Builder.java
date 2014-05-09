@@ -44,7 +44,7 @@ import com.github.bckfnn.reactstreams.ops.WhenDoneValueOp;
 import com.github.bckfnn.reactstreams.ops.ZipOp;
 
 /**
- * Main class for using <code>RVX</code> classes.
+ * Main class for using <code>react-stream</code> classes.
  * @param <T> type of builder.
  */
 public class Builder<T> implements Operations<T>, Publisher<T> {
