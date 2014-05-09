@@ -22,6 +22,7 @@ public class PrintStreamOp<T> extends BaseProcessor<T, T> {
 	private PrintStream printStream;
 	
 	public PrintStreamOp(String prefix, PrintStream printStream) {
+		this.prefix = prefix;
 		this.printStream = printStream;
 	}
 	
