@@ -28,6 +28,7 @@ import com.github.bckfnn.reactstreams.ops.CounterOp;
 import com.github.bckfnn.reactstreams.ops.DelegateOp;
 import com.github.bckfnn.reactstreams.ops.DoneOp;
 import com.github.bckfnn.reactstreams.ops.FilterOp;
+import com.github.bckfnn.reactstreams.ops.FinallyOp;
 import com.github.bckfnn.reactstreams.ops.FromArrayOp;
 import com.github.bckfnn.reactstreams.ops.FromErrorOp;
 import com.github.bckfnn.reactstreams.ops.FromIteratorOp;
@@ -225,6 +226,20 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
     }
 
     @Override
+    public Operations<T> whenDone(Proc0 func) {
+        return then(new NopOp<T>() {
+            @Override
+            public void onComplete() {
+                try {
+                    func.apply();
+                } catch (Throwable e) {
+                    sendError(e);
+                }
+            }
+        });
+    }
+
+    @Override
     public <R> Operations<R> whenDone(Publisher<R> publisher) {
         // TODO Auto-generated method stub
         return null;
@@ -239,6 +254,31 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
     public Operations<T> delegate(Subscriber<T> x) {
         return then(new DelegateOp<T>(x));
     }
+
+    @Override
+    public Operations<T> onEach(Proc1<T> func) {
+        return then(new NopOp<T>() {
+            @Override
+            public void doNext(T value) {
+                try {
+                    func.apply(value);
+                } catch (Throwable e) {
+                    sendError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public <R> Operations<R> onFinally(Func0<Operations<R>> func) {
+        return then(new FinallyOp<T, R>() {
+            @Override
+            public Operations<R> fin() throws Throwable {
+                return func.apply();
+            }
+        });
+    }
+
 
     @Override
     public Operations<T> printStream(String prefix, PrintStream printStream) {
@@ -272,6 +312,18 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
             public void onSubscribe(Subscription s) {
                 super.onSubscribe(s);
                 s.request(elements);
+            }
+
+            @Override
+            public void onNext(T value) {
+            }
+
+            @Override
+            public void onError(Throwable t) {
+            }
+
+            @Override
+            public void onComplete() {
             }
 
             public String toString() {

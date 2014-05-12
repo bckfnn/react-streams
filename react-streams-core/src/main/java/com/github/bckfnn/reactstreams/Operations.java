@@ -110,7 +110,9 @@ public interface Operations<T> extends Publisher<T> {
      * @return a new builder that wraps the output.
      */ 
     public <R> Operations<R> whenDone(R value);
-    
+
+    public Operations<T> whenDone(Proc0 func);
+
     /**
      * Add a <code>whenDone</code> operation to the output from this publisher. 
      * The whenDone operation will ignore all the input elements and when the publisher 
@@ -129,6 +131,16 @@ public interface Operations<T> extends Publisher<T> {
      * @return a new builder that wraps the output.
      */ 
     public Operations<T> continueWithError(Throwable error);
+    
+    /**
+     * Add an <code>onEach</code> operation to the output from this publisher.
+     * @param func the function to call for each input element. 
+     * The input elements are not passed through.
+     * @return a new builder that wraps the output.
+     */
+    public Operations<T> onEach(Proc1<T> func);
+
+    public <R> Operations<R> onFinally(Func0<Operations<R>> func);
     
     /**
      * Add a <code>delegate</code> operation to the output from this publisher. 
@@ -173,4 +185,5 @@ public interface Operations<T> extends Publisher<T> {
      * @param elements the number of elements.
      */
     public void start(int elements);
+
 }
