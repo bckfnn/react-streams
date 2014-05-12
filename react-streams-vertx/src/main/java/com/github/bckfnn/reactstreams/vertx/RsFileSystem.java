@@ -26,12 +26,18 @@ public class RsFileSystem {
 			@Override
 			public void subscribe(Subscriber<RsAsyncFile> subscriber) {
 				subscriber.onSubscribe(new BaseSubscription<RsAsyncFile>(subscriber) {
+				    boolean done = false;
 					@Override
 					public void request(int elements) {
+					    System.out.println("request:" + elements);
 						super.request(elements);
+						if (done) {
+						    return;
+						}
 						fileSystem.open(path, new Handler<AsyncResult<AsyncFile>>() {
 							@Override
 							public void handle(AsyncResult<AsyncFile> event) {
+							    done = true;
 								if (event.succeeded()) {
 									sendNext(new RsAsyncFile(event.result()));
 									sendComplete();
