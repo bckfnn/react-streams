@@ -230,7 +230,6 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
 
     @Override
     public Operations<T> whenDoneError(Throwable error) {
-        // TODO Auto-generated method stub
         return then(new WhenDoneErrorOp<T>(error));
     }
     

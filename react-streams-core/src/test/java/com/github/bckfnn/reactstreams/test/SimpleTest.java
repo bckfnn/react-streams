@@ -18,6 +18,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -34,6 +35,36 @@ import com.github.bckfnn.reactstreams.ops.MapOp;
 
 public class SimpleTest {
 
+	@Test
+	public void testTuple() {
+		Tuple<Integer, Integer> t1 = new Tuple<>(1, 2);
+		Assert.assertEquals((Integer) 1, t1.left());
+		Assert.assertEquals((Integer) 2, t1.right());
+		Assert.assertEquals("Tuple[1, 2]", t1.toString());
+
+		Tuple<Integer, Integer> t2 = new Tuple<>(1, 2);
+		Assert.assertTrue(t2.equals(t1));
+		Assert.assertTrue(t1.equals(t2));
+		Assert.assertEquals(t1.hashCode(), t2.hashCode());
+		Assert.assertTrue(t1.equals(t1));
+
+		Assert.assertFalse(t1.equals("abc"));
+		Assert.assertFalse(t1.equals(null));
+		Assert.assertFalse(t1.equals(new Tuple<Integer, Integer>(1, null)));
+		Assert.assertFalse(t1.equals(new Tuple<Integer, Integer>(null, null)));
+		Assert.assertFalse(new Tuple<Integer, Integer>(1, null).equals(t1));
+		Assert.assertFalse(new Tuple<Integer, Integer>(null, null).equals(t1));
+
+		Assert.assertTrue(new Tuple<Integer, Integer>(null, null).equals(new Tuple<>(null, null)));
+
+
+		Tuple<Integer, Integer> t3 = new Tuple<>(3, 4);
+		Assert.assertFalse(t1.equals(t3));
+		Assert.assertFalse(t1.hashCode() == t3.hashCode());
+		
+		Assert.assertTrue(new Tuple<>(null, null).hashCode() == new Tuple<>(null, null).hashCode());
+	}
+	
     @Test
     public void testIterable() {
         Keep<String> keep = new Keep<>();
