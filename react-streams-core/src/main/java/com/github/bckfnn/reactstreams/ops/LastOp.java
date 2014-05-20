@@ -15,6 +15,12 @@ package com.github.bckfnn.reactstreams.ops;
 
 import com.github.bckfnn.reactstreams.BaseProcessor;
 
+/**
+ * <b>LastOp</b> will consume all the input and when onComplete() is recieved will 
+ * send out an onNext() with the last element, followed by an onComplete(). 
+ *
+ * @param <T>type of the event.
+ */
 public class LastOp<T> extends BaseProcessor<T, T> {
     private T value;
     private boolean onNext = false;

@@ -102,15 +102,33 @@ public interface Operations<T> extends Publisher<T> {
     public Operations<T> filter(Func1<T, Boolean> func);
 
     /**
-     * Add a <code>whenDone</code> operation to the output from this publisher. 
-     * The whenDone operation will ignore all the input elements and when the publisher 
+     * Add a <code>whenDoneValue</code> operation to the output from this publisher. 
+     * The whenDoneValue operation will ignore all the input elements and when the publisher 
      * is complete it will emit the single <code>value</code> element
      * @param value the value.
      * @param <R> the type of the output value.
      * @return a new builder that wraps the output.
      */ 
-    public <R> Operations<R> whenDone(R value);
+    public <R> Operations<R> whenDoneValue(R value);
 
+    /**
+     * Add a <code>whenDoneError</code> operation to the output from this publisher. 
+     * The whenDoneError operation will ignore all the input elements and when the publisher 
+     * is complete it will emit the <code>error</code> event.
+     * @param error the error.
+     * @param <R> the type of the output value.
+     * @return a new builder that wraps the output.
+     */ 
+    public Operations<T> whenDoneError(Throwable error);
+
+    /**
+     * Add a <code>whenDone</code> operation to the output from this publisher. 
+     * The whenDone operation will ignore all the input elements and when the publisher 
+     * is complete it will call the function.
+     * It is the responsibility of the <code>func</code> function to call f.ex onComplete().
+     * @param func the function to call.
+     * @return a new builder that wraps the output.
+     */ 
     public Operations<T> whenDone(Proc0 func);
 
     /**
@@ -124,6 +142,15 @@ public interface Operations<T> extends Publisher<T> {
     public <R> Operations<R> whenDone(Publisher<R> publisher);
     
     /**
+     * Add a <code>continueWithValue</code> operation to the output from this publisher. 
+     * The continueWithValue operation will pass through all the input elements and when 
+     * the publisher is complete it will emit the <code>value</code>.
+     * @param value the value.
+     * @return a new builder that wraps the output.
+     */ 
+    public Operations<T> continueWithValue(T value);
+    
+    /**
      * Add a <code>continueWithError</code> operation to the output from this publisher. 
      * The continueWithError operation will pass through all the input elements and when 
      * the publisher is complete it will emit the <code>error</code>.
@@ -131,6 +158,26 @@ public interface Operations<T> extends Publisher<T> {
      * @return a new builder that wraps the output.
      */ 
     public Operations<T> continueWithError(Throwable error);
+
+    /**
+     * Add a <code>continueWith</code> operation to the output from this publisher. 
+     * The continueWith operation will pass through all the input elements and when 
+     * the publisher is complete it will call the <code>func</code> function.
+     * It is the responsibility of the <code>func</code> function to call onComplete().
+     * @param error the error exception.
+     * @return a new builder that wraps the output.
+     */ 
+    public Operations<T> continueWith(Proc0 func);
+
+    /**
+     * Add a <code>continueWith</code> operation to the output from this publisher. 
+     * The continueWith operation will pass through all the input elements and when 
+     * the publisher is complete it will pass trough all the elements from the 
+     * <code>publisher</code>.
+     * @param publisher the publisher.
+     * @return a new builder that wraps the output.
+     */ 
+    public Operations<T> continueWith(Publisher<T> publisher);
     
     /**
      * Add an <code>onEach</code> operation to the output from this publisher.

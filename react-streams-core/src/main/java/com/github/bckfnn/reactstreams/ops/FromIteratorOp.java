@@ -21,8 +21,8 @@ import org.reactivestreams.Subscriber;
 import com.github.bckfnn.reactstreams.ActiveSubscription;
 
 /**
- * Iter will generate a onNext event for each element in the
- * Iterable.
+ * <strong>FromIteratorOp</strong> will generate an onNext() event for each element in the
+ * Iterable, followed by an onComplete() event.
  * 
  * @param <T> type of the event.
  */

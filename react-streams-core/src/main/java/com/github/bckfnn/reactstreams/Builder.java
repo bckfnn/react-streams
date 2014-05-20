@@ -221,10 +221,16 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
     }
 
     @Override
-    public <R> Operations<R> whenDone(R value) {
+    public <R> Operations<R> whenDoneValue(R value) {
         return then(new WhenDoneValueOp<T, R>(value));
     }
 
+    @Override
+    public Operations<T> whenDoneError(Throwable error) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
     @Override
     public Operations<T> whenDone(Proc0 func) {
         return then(new NopOp<T>() {
@@ -246,10 +252,28 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
     }
 
     @Override
+    public Operations<T> continueWithValue(T value) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
     public Operations<T> continueWithError(Throwable error) {
         return then(new ContinueWithErrorOp<>(error));
     }
 
+    @Override
+    public Operations<T> continueWith(Proc0 func) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public Operations<T> continueWith(Publisher<T> publisher) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
     @Override
     public Operations<T> delegate(Subscriber<T> x) {
         return then(new DelegateOp<T>(x));

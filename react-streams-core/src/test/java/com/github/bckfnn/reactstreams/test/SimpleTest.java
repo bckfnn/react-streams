@@ -586,12 +586,12 @@ public class SimpleTest {
 
 
     @Test
-    public void testWhenDone1() {
+    public void testWhenDoneValue1() {
         Keep<Integer> keep = new Keep<>();
 
         Builder
         .from(1, 2, 3)
-        .whenDone(4)
+        .whenDoneValue(4)
         .then(keep)
         .start(1);
 
@@ -609,26 +609,26 @@ public class SimpleTest {
         
         keep.assertException(new Exception("xx"), 1, 2, 3);
     }
-    /*   
+   /*
     @Test
     public void testWhenDone2() {
         Keep<Integer> keep = new Keep<>();
 
         Builder
         .from(1, 2, 3)
-        .whenDone(new Builder.Func0<Integer>() {
+        .whenDone(new Proc0() {
             @Override
-            public Integer call() {
-                return 4;
+            public void apply() {
+            	onNext(4);
+            	onComplete();
             }
-
         })
         .then(keep)
         .start();
 
         keep.assertEquals(4);
     }
-
+/*
     @Test
     public void testWhenDone3() {
         Keep<Integer> keep = new Keep<>();

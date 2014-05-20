@@ -19,7 +19,8 @@ import org.reactivestreams.Subscriber;
 import com.github.bckfnn.reactstreams.BaseSubscription;
 
 /**
- * Single will generate a single onNext event for the element.
+ * FromValueOp will generate a single onNext() event for the specified element, 
+ * followed by an onComplete().
  * 
  * @param <T> type of the event.
  */
