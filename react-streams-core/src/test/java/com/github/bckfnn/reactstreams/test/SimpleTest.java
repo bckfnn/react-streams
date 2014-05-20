@@ -776,6 +776,20 @@ public class SimpleTest {
         keep.assertEquals(Arrays.asList(1, 2, 3));
     }
     
+    @Test
+    public void testOnEach1() {
+        Keep<Integer> keep = new Keep<>();
+
+        Builder
+        .from(1, 2, 3)
+        .onEach((v, proc) -> { proc.sendNext(v); })
+        .then(keep)
+        .start(1);
+
+        keep.assertEquals(1, 2, 3);
+    	
+    }
+    
     /*    
     @Test
     public void testQueue() {

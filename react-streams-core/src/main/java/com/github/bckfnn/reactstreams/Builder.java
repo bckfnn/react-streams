@@ -272,12 +272,12 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
     }
 
     @Override
-    public Operations<T> onEach(Proc1<T> func) {
+    public Operations<T> onEach(Proc2<T, BaseProcessor<T, T>> func) {
         return then(new NopOp<T>() {
             @Override
             public void doNext(T value) {
                 try {
-                    func.apply(value);
+                    func.apply(value, this);
                 } catch (Throwable e) {
                     sendError(e);
                 }
@@ -323,10 +323,9 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
 
     @Override
     public void start(int elements) {
-        subscribe(new NopOp<T>() {
+        subscribe(new Subscriber<T>() {
             @Override
             public void onSubscribe(Subscription s) {
-                super.onSubscribe(s);
                 s.request(elements);
             }
 

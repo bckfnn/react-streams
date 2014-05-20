@@ -184,7 +184,7 @@ public interface Operations<T> extends Publisher<T> {
      * The input elements are not passed through.
      * @return a new builder that wraps the output.
      */
-    public Operations<T> onEach(Proc1<T> func);
+    public Operations<T> onEach(Proc2<T, BaseProcessor<T, T>> func);
 
     public <R> Operations<R> onFinally(Func0<Operations<R>> func);
     
