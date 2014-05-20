@@ -41,6 +41,9 @@ import com.github.bckfnn.reactstreams.ops.PrintStreamOp;
 import com.github.bckfnn.reactstreams.ops.SkipOp;
 import com.github.bckfnn.reactstreams.ops.TakeOp;
 import com.github.bckfnn.reactstreams.ops.ToListOp;
+import com.github.bckfnn.reactstreams.ops.WhenDoneErrorOp;
+import com.github.bckfnn.reactstreams.ops.WhenDoneProcOp;
+import com.github.bckfnn.reactstreams.ops.WhenDonePublisherOp;
 import com.github.bckfnn.reactstreams.ops.WhenDoneValueOp;
 import com.github.bckfnn.reactstreams.ops.ZipOp;
 
@@ -228,27 +231,17 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
     @Override
     public Operations<T> whenDoneError(Throwable error) {
         // TODO Auto-generated method stub
-        return null;
+        return then(new WhenDoneErrorOp<T>(error));
     }
     
     @Override
     public Operations<T> whenDone(Proc0 func) {
-        return then(new NopOp<T>() {
-            @Override
-            public void onComplete() {
-                try {
-                    func.apply();
-                } catch (Throwable e) {
-                    sendError(e);
-                }
-            }
-        });
+        return then(new WhenDoneProcOp<T>(func));
     }
 
     @Override
     public <R> Operations<R> whenDone(Publisher<R> publisher) {
-        // TODO Auto-generated method stub
-        return null;
+        return then(new WhenDonePublisherOp<T, R>(publisher));
     }
 
     @Override

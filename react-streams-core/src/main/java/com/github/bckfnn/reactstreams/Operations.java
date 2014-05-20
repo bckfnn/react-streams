@@ -125,7 +125,6 @@ public interface Operations<T> extends Publisher<T> {
      * Add a <code>whenDone</code> operation to the output from this publisher. 
      * The whenDone operation will ignore all the input elements and when the publisher 
      * is complete it will call the function.
-     * It is the responsibility of the <code>func</code> function to call f.ex onComplete().
      * @param func the function to call.
      * @return a new builder that wraps the output.
      */ 

@@ -568,7 +568,6 @@ public class SimpleTest {
         })
         .then(keep)
         .start(1);
-        System.out.println(keep);
         keep.assertException(new Exception("xx"), 0, 1, 3);
     }
     
@@ -596,6 +595,57 @@ public class SimpleTest {
         .start(1);
 
         keep.assertEquals(4);
+    }
+    
+    @Test
+    public void testWhenDoneError1() {
+        Keep<Integer> keep = new Keep<>();
+
+        Builder
+        .from(1, 2, 3)
+        .whenDoneError(new Exception("xx"))
+        .then(keep)
+        .start(1);
+
+        keep.assertException(new Exception("xx"));
+    }
+    
+    @Test
+    public void testWhenDoneProc1() {
+        Keep<Integer> keep = new Keep<>();
+
+        Builder
+        .from(1, 2, 3)
+        .whenDone(() -> { keep.doNext(44); })
+        .then(keep)
+        .start(1);
+
+        keep.assertEquals(44);
+    }
+    
+    @Test
+    public void testWhenDonePublisher1() {
+        Keep<Integer> keep = new Keep<>();
+
+        Builder
+        .from(1, 2, 3)
+        .whenDone(Builder.from(5, 6, 7))
+        .then(keep)
+        .start(1);
+
+        keep.assertEquals(5, 6, 7);
+    }
+    
+    @Test
+    public void testWhenDonePublisher2() {
+        Keep<Integer> keep = new Keep<>();
+
+        Builder
+        .from(1, 2, 3)
+        .whenDone(Builder.counter())
+        .take(100000)
+        .then(keep)
+        .start(1);
     }
     
     @Test
