@@ -186,6 +186,14 @@ public interface Operations<T> extends Publisher<T> {
      */
     public Operations<T> onEach(Proc2<T, BaseProcessor<T, T>> func);
 
+    /**
+     * Add an <code>onFinally</code> operation to the output from this publisher.
+     * After this publisher ends, with either onComplete() or onError(), the elements that 
+     * is returned from the <code>func</func> will be emitted.
+     * @param func the function to call for each input element. 
+     * The input elements are not passed through.
+     * @return a new builder that wraps the output.
+     */
     public <R> Operations<R> onFinally(Func0<Operations<R>> func);
     
     /**
