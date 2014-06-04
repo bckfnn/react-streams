@@ -10,7 +10,7 @@ public class FileSystemTest extends TestVerticle {
     @Test
     public void testRead() {
         RsVertx v = new RsVertx(vertx);
-        v.fileSystem().open("test")
+        v.fileSystem().open("src/test/resources/testfile")
         .printStream("open", System.out)
         .<Void>mapMany(file -> {
             return file
