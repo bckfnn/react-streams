@@ -13,11 +13,11 @@ import com.github.bckfnn.reactstreams.Builder;
 import com.github.bckfnn.reactstreams.Operations;
 
 public class RsFileSystem {
-	private Vertx vertx;
+	//private Vertx vertx;
 	private FileSystem fileSystem;
 	
 	public RsFileSystem(Vertx vertx) {
-		this.vertx = vertx;
+		//this.vertx = vertx;
 		this.fileSystem = vertx.fileSystem();
 	}
 	

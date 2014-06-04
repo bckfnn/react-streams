@@ -18,7 +18,6 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import com.github.bckfnn.reactstreams.BaseProcessor;
-import com.github.bckfnn.reactstreams.Builder;
 
 public class WhenDonePublisherOp<T, R> extends BaseProcessor<T, R> {
     private Publisher<R> publisher;
