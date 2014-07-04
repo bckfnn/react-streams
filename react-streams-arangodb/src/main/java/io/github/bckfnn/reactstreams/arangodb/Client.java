@@ -42,6 +42,7 @@ public class Client {
 
 	/**
 	 * Connect the server using default host and port.
+	 * @return a publisher with the result of the connect.
 	 */
 	public Operations<JsonObject> init() {
 		return init("localhost", 8529);
