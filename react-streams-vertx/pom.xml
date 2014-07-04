@@ -1,97 +1,94 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <groupId>com.github.bckfnn</groupId>
-    <artifactId>react-streams</artifactId>
-    <version>0.1</version>
-  </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>com.github.bckfnn</groupId>
+		<artifactId>react-streams</artifactId>
+		<version>0.1</version>
+	</parent>
 
-  <modelVersion>4.0.0</modelVersion>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <vertx.version>2.1M5</vertx.version>
-    <vertx.testtools.version>2.0.3-final</vertx.testtools.version>
-  </properties>
+	<modelVersion>4.0.0</modelVersion>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<vertx.version>2.1M5</vertx.version>
+		<vertx.testtools.version>2.0.3-final</vertx.testtools.version>
+	</properties>
 
-  <groupId>com.github.bckfnn</groupId>
-  <artifactId>react-streams-vertx</artifactId>
-  <version>0.1</version>
-  <packaging>jar</packaging>
-  <name>react-stream-vertx</name>
+	<groupId>com.github.bckfnn</groupId>
+	<artifactId>react-streams-vertx</artifactId>
+	<version>0.1</version>
+	<packaging>jar</packaging>
+	<name>react-stream-vertx</name>
 
-  <description>
-    A react-stream module for vertx.
-  </description>
+	<description>
+        A react-stream module for vertx.
+    </description>
 
-  <developers>
-    <developer>
-      <id>fb</id>
-      <name>Finn Bock</name>
-      <email>bckfnn@gmail.com</email>
-    </developer>
-  </developers>
+	<developers>
+		<developer>
+			<id>fb</id>
+			<name>Finn Bock</name>
+			<email>bckfnn@gmail.com</email>
+		</developer>
+	</developers>
 
-  <build>
-    <plugins>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.4</version>
+				<configuration>
+					<includes>
+						<include>**/test/*.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.12.4</version>
-        <configuration>
-          <includes>
-            <include>**/test/*.java</include>
-          </includes>
-        </configuration>
-      </plugin>
+	<dependencies>
+		<!--Vertx provided dependencies -->
+		<dependency>
+			<groupId>io.vertx</groupId>
+			<artifactId>vertx-core</artifactId>
+			<version>${vertx.version}</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
-    </plugins>
-  </build>
+		<dependency>
+			<groupId>io.vertx</groupId>
+			<artifactId>vertx-platform</artifactId>
+			<version>${vertx.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
-  <dependencies>
-    <!--Vertx provided dependencies -->
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-core</artifactId>
-      <version>${vertx.version}</version>
-      <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-platform</artifactId>
-      <version>${vertx.version}</version>
-      <scope>provided</scope>
-    </dependency>
+		<dependency>
+			<groupId>com.github.bckfnn</groupId>
+			<artifactId>react-streams-core</artifactId>
+			<version>0.1</version>
+		</dependency>
 
-    <dependency>
-      <groupId>com.github.bckfnn</groupId>
-      <artifactId>react-streams-core</artifactId>
-      <version>0.1</version>
-    </dependency>
-    
-    <!-- testing -->
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>testtools</artifactId>
-      <version>${vertx.testtools.version}</version>
-      <scope>test</scope>
-    </dependency>
-        
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.10</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+		<!-- testing -->
+		<dependency>
+			<groupId>io.vertx</groupId>
+			<artifactId>testtools</artifactId>
+			<version>${vertx.testtools.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 </project>
 
 
