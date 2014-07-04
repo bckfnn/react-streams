@@ -1,7 +1,5 @@
 package io.github.bckfnn.reactstreams.arangodb;
 
-import io.github.bckfnn.reactstreams.arangodb.Client.DataHandler;
-
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 import java.util.Map;
@@ -10,7 +8,6 @@ import java.util.Queue;
 import com.github.bckfnn.reactstreams.BaseProcessor;
 import com.github.bckfnn.reactstreams.BaseSubscription;
 import com.github.bckfnn.reactstreams.Builder;
-import com.github.bckfnn.reactstreams.Func1;
 import com.github.bckfnn.reactstreams.Operations;
 import com.github.bckfnn.reactstreams.Processor;
 
@@ -58,7 +55,7 @@ public class Client {
 	 */
 	public Operations<JsonObject> init(final String host, final int port) {
 		return Builder.as(new Publisher<JsonObject>() {
-			boolean init = true;
+			//boolean init = true;
 
 			@Override
 			public void subscribe(Subscriber<JsonObject> subscriber) {
@@ -119,6 +116,7 @@ public class Client {
 				try {
 					byte[] body = baos.toByteArray();
 
+					@SuppressWarnings("unchecked")
 					Map<String, Object> m = mapper.readValue(body, Map.class);
 					active.setBody(new JsonObject(m));
 					//LOG.debug("onDone body len {}, {}", body.length, new String(body));
