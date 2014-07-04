@@ -133,6 +133,16 @@ public interface Operations<T> extends Publisher<T> {
     /**
      * Add a <code>whenDone</code> operation to the output from this publisher. 
      * The whenDone operation will ignore all the input elements and when the publisher 
+     * is complete it will emit the single element from the specified <code>func</code>.
+     * @param func the function that return the next value.
+     * @param <R> the type of the output values.
+     * @return a new builder that wraps the output.
+     */ 
+    public <R> Operations<R> whenDone(Func0<R> func);
+    
+    /**
+     * Add a <code>whenDone</code> operation to the output from this publisher. 
+     * The whenDone operation will ignore all the input elements and when the publisher 
      * is complete it will emit the elements from the specified <code>publisher</code> element.
      * @param publisher the publisher.
      * @param <R> the type of the output values.

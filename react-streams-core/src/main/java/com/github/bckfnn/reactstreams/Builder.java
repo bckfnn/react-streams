@@ -42,6 +42,7 @@ import com.github.bckfnn.reactstreams.ops.SkipOp;
 import com.github.bckfnn.reactstreams.ops.TakeOp;
 import com.github.bckfnn.reactstreams.ops.ToListOp;
 import com.github.bckfnn.reactstreams.ops.WhenDoneErrorOp;
+import com.github.bckfnn.reactstreams.ops.WhenDoneFuncOp;
 import com.github.bckfnn.reactstreams.ops.WhenDoneProcOp;
 import com.github.bckfnn.reactstreams.ops.WhenDonePublisherOp;
 import com.github.bckfnn.reactstreams.ops.WhenDoneValueOp;
@@ -238,6 +239,11 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
         return then(new WhenDoneProcOp<T>(func));
     }
 
+    @Override
+    public <R> Operations<R> whenDone(Func0<R> func) {
+        return then(new WhenDoneFuncOp<T, R>(func));
+    }
+    
     @Override
     public <R> Operations<R> whenDone(Publisher<R> publisher) {
         return then(new WhenDonePublisherOp<T, R>(publisher));
