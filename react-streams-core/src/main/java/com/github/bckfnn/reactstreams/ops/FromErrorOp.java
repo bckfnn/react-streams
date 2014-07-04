@@ -21,7 +21,7 @@ import com.github.bckfnn.reactstreams.BaseSubscription;
 /**
  * Emits the exception as an onError event.
  * 
- * @param <T>
+ * @param <T> the type of output elements.
  */
 public class FromErrorOp<T> implements Publisher<T> {
     private Throwable exc;

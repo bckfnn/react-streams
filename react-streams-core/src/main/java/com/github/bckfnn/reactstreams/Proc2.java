@@ -23,7 +23,7 @@ public interface Proc2<T, U> {
      * Call the function.
      *
      * @param t the function argument
-     * @param t the second function argument
+     * @param u the second function argument
      * @exception Throwable when an exception occur.
      */
     void apply(T t, U u) throws Throwable;
