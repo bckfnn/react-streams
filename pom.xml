@@ -48,7 +48,15 @@
                 <scope>provided</scope>
             </dependency>
 
+
             <!-- testing -->
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>testtools</artifactId>
+                <version>${vertx.testtools.version}</version>
+                <scope>test</scope>
+            </dependency>
+
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
