@@ -193,7 +193,6 @@ public class Client {
 		return new BaseProcessor<Request, Response>() {
 			@Override
 			public void doNext(final Request req) {
-				super.onNext(req);
 				Response resp = new Response(req) {
 					@Override
 					public void done() {
