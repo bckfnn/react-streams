@@ -28,6 +28,7 @@
   <modules>
 	  <module>react-streams-core</module>
 	  <module>react-streams-vertx</module>
+	  <module>react-streams-arangodb</module>
   </modules>
 
 </project>
