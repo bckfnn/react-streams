@@ -18,14 +18,6 @@
         A react-stream module for vertx.
     </description>
 
-    <developers>
-        <developer>
-            <id>fb</id>
-            <name>Finn Bock</name>
-            <email>bckfnn@gmail.com</email>
-        </developer>
-    </developers>
-
     <dependencies>
         <!--Vertx provided dependencies -->
         <dependency>
