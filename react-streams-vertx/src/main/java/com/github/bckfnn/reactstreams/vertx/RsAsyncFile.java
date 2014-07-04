@@ -7,9 +7,11 @@ import org.vertx.java.core.Handler;
 import org.vertx.java.core.buffer.Buffer;
 import org.vertx.java.core.file.AsyncFile;
 
+import com.github.bckfnn.reactstreams.BaseProcessor;
 import com.github.bckfnn.reactstreams.BaseSubscription;
 import com.github.bckfnn.reactstreams.Builder;
 import com.github.bckfnn.reactstreams.Operations;
+import com.github.bckfnn.reactstreams.Processor;
 
 public class RsAsyncFile {
     private AsyncFile asyncFile;
@@ -24,7 +26,17 @@ public class RsAsyncFile {
             public void subscribe(Subscriber<Buffer> subscriber) {
                 subscriber.onSubscribe(new BaseSubscription<Buffer>(subscriber) {
                     boolean started = false;
+                    
                     @Override
+					public void cancel() {
+						super.cancel();
+						asyncFile.pause();
+						asyncFile.dataHandler(null);
+						asyncFile.exceptionHandler(null);
+						asyncFile.endHandler(null);
+					}
+
+					@Override
                     public void request(int elements) {
                         super.request(elements);
                         if (getPending() <= 0) {
@@ -59,6 +71,25 @@ public class RsAsyncFile {
                 });
             }
         });
+    }
+    
+    public Processor<Buffer, Void> write() {
+		return new BaseProcessor<Buffer, Void>() {
+			@Override
+			public void doNext(Buffer value) {
+				asyncFile.write(value);
+				if (!asyncFile.writeQueueFull()) {
+					sendRequest();
+				} else {
+					asyncFile.drainHandler(new Handler<Void>() {
+						@Override
+						public void handle(Void event) {
+							sendRequest();
+						}
+					});
+				}
+			}
+		};
     }
 
     public Operations<Void> close() {
