@@ -45,7 +45,6 @@ public class Client {
 
 	/**
 	 * Connect the server using default host and port.
-	 * @param callback the callback.
 	 */
 	public Operations<JsonObject> init() {
 		return init("localhost", 8529);
@@ -55,7 +54,7 @@ public class Client {
 	 * Connect the server using default host and port.
 	 * @param host the host string.
 	 * @param port the port number.
-	 * @param callback the callback.
+	 * @return a publisher of the connection result.
 	 */
 	public Operations<JsonObject> init(final String host, final int port) {
 		return Builder.as(new Publisher<JsonObject>() {
