@@ -15,7 +15,7 @@
     <name>react-streams-arangodb</name>
 
     <description>
-        A react-stream module for vertx.
+        A react-stream module for the arangodb database.
      </description>
 
     <developers>
