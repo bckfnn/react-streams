@@ -55,17 +55,21 @@ public class Client {
 	 */
 	public Operations<JsonObject> init(final String host, final int port) {
 		return Builder.as(new Publisher<JsonObject>() {
-			//boolean init = true;
+			boolean init = false;
 
 			@Override
 			public void subscribe(Subscriber<JsonObject> subscriber) {
 				subscriber.onSubscribe(new BaseSubscription<JsonObject>(subscriber) {
 					@Override
 					public void request(int elements) {
+						if (init) {
+							return;
+						}
+						init = true;
 						client = vertx.createNetClient();
 						client.connect(port, host, new Handler<AsyncResult<NetSocket>>() {
 							public void handle(AsyncResult<NetSocket> asyncResult) {
-								System.out.println(" init " + asyncResult + " " + asyncResult.succeeded() + " " + asyncResult.result());
+								System.out.println("connected " + asyncResult + " " + asyncResult.succeeded() + " " + asyncResult.result());
 								if (asyncResult.succeeded()) {
 									socket = asyncResult.result();
 									socket.dataHandler(new DataHandler());
@@ -167,10 +171,15 @@ public class Client {
 
 	public Publisher<Void> close() {
 		return Builder.as(new Publisher<Void>()  {
+			boolean done = false;
 			@Override
 			public void subscribe(Subscriber<Void> subscriber) {
 				subscriber.onSubscribe(new BaseSubscription<Void>(subscriber) {
 					public void request(int elements) {
+						if (done) {
+							return;
+						}
+						done = true;
 						client.close();
 						sendComplete();
 					}
@@ -179,12 +188,9 @@ public class Client {
 		});
 	}
 
-
 	public Request getVersion(boolean details) {
 		return new Request("GET", "/_api/version?details=" + details, null);
 	}
-
-
 	
 	public Processor<Request, Response> process() { 
 		return new BaseProcessor<Request, Response>() {
@@ -197,7 +203,7 @@ public class Client {
 						sendNext(this);
 					}
 				};
-
+//System.out.println("active " + active + " " + req);
 				if (active == null) {
 					active = resp;
 					active.begin();

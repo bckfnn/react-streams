@@ -20,6 +20,7 @@ public class ArangoTest extends TestVerticle {
     private Operations<?> init(Client client) {
         return client
                 .init("127.0.0.1", 8529)
+                .printStream("after connect", System.out)
                 .whenDoneValue(client.createDatabase("test"))
                 .then(client.process());
     }
@@ -41,9 +42,11 @@ public class ArangoTest extends TestVerticle {
     public void initListdatabases() {
         final Client client = new Client(getVertx());
         init(client)
+        .printStream("after init", System.out)
         .whenDoneValue(client.listDatabases())
+        .printStream("after list ", System.out)
         .then(client.process())
-        .printStream("after list", System.out)
+        .printStream("after list process", System.out)
         .whenDone(() -> VertxAssert.testComplete())
         .start(1);
     }

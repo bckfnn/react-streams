@@ -60,6 +60,7 @@ public class Response {
     
     public void done() {
         long t = System.currentTimeMillis() - time;
+        System.out.println("response took:" + t + " " + body);
         if (t > 100) {
             System.out.println("Response took:" + t);
             System.out.println("request started:" + time);

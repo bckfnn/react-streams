@@ -72,4 +72,8 @@ public class Request {
         LOG.debug("Sending to socket {}", b.toString());
         socket.write(b);
     }
+    
+    public String toString() {
+    	return "Request[" + method + " " + uri + "]";
+    }
 }
