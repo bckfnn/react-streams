@@ -1,0 +1,26 @@
+-classpath
+'D:/vertx/react-streams/react-streams-arangodb/target/classes;C:/Users/finn/.m2/repository/io/vertx/vertx-core/2.1M5/vertx-core-2.1M5.jar;C:/Users/finn/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.2.2/jackson-annotations-2.2.2.jar;C:/Users/finn/.m2/repository/io/vertx/vertx-platform/2.1M5/vertx-platform-2.1M5.jar;D:/vertx/react-streams/react-streams-core/target/classes;C:/Users/finn/.m2/repository/org/slf4j/slf4j-api/1.6.2/slf4j-api-1.6.2.jar;C:/Users/finn/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.2.2/jackson-databind-2.2.2.jar;C:/Users/finn/.m2/repository/io/netty/netty-all/4.0.14.Final/netty-all-4.0.14.Final.jar;C:/Users/finn/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.2.2/jackson-core-2.2.2.jar'
+-encoding
+'UTF-8'
+-protected
+-sourcepath
+'D:/vertx/react-streams/react-streams-arangodb/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2014. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'D:/vertx/react-streams/react-streams-arangodb/target/site/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'react-streams-arangodb 0.1 API'
+-linkoffline
+'http://docs.oracle.com/javase/7/docs/api' 'D:/vertx/react-streams/react-streams-arangodb/target/javadoc-bundle-options'
+-linkoffline
+'http://bckfnn.github.io/react-streams/react-streams-core/apidocs' 'D:/vertx/react-streams/react-streams-core/target/site/apidocs'
+-use
+-version
+-windowtitle
+'react-streams-arangodb 0.1 API'
