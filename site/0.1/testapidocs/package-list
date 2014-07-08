@@ -1,0 +1,3 @@
+com.github.bckfnn.reactstreams.test
+com.github.bckfnn.reactstreams.vertx.test
+io.github.bckfnn.reactstreams.arangodb.test
