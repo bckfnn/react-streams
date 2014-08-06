@@ -7,7 +7,7 @@
     <custom>
         <fluidoSkin>
             <!-- googleSearch/ -->
-            <sourceLineNumbersEnabled>true</sourceLineNumbersEnabled>
+            <!--sourceLineNumbersEnabled>true</sourceLineNumbersEnabled-->
         </fluidoSkin>
     </custom>
     
