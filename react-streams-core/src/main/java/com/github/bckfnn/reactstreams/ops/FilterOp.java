@@ -23,6 +23,8 @@ public abstract class FilterOp<T> extends BaseProcessor<T, T> {
         try {
             if (check(value)) {
                 sendNext(value);
+            } else {
+                sendRequest();
             }
         } catch (Throwable exc) {
             sendError(exc);
