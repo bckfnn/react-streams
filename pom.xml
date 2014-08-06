@@ -149,13 +149,16 @@
 			<plugin>
 				<groupId>com.github.github</groupId>
 				<artifactId>site-maven-plugin</artifactId>
-				<version>0.7</version>
+				<version>0.9</version>
 				<configuration>
+                                        <server>github</server>
 					<message>Creating site for ${project.artifactId},
 						${project.version}</message>
 					<!-- this does the trick to place every module in the correct subfolder -->
 					<path>${project.distributionManagement.site.url}</path>
 					<merge>true</merge>
+                                        <repositoryName>react-streams</repositoryName>
+                                        <repositoryOwner>bckfnn</repositoryOwner>
 				</configuration>
 				<executions>
 					<execution>
