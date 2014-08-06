@@ -20,8 +20,6 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 	private Subscription inputSubscription;
 	private BaseSubscription<O> outputSubscription;
 	private int queue = 0;
-	private int count = 0;
-	private boolean complete = false;
 	
 	@Override
 	public void onSubscribe(Subscription s) {
@@ -32,7 +30,6 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 	
 	@Override 
 	public void onNext(I value) {
-		count++;
 		queue--;
 		doNext(value);
 		sendRequest();
@@ -45,18 +42,11 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 
 	@Override
 	public void onComplete() {
-		if (count == 0) {
-			sendComplete();
-		}
-		complete = true;
+	    sendComplete();
 	}
 
 	public void sendNext(O value) {
-		count--;
 		outputSubscription.sendNext(value);
-		if (count == 0 && complete) {
-			sendComplete();
-		}
 	}
 
 	public void sendError(Throwable error) {
