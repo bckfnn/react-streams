@@ -1,0 +1,29 @@
+<project name="Parent">
+    <skin>
+       <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.3.1</version>
+    </skin>
+    <custom>
+        <fluidoSkin>
+            <!-- googleSearch/ -->
+            <!--sourceLineNumbersEnabled>true</sourceLineNumbersEnabled-->
+        </fluidoSkin>
+    </custom>
+    
+    <body>
+        <links>
+            <item name="reactive-streams.org" href="http://www.reactive-streams.org/" />
+        </links>
+
+        <menu name="Subprojects">
+            <item name="Core" href="../../react-streams-core/target/site/index.html"/>
+            <item name="Vert.x" href="../../react-streams-vertx/target/site/index.html"/>
+            <item name="ArangoDB" href="../../react-streams-arangodb/target/site/index.html" />
+        </menu>
+
+        <menu ref="reports"/>
+     </body>
+</project>
+
+

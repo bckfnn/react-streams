@@ -1,0 +1,15 @@
+<project name="core">
+    <body>
+        <menu name="Intro">
+            <item name="Introduction" href="intro.html"/>
+        </menu>
+        <menu name="Steps">
+            <item name="Filter" href="filter.html"/>
+            <item name="Flow" href="flow.html"/>
+        </menu>
+        <menu name="Javadoc">
+            <item name="API docs" href="apidocs/index.html"/>
+        </menu>
+     </body>
+</project>
+

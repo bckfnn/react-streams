@@ -15,6 +15,8 @@ package com.github.bckfnn.reactstreams.ops;
 
 import java.io.PrintStream;
 
+import org.reactivestreams.Subscription;
+
 import com.github.bckfnn.reactstreams.BaseProcessor;
 
 public class PrintStreamOp<T> extends BaseProcessor<T, T> {
@@ -25,7 +27,12 @@ public class PrintStreamOp<T> extends BaseProcessor<T, T> {
 		this.prefix = prefix;
 		this.printStream = printStream;
 	}
-	
+
+	public void onSubscribe(Subscription s) {
+	    printStream.println(prefix + " onSubScribe:" + s);
+	    super.onSubscribe(s);
+	}
+
 	@Override
 	public void doNext(T value) {
 		printStream.println(prefix + " onNext:" + value);
@@ -44,6 +51,15 @@ public class PrintStreamOp<T> extends BaseProcessor<T, T> {
 		super.onComplete();
 	}
 
+    @Override
+    public void sendCancel() {
+        printStream.println(prefix + " cancel");
+        super.sendCancel();
+    }
 
-
+    @Override
+    protected void sendRequest(int n) {
+        printStream.println(prefix + " request(" + n + ")");
+        super.sendRequest(n);
+    }
 }
