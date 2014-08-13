@@ -70,7 +70,7 @@ public class SimpleTest {
         Keep<String> keep = new Keep<>();
         Builder
         .from(Arrays.asList("12", "34", "56"))
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals("12", "34", "56");
@@ -81,7 +81,7 @@ public class SimpleTest {
         Keep<String> keep = new Keep<>();
         Builder
         .from(Arrays.<String> asList())
-        .then(keep)
+        .next(keep)
         .start(1);
         keep.assertEquals();
     }
@@ -91,7 +91,7 @@ public class SimpleTest {
         Keep<String> keep = new Keep<>();
         Builder
         .from("12", "34", "56")
-        .then(keep)
+        .next(keep)
         .start(1);
         keep.assertEquals("12", "34", "56");
     }
@@ -101,7 +101,7 @@ public class SimpleTest {
         Keep<String> keep = new Keep<>();
         Builder
         .from("12")
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals("12");
@@ -113,7 +113,7 @@ public class SimpleTest {
         Keep<String> keep = new Keep<>();
         Builder
         .from("abc")
-        .then(keep)
+        .next(keep)
         .start(1);
         keep.assertEquals("abc");
     }
@@ -123,7 +123,7 @@ public class SimpleTest {
         Keep<String> keep = new Keep<>();
         Builder
         .<String> error(new RuntimeException("test"))
-        .then(keep)
+        .next(keep)
         .start(1);
         keep.assertException(new RuntimeException("test"));
     }
@@ -134,7 +134,7 @@ public class SimpleTest {
         Builder
         .from(1, 2, 3)
         .done()
-        .then(keep)
+        .next(keep)
         .start(1);
         keep.assertEquals();
         
@@ -146,7 +146,7 @@ public class SimpleTest {
         Builder
         .counter()
         .take(5)
-        .then(keep)
+        .next(keep)
         .start(1);
         keep.assertEquals(0, 1, 2, 3, 4);
     }
@@ -157,7 +157,7 @@ public class SimpleTest {
         Builder
         .counter(3)
         .take(5)
-        .then(keep)
+        .next(keep)
         .start(1);
         keep.assertEquals(3, 4, 5, 6, 7);
     }
@@ -168,7 +168,7 @@ public class SimpleTest {
         Builder
         .counter(3)
         .take(1000000)
-        .then(keep)
+        .next(keep)
         .start(1);
     }
 
@@ -178,7 +178,7 @@ public class SimpleTest {
         Builder
         .counter(3)
         .take(1000000)
-        .then(keep)
+        .next(keep)
         .start(100);
     }
 
@@ -188,7 +188,7 @@ public class SimpleTest {
         Keep<Tuple<Integer, String>> keep = new Keep<>();
 
         Builder.zip(Builder.counter(), Builder.from("a", "b", "c"))
-        .then(keep)
+        .next(keep)
         .start(1);
         keep.assertEquals(new Tuple<>(0, "a"), new Tuple<>(1, "b"), new Tuple<>(2, "c"));
     }
@@ -199,7 +199,7 @@ public class SimpleTest {
         Keep<Tuple<String, Integer>> keep = new Keep<>();
 
         Builder.zip(Builder.from("a", "b", "c"), Builder.counter())
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals(new Tuple<>("a", 0), new Tuple<>("b", 1), new Tuple<>("c", 2));
@@ -211,7 +211,7 @@ public class SimpleTest {
 
         Builder.zip(Builder.counter(10), Builder.counter())
         .take(1000000)
-        .then(keep)
+        .next(keep)
         .start(1);
     }
 
@@ -221,7 +221,7 @@ public class SimpleTest {
         Keep<Tuple<String, Integer>> keep = new Keep<>();
 
         Builder.zip(Builder.from("a", "b", "c").continueWithError(new Exception("xx")), Builder.counter())
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertException(new Exception("xx"), new Tuple<>("a", 0), new Tuple<>("b", 1));
@@ -233,7 +233,7 @@ public class SimpleTest {
         Builder
         .from("def")
         .nop()
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals("def");
@@ -245,19 +245,19 @@ public class SimpleTest {
         Keep<Integer> keep = new Keep<>();
         Builder
         .from("12", "34", "56")
-        .then(new MapOp<String, String>() {
+        .next(new MapOp<String, String>() {
             @Override
             public String map(String value) {
                 return "-" + value;
             }
         })
-        .then(new MapOp<String, Integer>() {
+        .next(new MapOp<String, Integer>() {
             @Override
             public Integer map(String value) {
                 return Integer.valueOf(value);
             }
         })
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals(-12, -34, -56);
@@ -270,7 +270,7 @@ public class SimpleTest {
         .from("12", "34", "56")
         .map((String value) -> "-" + value)
         .map((String value) -> Integer.valueOf(value))
-        .then(keep)
+        .next(keep)
         .start(1);
         keep.assertEquals(-12, -34, -56); 
     }
@@ -280,7 +280,7 @@ public class SimpleTest {
         Keep<Integer> keep = new Keep<>();
         Builder
         .from("12", "34", "56")
-        .then(new MapOp<String, String>() {
+        .next(new MapOp<String, String>() {
             @Override
             public String map(String value) {
                 if (value.equals("34")) {
@@ -289,13 +289,13 @@ public class SimpleTest {
                 return "-" + value;
             }
         })
-        .then(new MapOp<String, Integer>() {
+        .next(new MapOp<String, Integer>() {
             @Override
             public Integer map(String value) {
                 return Integer.valueOf(value);
             }
         })
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertException(new RuntimeException("stop!"), -12);
@@ -321,7 +321,7 @@ public class SimpleTest {
                 return Integer.valueOf(value);
             }
         })
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertException(new RuntimeException("stop!"), -12);
@@ -335,7 +335,7 @@ public class SimpleTest {
         .take(1000000)
         .map((Integer value) -> "-" + value)
         .map((String value) -> Integer.valueOf(value))
-        .then(keep)
+        .next(keep)
         .start(1);
     }
 
@@ -344,13 +344,13 @@ public class SimpleTest {
         Keep<String> keep = new Keep<>();
         Builder
         .from("12", "34", "56")
-        .then(new MapManyOp<String, String>() {
+        .next(new MapManyOp<String, String>() {
             @Override
             public Operations<String> map(String value) {
                 return Builder.from("x" + value, "y" + value, "z" + value);
             }
         })
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals("x12", "y12", "z12", "x34", "y34", "z34", "x56", "y56", "z56");
@@ -367,7 +367,7 @@ public class SimpleTest {
                 return Builder.from("x" + value, "y" + value, "z" + value);
             }
         })
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals("x12", "y12", "z12", "x34", "y34", "z34", "x56", "y56", "z56");
@@ -379,7 +379,7 @@ public class SimpleTest {
         Builder
         .from("12", "34", "56")
         .mapMany((String value) -> Builder.from("x" + value, "y" + value, "z" + value))
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals("x12", "y12", "z12", "x34", "y34", "z34", "x56", "y56", "z56");
@@ -391,7 +391,7 @@ public class SimpleTest {
         Builder
         .from("12", "34", "56")
         .<String> mapMany((String value) -> { throw new Exception("x"); })
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertException(new Exception("x"));
@@ -403,7 +403,7 @@ public class SimpleTest {
         Builder
         .from("12", "34", "56")
         .mapMany((String value) -> Builder.<String> error(new Exception("x")))
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertException(new Exception("x"));
@@ -414,13 +414,13 @@ public class SimpleTest {
         Keep<String> keep = new Keep<>();
         Builder
         .from("12", "34", "56")
-        .then(new FilterOp<String>() {
+        .next(new FilterOp<String>() {
             @Override
             public boolean check(String value) {
                 return value.equals("34");
             }
         })
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals("34");
@@ -432,7 +432,7 @@ public class SimpleTest {
         Builder
         .from("12", "34", "56")
         .filter(x -> x.equals("34") )
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals("34");
@@ -446,7 +446,7 @@ public class SimpleTest {
         .from("12", "34", "56")
         .continueWithError(new Exception("xx"))
         .filter(x -> x.equals("34") )
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertException(new Exception("xx"), "34");
@@ -467,7 +467,7 @@ public class SimpleTest {
             }
             return false;
         })
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertException(new Exception("xx"), "34");
@@ -479,7 +479,7 @@ public class SimpleTest {
         Builder
         .from("12", "34", "56")
         .last()
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals("56");
@@ -491,7 +491,7 @@ public class SimpleTest {
         Builder
         .<String> from()
         .last()
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals();
@@ -503,7 +503,7 @@ public class SimpleTest {
         Builder
         .from(1, 2, 3)
         .skip(1)
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals(2, 3);
@@ -515,7 +515,7 @@ public class SimpleTest {
         Builder
         .from(1, 2, 3)
         .skip(5)
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals();
@@ -527,7 +527,7 @@ public class SimpleTest {
         Builder
         .from(1, 2, 3)
         .take(2)
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals(1, 2);
@@ -539,7 +539,7 @@ public class SimpleTest {
         Builder
         .from(1, 2, 3)
         .take(5)
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals(1, 2, 3);
@@ -550,13 +550,13 @@ public class SimpleTest {
         Keep<Integer> keep = new Keep<>();
         Builder
         .from(1, 2, 3)
-        .then(new AccumulatorOp<Integer>(0) {
+        .next(new AccumulatorOp<Integer>(0) {
             @Override
             public Integer calc(Integer value, Integer nextValue) {
                 return value + nextValue;
             }
         })
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals(0, 1, 3, 6);
@@ -568,7 +568,7 @@ public class SimpleTest {
         Builder
         .from(1, 2, 3)
         .accumulate(0, (value, next) -> value + next)
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals(0, 1, 3, 6);
@@ -580,7 +580,7 @@ public class SimpleTest {
         Builder
         .from(1, 2, 3)
         .accumulate(null, (value, next) -> value + next)
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals(1, 3, 6);
@@ -597,7 +597,7 @@ public class SimpleTest {
             }
             return value + next;
         })
-        .then(keep)
+        .next(keep)
         .start(1);
         keep.assertException(new Exception("xx"), 0, 1, 3);
     }
@@ -608,7 +608,7 @@ public class SimpleTest {
 
         Builder
         .concat(Builder.from(1, 2, 3), Builder.from(4, 5))
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals(1, 2, 3, 4, 5);
@@ -622,7 +622,7 @@ public class SimpleTest {
         Builder
         .from(1, 2, 3)
         .whenDoneValue(4)
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals(4);
@@ -635,7 +635,7 @@ public class SimpleTest {
         Builder
         .from(1, 2, 3)
         .whenDoneError(new Exception("xx"))
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertException(new Exception("xx"));
@@ -648,7 +648,7 @@ public class SimpleTest {
         Builder
         .from(1, 2, 3)
         .whenDone(() -> { keep.doNext(44); })
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals(44);
@@ -661,7 +661,7 @@ public class SimpleTest {
         Builder
         .from(1, 2, 3)
         .whenDone(Builder.from(5, 6, 7))
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals(5, 6, 7);
@@ -675,7 +675,7 @@ public class SimpleTest {
         .from(1, 2, 3)
         .whenDone(Builder.counter())
         .take(100000)
-        .then(keep)
+        .next(keep)
         .start(1);
     }
     
@@ -685,7 +685,7 @@ public class SimpleTest {
         Builder
         .from(1, 2, 3)
         .continueWithError(new Exception("xx"))
-        .then(keep)
+        .next(keep)
         .start(1);
         
         keep.assertException(new Exception("xx"), 1, 2, 3);
@@ -755,7 +755,7 @@ public class SimpleTest {
         //.next(keep)
         //.debug()
         //.stdout("xxx")
-        .then(keep2)
+        .next(keep2)
         .start(1);
 
         keep.assertEquals(1, 2, 3);
@@ -770,7 +770,7 @@ public class SimpleTest {
         Builder
         .from(1, 2, 3)
         .toList()
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals(Arrays.asList(1, 2, 3));
@@ -783,7 +783,7 @@ public class SimpleTest {
         Builder
         .from(1, 2, 3)
         .onEach((v, proc) -> { proc.sendNext(v); })
-        .then(keep)
+        .next(keep)
         .start(1);
 
         keep.assertEquals(1, 2, 3);

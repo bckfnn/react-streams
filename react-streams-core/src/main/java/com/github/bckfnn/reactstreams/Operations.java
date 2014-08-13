@@ -32,7 +32,7 @@ public interface Operations<T> extends Publisher<T> {
      * @param <R> type the new builder that is returned.
      * @return a new builder that wraps the processor.
      */
-    public <R> Operations<R> then(Processor<T, R> processor);
+    public <R> Operations<R> next(Processor<T, R> processor);
 
     /**
      * Add a subscriber to this publisher.

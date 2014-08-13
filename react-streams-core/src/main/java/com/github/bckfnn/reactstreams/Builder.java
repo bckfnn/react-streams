@@ -151,7 +151,7 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
 
 
     @Override
-    public <R> Operations<R> then(Processor<T, R> processor) {
+    public <R> Operations<R> next(Processor<T, R> processor) {
         publisher.subscribe(processor);
         return new Builder<R>(processor);
     }
@@ -168,7 +168,7 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
 
     @Override
     public <R> Operations<R> map(final Func1<T, R> mapFunc) {
-        return then(new MapOp<T, R>() {
+        return next(new MapOp<T, R>() {
             @Override
             public R map(T value) throws Throwable {
                 return mapFunc.apply(value);
@@ -178,7 +178,7 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
 
     @Override
     public <R> Operations<R> mapMany(final Func1<T, Operations<R>> mapFunc) {
-        return then(new MapManyOp<T, R>() {
+        return next(new MapManyOp<T, R>() {
             @Override
             public Operations<R> map(T value) throws Throwable {
                 return mapFunc.apply(value);
@@ -191,32 +191,32 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
      */
     @Override
     public Operations<T> last() {
-        return then(new LastOp<T>());
+        return next(new LastOp<T>());
     }
 
     @Override
     public Operations<T> skip(int cnt) {
-        return then(new SkipOp<T>(cnt));
+        return next(new SkipOp<T>(cnt));
     }
 
     @Override
     public Operations<T> take(int cnt) {
-        return then(new TakeOp<T>(cnt));
+        return next(new TakeOp<T>(cnt));
     }
 
     @Override
     public Operations<T> nop() {
-        return then(new NopOp<T>());
+        return next(new NopOp<T>());
     }
 
     @Override
     public Operations<T> done() {
-        return then(new DoneOp<T>());
+        return next(new DoneOp<T>());
     }
 
     @Override
     public Operations<T> filter(Func1<T, Boolean> func) {
-        return then(new FilterOp<T>() {
+        return next(new FilterOp<T>() {
             @Override
             public boolean check(T value) throws Throwable {
                 return func.apply(value);
@@ -226,27 +226,27 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
 
     @Override
     public <R> Operations<R> whenDoneValue(R value) {
-        return then(new WhenDoneValueOp<T, R>(value));
+        return next(new WhenDoneValueOp<T, R>(value));
     }
 
     @Override
     public Operations<T> whenDoneError(Throwable error) {
-        return then(new WhenDoneErrorOp<T>(error));
+        return next(new WhenDoneErrorOp<T>(error));
     }
     
     @Override
     public Operations<T> whenDone(Proc0 func) {
-        return then(new WhenDoneProcOp<T>(func));
+        return next(new WhenDoneProcOp<T>(func));
     }
 
     @Override
     public <R> Operations<R> whenDone(Func0<R> func) {
-        return then(new WhenDoneFuncOp<T, R>(func));
+        return next(new WhenDoneFuncOp<T, R>(func));
     }
     
     @Override
     public <R> Operations<R> whenDone(Publisher<R> publisher) {
-        return then(new WhenDonePublisherOp<T, R>(publisher));
+        return next(new WhenDonePublisherOp<T, R>(publisher));
     }
 
     @Override
@@ -257,7 +257,7 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
     
     @Override
     public Operations<T> continueWithError(Throwable error) {
-        return then(new ContinueWithErrorOp<>(error));
+        return next(new ContinueWithErrorOp<>(error));
     }
 
     @Override
@@ -274,12 +274,12 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
     
     @Override
     public Operations<T> delegate(Subscriber<T> x) {
-        return then(new DelegateOp<T>(x));
+        return next(new DelegateOp<T>(x));
     }
 
     @Override
     public Operations<T> onEach(Proc2<T, BaseProcessor<T, T>> func) {
-        return then(new NopOp<T>() {
+        return next(new NopOp<T>() {
             @Override
             public void doNext(T value) {
                 try {
@@ -293,7 +293,7 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
 
     @Override
     public <R> Operations<R> onFinally(Func0<Operations<R>> func) {
-        return then(new FinallyOp<T, R>() {
+        return next(new FinallyOp<T, R>() {
             @Override
             public Operations<R> fin() throws Throwable {
                 return func.apply();
@@ -304,17 +304,17 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
 
     @Override
     public Operations<T> printStream(String prefix, PrintStream printStream) {
-        return then(new PrintStreamOp<T>(prefix, printStream));
+        return next(new PrintStreamOp<T>(prefix, printStream));
     }
 
     @Override
     public Operations<List<T>> toList() {
-        return then(new ToListOp<T>());
+        return next(new ToListOp<T>());
     }
 
     @Override
     public Operations<T> accumulate(T initial, final Func2<T, T, T> func) {
-        return then(new AccumulatorOp<T>(initial) {
+        return next(new AccumulatorOp<T>(initial) {
             @Override
             public T calc(T value, T nextValue) throws Throwable {
                 return func.apply(value, nextValue);

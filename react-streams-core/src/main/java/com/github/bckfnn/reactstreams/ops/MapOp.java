@@ -24,6 +24,7 @@ public abstract class MapOp<I, O> extends BaseProcessor<I, O> {
         try {
             sendNext(map(value));
         } catch (Throwable error) {
+        	error.printStackTrace();
             sendError(error);
             sendCancel();
         }
