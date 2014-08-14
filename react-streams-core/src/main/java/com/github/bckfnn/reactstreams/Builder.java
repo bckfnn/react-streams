@@ -264,7 +264,7 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
     @Override
     public Operations<T> continueWith(Proc0 func) {
         // TODO Auto-generated method stub
-        return next(new ContinueWithProcOp(func));
+        return next(new ContinueWithProcOp<T>(func));
     }
     
     @Override
@@ -330,7 +330,7 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
                     sendError(e);
                 }
             }
-            
+
             private void runFinally() throws Throwable {
                 func.apply();
             }

@@ -43,7 +43,6 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 
 	@Override
 	public void onComplete() {
-	    System.out.println("onComp:" + queue);
 	    complete = true;
 	    if (queue == 0) {
 	        sendComplete();

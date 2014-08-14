@@ -223,10 +223,10 @@ public class SimpleTest {
     public void testZip4() {
         Keep<Tuple<String, Integer>> keep = new Keep<>();
 
-        Builder.zip(Builder.from("a", "b", "c").printStream("i1", System.out).continueWithError(new Exception("xx")), Builder.counter().printStream("i2", System.out))
+        Builder.zip(Builder.from("a", "b", "c").continueWithError(new Exception("xx")), Builder.counter())
         .next(keep)
         .start(1);
-System.out.println(keep);
+
         keep.assertException(new Exception("xx"), new Tuple<>("a", 0), new Tuple<>("b", 1));
     }
 
@@ -421,21 +421,17 @@ System.out.println(keep);
                 return Builder.
                         from("a" + i, "b" + i, "c" + i).
                         onEach((v, op) -> {
-                            System.out.println("each:" + v);
                             s.execute(() -> {
-                                System.out.println("next:" + v);
                                 op.sendNext(v);
                                 op.handled();
                             });
                         });
             }).
-            printStream("xxx", System.out).
             continueWith(() -> { s.shutdown(); }).
             next(keep).
             start(1);
         });
         s.awaitTermination(10, TimeUnit.SECONDS);
-        System.out.println(keep);
         keep.assertEquals("a1", "b1", "c1", "a2", "b2", "c2", "a3", "b3", "c3");
     }
     
@@ -452,7 +448,7 @@ System.out.println(keep);
         })
         .next(keep)
         .start(1);
-System.out.println(keep);
+
         keep.assertEquals("34");
     }
 
@@ -511,7 +507,7 @@ System.out.println(keep);
         .last()
         .next(keep)
         .start(1);
-System.out.println(keep);
+
         keep.assertEquals("56");
     }
 
@@ -692,7 +688,7 @@ System.out.println(keep);
         .whenDone(Builder.from(5, 6, 7))
         .next(keep)
         .start(1);
-System.out.println(keep);
+
         keep.assertEquals(5, 6, 7);
     }
 
