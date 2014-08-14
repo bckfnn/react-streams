@@ -41,13 +41,11 @@ public abstract class MapManyOp<T, R> extends BaseProcessor<T, R> {
 
 	@Override
     public void doNext(T value) {
-	    System.out.println("mm:" + value);
         try {
             final Publisher<R> child = map(value);
             children.add(child);
             count++;
             drain();
-            handled();
         } catch (Throwable exc) {
             onError(exc);
         }
@@ -100,6 +98,7 @@ public abstract class MapManyOp<T, R> extends BaseProcessor<T, R> {
                 	sendRequest(1);
                     drain();
                 }
+                handled();
             }
 
             @Override
