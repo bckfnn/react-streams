@@ -24,6 +24,7 @@ public class ToListOp<T> extends BaseProcessor<T, List<T>> {
     @Override
     public void doNext(T value) {
         list.add(value);
+        sendRequest();
     }
 
     @Override

@@ -39,7 +39,7 @@ public class RsAsyncFile {
 					@Override
                     public void request(int elements) {
                         super.request(elements);
-                        if (getPending() <= 0) {
+                        if (getPendingDemand() <= 0) {
                             asyncFile.pause();
                         } else {
                             asyncFile.resume();

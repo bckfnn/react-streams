@@ -43,6 +43,7 @@ public class Keep<T> extends BaseProcessor<T, T> {
             new IllegalStateException("onNext in state " + state);
         }
         list.add(value);
+        sendRequest();
     }
 
     @Override

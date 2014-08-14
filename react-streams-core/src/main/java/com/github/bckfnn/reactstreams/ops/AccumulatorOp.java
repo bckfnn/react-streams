@@ -29,6 +29,7 @@ public abstract class AccumulatorOp<T> extends BaseProcessor<T, T> {
     public void doNext(T value) {
         if (acc == null) {
             acc = value;
+            sendRequest();
             return;
         }
         if (!initialValueSent) {
@@ -38,6 +39,7 @@ public abstract class AccumulatorOp<T> extends BaseProcessor<T, T> {
         try {
             acc = calc(acc, value);
             sendNext(acc);
+            sendRequest();
         } catch (Throwable exc) {
             sendError(exc);
             sendCancel();

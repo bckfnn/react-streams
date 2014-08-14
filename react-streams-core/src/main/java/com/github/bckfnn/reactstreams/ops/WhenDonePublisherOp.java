@@ -29,6 +29,7 @@ public class WhenDonePublisherOp<T, R> extends BaseProcessor<T, R> {
 
     @Override
     public void doNext(T value) {
+        sendRequest();
     }
 
     public void sendCancel() {
@@ -39,7 +40,7 @@ public class WhenDonePublisherOp<T, R> extends BaseProcessor<T, R> {
     	}
 	}
 	
-	protected void sendRequest(int n) {
+	public void sendRequest(int n) {
     	if (continueSubscription != null) {
     		continueSubscription.request(n);
     	} else {

@@ -24,6 +24,7 @@ public class WhenDoneErrorOp<T> extends BaseProcessor<T, T> {
 
     @Override
     public void doNext(T value) {
+        sendRequest();
     }
 
     @Override

@@ -33,9 +33,8 @@ public abstract class ActiveSubscription<T> extends BaseSubscription<T> {
 			return;
 		}
 		recursion = true;
-		while (getPending() > 0 && !isCancelled() && hasMore()) {
+		while (getPendingDemand() > 0 && !isCancelled() && hasMore()) {
 			sendNext(getOne());
-			
 		}
 		if (!hasMore() && !isCancelled()) {
 			sendComplete();

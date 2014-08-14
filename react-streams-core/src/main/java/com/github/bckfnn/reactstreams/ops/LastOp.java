@@ -29,6 +29,7 @@ public class LastOp<T> extends BaseProcessor<T, T> {
     public void doNext(T value) {
         onNext = true;
         this.value = value;
+        sendRequest();
     }
 
     @Override

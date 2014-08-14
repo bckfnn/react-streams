@@ -19,5 +19,6 @@ public class NopOp<T> extends BaseProcessor<T, T> {
     @Override
     public void doNext(T value) {
         sendNext(value);
+        sendRequest();
     }
 }

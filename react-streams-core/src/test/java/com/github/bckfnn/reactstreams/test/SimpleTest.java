@@ -17,6 +17,9 @@ import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -35,36 +38,36 @@ import com.github.bckfnn.reactstreams.ops.MapOp;
 
 public class SimpleTest {
 
-	@Test
-	public void testTuple() {
-		Tuple<Integer, Integer> t1 = new Tuple<>(1, 2);
-		Assert.assertEquals((Integer) 1, t1.left());
-		Assert.assertEquals((Integer) 2, t1.right());
-		Assert.assertEquals("Tuple[1, 2]", t1.toString());
+    @Test
+    public void testTuple() {
+        Tuple<Integer, Integer> t1 = new Tuple<>(1, 2);
+        Assert.assertEquals((Integer) 1, t1.left());
+        Assert.assertEquals((Integer) 2, t1.right());
+        Assert.assertEquals("Tuple[1, 2]", t1.toString());
 
-		Tuple<Integer, Integer> t2 = new Tuple<>(1, 2);
-		Assert.assertTrue(t2.equals(t1));
-		Assert.assertTrue(t1.equals(t2));
-		Assert.assertEquals(t1.hashCode(), t2.hashCode());
-		Assert.assertTrue(t1.equals(t1));
+        Tuple<Integer, Integer> t2 = new Tuple<>(1, 2);
+        Assert.assertTrue(t2.equals(t1));
+        Assert.assertTrue(t1.equals(t2));
+        Assert.assertEquals(t1.hashCode(), t2.hashCode());
+        Assert.assertTrue(t1.equals(t1));
 
-		Assert.assertFalse(t1.equals("abc"));
-		Assert.assertFalse(t1.equals(null));
-		Assert.assertFalse(t1.equals(new Tuple<Integer, Integer>(1, null)));
-		Assert.assertFalse(t1.equals(new Tuple<Integer, Integer>(null, null)));
-		Assert.assertFalse(new Tuple<Integer, Integer>(1, null).equals(t1));
-		Assert.assertFalse(new Tuple<Integer, Integer>(null, null).equals(t1));
+        Assert.assertFalse(t1.equals("abc"));
+        Assert.assertFalse(t1.equals(null));
+        Assert.assertFalse(t1.equals(new Tuple<Integer, Integer>(1, null)));
+        Assert.assertFalse(t1.equals(new Tuple<Integer, Integer>(null, null)));
+        Assert.assertFalse(new Tuple<Integer, Integer>(1, null).equals(t1));
+        Assert.assertFalse(new Tuple<Integer, Integer>(null, null).equals(t1));
 
-		Assert.assertTrue(new Tuple<Integer, Integer>(null, null).equals(new Tuple<>(null, null)));
+        Assert.assertTrue(new Tuple<Integer, Integer>(null, null).equals(new Tuple<>(null, null)));
 
 
-		Tuple<Integer, Integer> t3 = new Tuple<>(3, 4);
-		Assert.assertFalse(t1.equals(t3));
-		Assert.assertFalse(t1.hashCode() == t3.hashCode());
-		
-		Assert.assertTrue(new Tuple<>(null, null).hashCode() == new Tuple<>(null, null).hashCode());
-	}
-	
+        Tuple<Integer, Integer> t3 = new Tuple<>(3, 4);
+        Assert.assertFalse(t1.equals(t3));
+        Assert.assertFalse(t1.hashCode() == t3.hashCode());
+
+        Assert.assertTrue(new Tuple<>(null, null).hashCode() == new Tuple<>(null, null).hashCode());
+    }
+
     @Test
     public void testIterable() {
         Keep<String> keep = new Keep<>();
@@ -127,7 +130,7 @@ public class SimpleTest {
         .start(1);
         keep.assertException(new RuntimeException("test"));
     }
-    
+
     @Test
     public void testDone1() {
         Keep<Integer> keep = new Keep<>();
@@ -137,7 +140,7 @@ public class SimpleTest {
         .next(keep)
         .start(1);
         keep.assertEquals();
-        
+
     }
 
     @Test
@@ -438,7 +441,7 @@ public class SimpleTest {
         keep.assertEquals("34");
     }
 
-    
+
     @Test
     public void testFilter3() {
         Keep<String> keep = new Keep<>();
@@ -558,7 +561,6 @@ public class SimpleTest {
         })
         .next(keep)
         .start(1);
-
         keep.assertEquals(0, 1, 3, 6);
     }
 
@@ -585,7 +587,7 @@ public class SimpleTest {
 
         keep.assertEquals(1, 3, 6);
     }
-    
+
     @Test
     public void testAccumulator4() {
         Keep<Integer> keep = new Keep<>();
@@ -601,7 +603,7 @@ public class SimpleTest {
         .start(1);
         keep.assertException(new Exception("xx"), 0, 1, 3);
     }
-    
+
     @Test
     public void testConcat() {
         Keep<Integer> keep = new Keep<>();
@@ -627,7 +629,7 @@ public class SimpleTest {
 
         keep.assertEquals(4);
     }
-    
+
     @Test
     public void testWhenDoneError1() {
         Keep<Integer> keep = new Keep<>();
@@ -640,7 +642,7 @@ public class SimpleTest {
 
         keep.assertException(new Exception("xx"));
     }
-    
+
     @Test
     public void testWhenDoneProc1() {
         Keep<Integer> keep = new Keep<>();
@@ -653,7 +655,7 @@ public class SimpleTest {
 
         keep.assertEquals(44);
     }
-    
+
     @Test
     public void testWhenDonePublisher1() {
         Keep<Integer> keep = new Keep<>();
@@ -666,7 +668,7 @@ public class SimpleTest {
 
         keep.assertEquals(5, 6, 7);
     }
-    
+
     @Test
     public void testWhenDonePublisher2() {
         Keep<Integer> keep = new Keep<>();
@@ -678,7 +680,7 @@ public class SimpleTest {
         .next(keep)
         .start(1);
     }
-    
+
     @Test
     public void testContinueWithError1() {
         Keep<Integer> keep = new Keep<>();
@@ -687,10 +689,10 @@ public class SimpleTest {
         .continueWithError(new Exception("xx"))
         .next(keep)
         .start(1);
-        
+
         keep.assertException(new Exception("xx"), 1, 2, 3);
     }
-   /*
+    /*
     @Test
     public void testWhenDone2() {
         Keep<Integer> keep = new Keep<>();
@@ -761,9 +763,9 @@ public class SimpleTest {
         keep.assertEquals(1, 2, 3);
         keep2.assertEquals(1, 2, 3);
     }
-    
+
     @SuppressWarnings("unchecked")
-	@Test
+    @Test
     public void testToList1() {
         Keep<List<Integer>> keep = new Keep<>();
 
@@ -775,21 +777,50 @@ public class SimpleTest {
 
         keep.assertEquals(Arrays.asList(1, 2, 3));
     }
-    
+
     @Test
     public void testOnEach1() {
         Keep<Integer> keep = new Keep<>();
 
         Builder
         .from(1, 2, 3)
-        .onEach((v, proc) -> { proc.sendNext(v); })
+        .onEach((v, proc) -> { 
+            proc.sendNext(v);
+            proc.sendRequest();
+        })
         .next(keep)
         .start(1);
 
         keep.assertEquals(1, 2, 3);
-    	
+
     }
-    
+
+    @Test
+    public void testMapMany() throws InterruptedException {
+        Keep<String> keep = new Keep<>();
+        ScheduledExecutorService s = Executors.newSingleThreadScheduledExecutor();
+        s.execute(() -> {
+            Builder.from(1, 2, 3).mapMany(i -> {
+                return Builder.
+                        from("a" + i, "b" + i, "c" + i).
+                        onEach((v, op) -> {
+                            s.execute(() -> {
+                                op.sendNext(v);
+                                op.sendRequest();
+                            });
+                        });
+            }).
+            printStream("xxx", System.out).
+            continueWith(() -> {
+                s.shutdown();
+            }).
+            next(keep).
+            start(1);
+        });
+        s.awaitTermination(10, TimeUnit.SECONDS);
+        keep.assertEquals("a1", "a2", "a3", "b1", "b2", "b3", "c1", "c2", "c3");
+    }
+
     /*    
     @Test
     public void testQueue() {

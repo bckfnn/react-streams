@@ -20,6 +20,7 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 	private Subscription inputSubscription;
 	private BaseSubscription<O> outputSubscription;
 	private int queue = 0;
+	boolean complete = false;
 	
 	@Override
 	public void onSubscribe(Subscription s) {
@@ -30,9 +31,8 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 	
 	@Override 
 	public void onNext(I value) {
-		queue--;
+		queue++;
 		doNext(value);
-		sendRequest();
 	}
 
 	@Override
@@ -42,7 +42,10 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 
 	@Override
 	public void onComplete() {
-	    sendComplete();
+	    complete = true;
+	    if (queue == 0) {
+	        sendComplete();
+	    }
 	}
 
 	public void sendNext(O value) {
@@ -61,18 +64,17 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 		inputSubscription.cancel();
 	}
 	
-	protected void sendRequest(int n) {
-		queue += n;
+	public void sendRequest(int n) {
 		inputSubscription.request(n);
 	}
 
-	protected void sendRequest() {
-		if (outputSubscription != null) {
-			int room = outputSubscription.getPending() - queue;
-			if (room > 0) {
-				sendRequest(room);
-			}
-		}
+	public void sendRequest() {
+	    queue--;
+	    if (complete && queue == 0) {
+	        sendComplete();
+	    } else {
+	        sendRequest(1);
+	    }
 	}
 	
 	@Override

@@ -25,6 +25,7 @@ public class WhenDoneFuncOp<T, R> extends BaseProcessor<T, R> {
 
     @Override
     public void doNext(T value) {
+        sendRequest();
     }
 
     @Override

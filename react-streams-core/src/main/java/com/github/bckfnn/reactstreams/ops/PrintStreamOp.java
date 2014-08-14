@@ -37,6 +37,7 @@ public class PrintStreamOp<T> extends BaseProcessor<T, T> {
 	public void doNext(T value) {
 		printStream.println(prefix + " onNext:" + value);
 		sendNext(value);
+		sendRequest();
 	}
 	
 	@Override
@@ -58,8 +59,9 @@ public class PrintStreamOp<T> extends BaseProcessor<T, T> {
     }
 
     @Override
-    protected void sendRequest(int n) {
+    public void sendRequest(int n) {
         printStream.println(prefix + " request(" + n + ")");
+        //new Exception().printStackTrace();
         super.sendRequest(n);
     }
 }

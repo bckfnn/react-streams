@@ -43,7 +43,7 @@ public class ConcatOp<T> implements Publisher<T> {
             @Override
             public void request(int elements) {
                 super.request(elements);
-                currentInputSubscription.request(outputSubscription.getPending());
+                currentInputSubscription.request(outputSubscription.getPendingDemand());
             }
         });
     }
@@ -70,7 +70,7 @@ public class ConcatOp<T> implements Publisher<T> {
                 outputSubscription.sendComplete();
             } else {
                 list.get(i++).subscribe(new Sub());
-                currentInputSubscription.request(outputSubscription.getPending());
+                currentInputSubscription.request(outputSubscription.getPendingDemand());
             }
         }
     }

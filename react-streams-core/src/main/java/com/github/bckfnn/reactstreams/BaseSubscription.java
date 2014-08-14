@@ -19,7 +19,7 @@ import org.reactivestreams.Subscription;
 public class BaseSubscription<T> implements Subscription {
 	private Subscriber<T> subscriber;
 	private boolean cancelled = false;
-	private int pending;
+	private int pendingDemand;
 	
 	public BaseSubscription(Subscriber<T> subscriber) {
 		this.subscriber = subscriber;
@@ -32,30 +32,30 @@ public class BaseSubscription<T> implements Subscription {
 	
 	@Override
 	public void request(int elements) {
-		pending += elements;
+	    pendingDemand += elements;
 	}
 
 	protected boolean isCancelled() {
 		return cancelled;
 	}
 
-	public int getPending() {
-		return pending;
+	public int getPendingDemand() {
+		return pendingDemand;
 	}
 
 	public void sendNext(T value) {
 		subscriber.onNext(value);
-		pending--;
+		pendingDemand--;
 	}
 	
 	public void sendComplete() {
 		subscriber.onComplete();
-		pending = 0;
+		cancelled = true;
 	}
 	
 	public void sendError(Throwable t) {
 		subscriber.onError(t);
-		pending = 0;
+		cancelled = true;
 	}
 	
 	public String toString() {
