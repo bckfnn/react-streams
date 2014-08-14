@@ -25,6 +25,8 @@ public abstract class FinallyOp<T, R> extends BaseProcessor<T, R> {
     
     @Override
     public void doNext(T value) {
+        sendRequest();
+        handled();
     }
 
     @Override

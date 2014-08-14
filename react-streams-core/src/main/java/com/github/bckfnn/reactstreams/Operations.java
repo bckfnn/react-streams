@@ -208,7 +208,9 @@ public interface Operations<T> extends Publisher<T> {
      * @return a new builder that wraps the output.
      */
     public <R> Operations<R> onFinally(Func0<Operations<R>> func);
-    
+
+    public <R> Operations<R> onFinally(Proc0 func);
+
     /**
      * Add a <code>delegate</code> operation to the output from this publisher. 
      * The delegate operation send all input events to the specified <code>subscriber</code>. 

@@ -301,7 +301,41 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
             }
         });
     }
+    @Override
+    public <R> Operations<R> onFinally(Proc0 func) {
+        return next(new BaseProcessor<T, R>() {
 
+            @Override
+            public void doNext(T value) {
+                sendRequest(1);
+                handled();
+            }
+            
+            @Override
+            public void onComplete() {
+                try {
+                    runFinally();
+                    super.onComplete();
+                } catch (Throwable e) {
+                    sendError(e);
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                try {
+                    runFinally();
+                    super.onError(t);
+                } catch (Throwable e) {
+                    sendError(e);
+                }
+            }
+            
+            private void runFinally() throws Throwable {
+                func.apply();
+            }
+        });
+    }
 
     @Override
     public Operations<T> printStream(String prefix, PrintStream printStream) {
