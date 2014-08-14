@@ -27,7 +27,9 @@ public class SkipOp<T> extends BaseProcessor<T, T> {
     public void doNext(T value) {
         if (++count > num) {
             sendNext(value);
+        } else {
+            sendRequest();
         }
-        sendRequest();
+        handled();
     }
 }

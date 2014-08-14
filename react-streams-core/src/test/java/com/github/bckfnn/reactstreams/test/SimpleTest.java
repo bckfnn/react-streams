@@ -223,10 +223,10 @@ public class SimpleTest {
     public void testZip4() {
         Keep<Tuple<String, Integer>> keep = new Keep<>();
 
-        Builder.zip(Builder.from("a", "b", "c").continueWithError(new Exception("xx")), Builder.counter())
+        Builder.zip(Builder.from("a", "b", "c").printStream("i1", System.out).continueWithError(new Exception("xx")), Builder.counter().printStream("i2", System.out))
         .next(keep)
         .start(1);
-
+System.out.println(keep);
         keep.assertException(new Exception("xx"), new Tuple<>("a", 0), new Tuple<>("b", 1));
     }
 
@@ -413,6 +413,33 @@ public class SimpleTest {
     }
 
     @Test
+    public void testMapMany6() throws InterruptedException {
+        Keep<String> keep = new Keep<>();
+        ScheduledExecutorService s = Executors.newSingleThreadScheduledExecutor();
+        s.execute(() -> {
+            Builder.from(1, 2, 3).mapMany(i -> {
+                return Builder.
+                        from("a" + i, "b" + i, "c" + i).
+                        onEach((v, op) -> {
+                            System.out.println("each:" + v);
+                            s.execute(() -> {
+                                System.out.println("next:" + v);
+                                op.sendNext(v);
+                                op.handled();
+                            });
+                        });
+            }).
+            printStream("xxx", System.out).
+            continueWith(() -> { s.shutdown(); }).
+            next(keep).
+            start(1);
+        });
+        s.awaitTermination(10, TimeUnit.SECONDS);
+        System.out.println(keep);
+        keep.assertEquals("a1", "b1", "c1", "a2", "b2", "c2", "a3", "b3", "c3");
+    }
+    
+    @Test
     public void testFilter1() {
         Keep<String> keep = new Keep<>();
         Builder
@@ -425,7 +452,7 @@ public class SimpleTest {
         })
         .next(keep)
         .start(1);
-
+System.out.println(keep);
         keep.assertEquals("34");
     }
 
@@ -484,7 +511,7 @@ public class SimpleTest {
         .last()
         .next(keep)
         .start(1);
-
+System.out.println(keep);
         keep.assertEquals("56");
     }
 
@@ -665,7 +692,7 @@ public class SimpleTest {
         .whenDone(Builder.from(5, 6, 7))
         .next(keep)
         .start(1);
-
+System.out.println(keep);
         keep.assertEquals(5, 6, 7);
     }
 
@@ -786,7 +813,7 @@ public class SimpleTest {
         .from(1, 2, 3)
         .onEach((v, proc) -> { 
             proc.sendNext(v);
-            proc.sendRequest();
+            proc.handled();
         })
         .next(keep)
         .start(1);
@@ -795,31 +822,7 @@ public class SimpleTest {
 
     }
 
-    @Test
-    public void testMapMany() throws InterruptedException {
-        Keep<String> keep = new Keep<>();
-        ScheduledExecutorService s = Executors.newSingleThreadScheduledExecutor();
-        s.execute(() -> {
-            Builder.from(1, 2, 3).mapMany(i -> {
-                return Builder.
-                        from("a" + i, "b" + i, "c" + i).
-                        onEach((v, op) -> {
-                            s.execute(() -> {
-                                op.sendNext(v);
-                                op.sendRequest();
-                            });
-                        });
-            }).
-            printStream("xxx", System.out).
-            continueWith(() -> {
-                s.shutdown();
-            }).
-            next(keep).
-            start(1);
-        });
-        s.awaitTermination(10, TimeUnit.SECONDS);
-        keep.assertEquals("a1", "a2", "a3", "b1", "b2", "b3", "c1", "c2", "c3");
-    }
+
 
     /*    
     @Test

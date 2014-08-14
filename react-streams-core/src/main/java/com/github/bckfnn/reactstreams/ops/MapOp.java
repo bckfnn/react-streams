@@ -23,7 +23,7 @@ public abstract class MapOp<I, O> extends BaseProcessor<I, O> {
     public void doNext(I value) {
         try {
             sendNext(map(value));
-            sendRequest();
+            handled();
         } catch (Throwable error) {
             sendError(error);
             sendCancel();

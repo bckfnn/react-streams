@@ -21,6 +21,7 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 	private BaseSubscription<O> outputSubscription;
 	private int queue = 0;
 	boolean complete = false;
+	boolean recursive = false;
 	
 	@Override
 	public void onSubscribe(Subscription s) {
@@ -42,10 +43,18 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 
 	@Override
 	public void onComplete() {
+	    System.out.println("onComp:" + queue);
 	    complete = true;
 	    if (queue == 0) {
 	        sendComplete();
 	    }
+	}
+
+	public void handled() {
+	    queue--;
+        if (complete && queue == 0) {
+            sendComplete();
+        }
 	}
 
 	public void sendNext(O value) {
@@ -65,16 +74,11 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 	}
 	
 	public void sendRequest(int n) {
-		inputSubscription.request(n);
+	    inputSubscription.request(n);
 	}
 
 	public void sendRequest() {
-	    queue--;
-	    if (complete && queue == 0) {
-	        sendComplete();
-	    } else {
-	        sendRequest(1);
-	    }
+	    sendRequest(1);
 	}
 	
 	@Override

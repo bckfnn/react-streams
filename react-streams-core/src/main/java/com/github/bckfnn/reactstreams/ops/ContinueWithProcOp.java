@@ -14,26 +14,27 @@
 package com.github.bckfnn.reactstreams.ops;
 
 import com.github.bckfnn.reactstreams.BaseProcessor;
+import com.github.bckfnn.reactstreams.Proc0;
 
-public abstract class FilterOp<T> extends BaseProcessor<T, T> {
-    public abstract boolean check(T value) throws Throwable;
+public class ContinueWithProcOp<T> extends BaseProcessor<T, T> {
+    private Proc0 func;
+
+    public ContinueWithProcOp(Proc0 func) {
+        this.func= func;
+    }
 
     @Override
     public void doNext(T value) {
-        try {
-            if (check(value)) {
-                sendNext(value);
-            } else {
-                sendRequest();
-            }
-            handled();
-        } catch (Throwable exc) {
-            sendError(exc);
-            sendCancel();
-        }
+        sendNext(value);
     }
-    
-    public String toString() {
-    	return "FilterOp";
+
+    @Override
+    public void onComplete() {
+        try {
+            func.apply();
+            sendComplete();
+        } catch (Throwable e) {
+            sendError(e);
+        }
     }
 }

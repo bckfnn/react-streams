@@ -27,6 +27,7 @@ public abstract class MapManyOp<T, R> extends BaseProcessor<T, R> {
     List<Publisher<R>> children = new ArrayList<Publisher<R>>();
     boolean completed = false;
     int count = 0;
+    Subscription childSubscription;
     
     public abstract Operations<R> map(T value) throws Throwable;
 
@@ -40,11 +41,13 @@ public abstract class MapManyOp<T, R> extends BaseProcessor<T, R> {
 
 	@Override
     public void doNext(T value) {
+	    System.out.println("mm:" + value);
         try {
             final Publisher<R> child = map(value);
             children.add(child);
             count++;
             drain();
+            handled();
         } catch (Throwable exc) {
             onError(exc);
         }
@@ -59,27 +62,37 @@ public abstract class MapManyOp<T, R> extends BaseProcessor<T, R> {
         }
     }
 
+    @Override
+    public void sendRequest(int n) {
+        if (childSubscription!= null) {
+            childSubscription.request(n);
+        } else {
+            super.sendRequest(n);
+        }
+    }
+
+
     private void drain() {
         if (children.size() == 0) {
             return;
         }
         final Publisher<R> child = children.remove(0);
         child.subscribe(new Subscriber<R>() {
-        	Subscription childSubscription;
+
             @Override
             public void onSubscribe(Subscription s) {
             	childSubscription = s;
-                s.request(1);
+            	childSubscription.request(1);
             }
             
             @Override
             public void onNext(R value) {
                 sendNext(value);
-                childSubscription.request(1);
             }
 
             @Override
             public void onComplete() {
+                childSubscription = null;
                 count--;
                 if (count == 0 && completed) {
                     sendComplete();

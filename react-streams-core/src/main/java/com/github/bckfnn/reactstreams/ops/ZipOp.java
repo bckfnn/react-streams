@@ -51,6 +51,7 @@ public class ZipOp<T1, T2> implements Publisher<Tuple<T1, T2>> {
 			public void onNext(T1 t) {
 				if (v2.size() > 0) {
 					subscriber.onNext(new Tuple<T1, T2>(t, v2.remove(0)));
+					//i2.request(1);
 				} else if (v2stop) {
                     subscriber.onComplete();
                     i1.cancel();
@@ -86,6 +87,7 @@ public class ZipOp<T1, T2> implements Publisher<Tuple<T1, T2>> {
 			public void onNext(T2 t) {
 				if (v1.size() > 0) {
 					subscriber.onNext(new Tuple<T1, T2>(v1.remove(0), t));
+					//i1.request(1);
 				} else if (v1stop) {
 				    subscriber.onComplete();
 				    i2.cancel();

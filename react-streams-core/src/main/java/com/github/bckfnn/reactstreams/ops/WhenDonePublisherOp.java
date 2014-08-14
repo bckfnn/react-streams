@@ -60,6 +60,7 @@ public class WhenDonePublisherOp<T, R> extends BaseProcessor<T, R> {
 			@Override
 			public void onNext(R value) {
 				sendNext(value);
+				continueSubscription.request(1);
 			}
 
 			@Override

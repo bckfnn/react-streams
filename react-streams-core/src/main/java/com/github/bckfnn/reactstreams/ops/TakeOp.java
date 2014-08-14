@@ -27,7 +27,7 @@ public class TakeOp<T> extends BaseProcessor<T, T> {
     public void doNext(T value) {
         if (count++ < num) {
             sendNext(value);
-            sendRequest();
+            handled();
         } else {
             sendComplete();
             sendCancel();

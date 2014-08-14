@@ -24,6 +24,7 @@ import org.reactivestreams.Subscription;
 import com.github.bckfnn.reactstreams.ops.AccumulatorOp;
 import com.github.bckfnn.reactstreams.ops.ConcatOp;
 import com.github.bckfnn.reactstreams.ops.ContinueWithErrorOp;
+import com.github.bckfnn.reactstreams.ops.ContinueWithProcOp;
 import com.github.bckfnn.reactstreams.ops.CounterOp;
 import com.github.bckfnn.reactstreams.ops.DelegateOp;
 import com.github.bckfnn.reactstreams.ops.DoneOp;
@@ -263,7 +264,7 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
     @Override
     public Operations<T> continueWith(Proc0 func) {
         // TODO Auto-generated method stub
-        return null;
+        return next(new ContinueWithProcOp(func));
     }
     
     @Override
@@ -330,13 +331,16 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
     @Override
     public void start(int elements) {
         subscribe(new Subscriber<T>() {
+            Subscription inputSubscription;
             @Override
             public void onSubscribe(Subscription s) {
-                s.request(elements);
+                inputSubscription = s;
+                inputSubscription.request(elements);
             }
 
             @Override
             public void onNext(T value) {
+                inputSubscription.request(1);
             }
 
             @Override
