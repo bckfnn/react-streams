@@ -306,7 +306,24 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
             }
         });
     }
-
+    
+    @Override
+    public Operations<T> each(Proc1<T> func) {
+        return next(new NopOp<T>() {
+            @Override
+            public void doNext(T value) {
+                try {
+                    func.apply(value);
+                    sendNext(value);
+                    handled();
+                } catch (Throwable e) {
+                    sendError(e);
+                    sendCancel();
+                }
+            }
+        });
+    }
+    
     @Override
     public <R> Operations<R> onFinally(Func0<Operations<R>> func) {
         return next(new FinallyOp<T, R>() {
