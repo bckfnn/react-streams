@@ -80,11 +80,13 @@ public class RsAsyncFile {
 				asyncFile.write(value);
 				if (!asyncFile.writeQueueFull()) {
 					sendRequest();
+					handled();
 				} else {
 					asyncFile.drainHandler(new Handler<Void>() {
 						@Override
 						public void handle(Void event) {
 							sendRequest();
+							handled();
 						}
 					});
 				}

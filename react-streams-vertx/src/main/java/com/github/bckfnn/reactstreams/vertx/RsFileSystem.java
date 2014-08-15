@@ -15,29 +15,30 @@ import com.github.bckfnn.reactstreams.Operations;
 public class RsFileSystem {
 	//private Vertx vertx;
 	private FileSystem fileSystem;
-	
+
 	public RsFileSystem(Vertx vertx) {
 		//this.vertx = vertx;
 		this.fileSystem = vertx.fileSystem();
 	}
-	
+
+
 	public Operations<RsAsyncFile> open(String path) {
 		return Builder.as(new Publisher<RsAsyncFile>() {
 			@Override
 			public void subscribe(Subscriber<RsAsyncFile> subscriber) {
 				subscriber.onSubscribe(new BaseSubscription<RsAsyncFile>(subscriber) {
-				    boolean done = false;
+					boolean done = false;
 					@Override
 					public void request(int elements) {
-					    System.out.println("request:" + elements);
+						System.out.println("request:" + elements);
 						super.request(elements);
 						if (done) {
-						    return;
+							return;
 						}
-						fileSystem.open(path, new Handler<AsyncResult<AsyncFile>>() {
+						fileSystem.open(path, "755", false, true, true, new Handler<AsyncResult<AsyncFile>>() {
 							@Override
 							public void handle(AsyncResult<AsyncFile> event) {
-							    done = true;
+								done = true;
 								if (event.succeeded()) {
 									sendNext(new RsAsyncFile(event.result()));
 									sendComplete();
@@ -49,6 +50,34 @@ public class RsFileSystem {
 					}
 				});
 			}
+		});
+	}
+
+	public Operations<RsAsyncFile> openWrite(String path) {
+		return Builder.as(subscriber -> {
+			subscriber.onSubscribe(new BaseSubscription<RsAsyncFile>(subscriber) {
+				boolean done = false;
+				@Override
+				public void request(int elements) {
+					System.out.println("request:" + elements);
+					super.request(elements);
+					if (done) {
+						return;
+					}
+					fileSystem.open(path, new Handler<AsyncResult<AsyncFile>>() {
+						@Override
+						public void handle(AsyncResult<AsyncFile> event) {
+							done = true;
+							if (event.succeeded()) {
+								sendNext(new RsAsyncFile(event.result()));
+								sendComplete();
+							} else {
+								sendError(event.cause());
+							}								
+						}
+					});
+				}
+			});
 		});
 	}
 }

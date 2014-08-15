@@ -19,7 +19,7 @@ public class FileSystemTest extends TestVerticle {
                     .onFinally(() -> file.close());
         })
         .printStream("done", System.out)
-        .whenDone(() -> { VertxAssert.testComplete(); })
+        .onFinally(() -> { VertxAssert.testComplete(); })
         .start(1);
     }
 }
