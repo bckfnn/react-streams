@@ -12,7 +12,7 @@
     <artifactId>react-streams-vertx</artifactId>
     <version>0.1</version>
     <packaging>jar</packaging>
-    <name>react-stream-vertx</name>
+    <name>react-streams-vertx</name>
 
     <description>
         A react-stream module for vertx.
