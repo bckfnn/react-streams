@@ -15,15 +15,30 @@ package com.github.bckfnn.reactstreams;
 
 import org.reactivestreams.Subscriber;
 
+/**
+ * Helper class that manage a synchronous publishing of elements in an iterator like structure.
+ *
+ * @param <T> type of elements.
+ */
 public abstract class ActiveSubscription<T> extends BaseSubscription<T> {
 	private boolean recursion = false;
 
+	/**
+	 * Constructor.
+	 * @param subscriber the subscriber that will recieve the elements.
+	 */
 	public ActiveSubscription(Subscriber<T> subscriber) {
 		super(subscriber);
 	}
 
+	/**
+	 * @return true when there are more elements available.
+	 */
 	public abstract boolean hasMore();
 
+	/**
+	 * @return the next element.
+	 */
 	public abstract T getOne();
 
 	@Override

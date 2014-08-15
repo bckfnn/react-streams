@@ -64,6 +64,11 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
         this.publisher = publisher;
     }
 
+    /**
+     * Wrap a publisher as an Operations object.
+     * @param publisher the publisher to wrap.
+     * @return the operations object.
+     */
     public static <T> Operations<T> as(Publisher<T> publisher) {
     	return new Builder<T>(publisher);
     }
@@ -149,7 +154,6 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
     public static <T1, T2> Operations<Tuple<T1, T2>> zip(Publisher<T1> p1, Publisher<T2> p2) {
         return new Builder<Tuple<T1, T2>>(new ZipOp<T1, T2>(p1, p2));
     }
-
 
     @Override
     public <R> Operations<R> next(Processor<T, R> processor) {

@@ -16,12 +16,20 @@ package com.github.bckfnn.reactstreams;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+/**
+ * Basic implementation of a processor step that manage both the input subscription where back pressure is applied and
+ * a single output subscription where the elements are send.
+ *
+ * @param <I> type of input elements.
+ * @param <O> type of output elements.
+ */
 public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 	private Subscription inputSubscription;
 	private BaseSubscription<O> outputSubscription;
+	/** the number received elements that have not yet been handled. */
 	private int queue = 0;
-	boolean complete = false;
-	boolean recursive = false;
+	/** true when onComplete is received. */
+	private boolean complete = false;
 	
 	@Override
 	public void onSubscribe(Subscription s) {
@@ -49,6 +57,9 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 	    }
 	}
 
+	/**
+	 * Must be called once for each onNext() that is received.
+	 */
 	public void handled() {
 	    queue--;
         if (complete && queue == 0) {
@@ -56,26 +67,47 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
         }
 	}
 
+	/**
+	 * Send a new value to the output subscription.
+	 * @param value the value.
+	 */
 	public void sendNext(O value) {
 		outputSubscription.sendNext(value);
 	}
 
+	/**
+	 * Send an error to the output subscription.
+	 * @param error the error.
+	 */
 	public void sendError(Throwable error) {
 		outputSubscription.sendError(error);
 	}
 
+	/**
+	 * Send a complete signal to the output subscription.
+	 */
 	public void sendComplete() {
 		outputSubscription.sendComplete();
 	}
 
+	/**
+	 * Send a cancel signal to the input subscription.
+	 */
 	public void sendCancel() {
 		inputSubscription.cancel();
 	}
 	
+	/**
+	 * Send a request signal to the input subscription.
+	 * @param n the number of element requested.
+	 */
 	public void sendRequest(int n) {
 	    inputSubscription.request(n);
 	}
 
+	/**
+	 * Send a request signal for one element to the input subscription.
+	 */
 	public void sendRequest() {
 	    sendRequest(1);
 	}
