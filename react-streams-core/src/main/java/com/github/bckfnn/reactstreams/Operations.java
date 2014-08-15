@@ -57,6 +57,14 @@ public interface Operations<T> extends Publisher<T> {
     public <R> Operations<R> mapMany(final Func1<T, Operations<R>> mapFunc);
     
     /**
+     * Add a mapManyWith operation to the output from this publisher.
+     * @param mapFunc a function that transform each value.
+     * @param <R> type the output from the transform.
+     * @return a new builder that wraps the output.
+     */
+    public <R> Operations<Tuple<T, R>> mapManyWith(final Func1<T, Operations<R>> mapFunc);
+    
+    /**
      * Add a <code>last</code> operation to the output from this publisher. 
      * The last operation will ignore all output except the very last element. 
      * @return a new builder that wraps the output.

@@ -435,6 +435,22 @@ public class SimpleTest {
         keep.assertEquals("a1", "b1", "c1", "a2", "b2", "c2", "a3", "b3", "c3");
     }
     
+    @SuppressWarnings("unchecked")
+	@Test
+    public void testMapManyWith1() {
+        Keep<Tuple<String, String>> keep = new Keep<>();
+        Builder
+        .from("12", "34", "56")
+        .mapManyWith(value -> Builder.from("x" + value, "y" + value, "z" + value))
+        .next(keep)
+        .start(1);
+
+        keep.assertEquals(
+        		new Tuple<>("12", "x12"), new Tuple<>("12", "y12"), new Tuple<>("12", "z12"),
+        		new Tuple<>("34", "x34"), new Tuple<>("34", "y34"), new Tuple<>("34", "z34"),
+        		new Tuple<>("56", "x56"), new Tuple<>("56", "y56"), new Tuple<>("56", "z56"));
+    }
+    
     @Test
     public void testFilter1() {
         Keep<String> keep = new Keep<>();

@@ -36,6 +36,7 @@ import com.github.bckfnn.reactstreams.ops.FromIteratorOp;
 import com.github.bckfnn.reactstreams.ops.FromValueOp;
 import com.github.bckfnn.reactstreams.ops.LastOp;
 import com.github.bckfnn.reactstreams.ops.MapManyOp;
+import com.github.bckfnn.reactstreams.ops.MapManyWithOp;
 import com.github.bckfnn.reactstreams.ops.MapOp;
 import com.github.bckfnn.reactstreams.ops.NopOp;
 import com.github.bckfnn.reactstreams.ops.PrintStreamOp;
@@ -191,6 +192,16 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
         });
     }
 
+    @Override
+    public <R> Operations<Tuple<T, R>> mapManyWith(final Func1<T, Operations<R>> mapFunc) {
+        return next(new MapManyWithOp<T, R>() {
+            @Override
+            public Operations<R> map(T value) throws Throwable {
+                return mapFunc.apply(value);
+            }
+        });
+    }
+    
     /*
      * Filter operations.
      */
