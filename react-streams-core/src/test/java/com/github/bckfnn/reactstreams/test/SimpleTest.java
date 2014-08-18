@@ -23,12 +23,14 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.reactivestreams.Processor;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import com.github.bckfnn.reactstreams.Builder;
 import com.github.bckfnn.reactstreams.Func1;
 import com.github.bckfnn.reactstreams.Operations;
+import com.github.bckfnn.reactstreams.Pipe;
 import com.github.bckfnn.reactstreams.Tuple;
 import com.github.bckfnn.reactstreams.ops.AccumulatorOp;
 import com.github.bckfnn.reactstreams.ops.FilterOp;
@@ -783,7 +785,23 @@ public class SimpleTest {
 
         keep.assertEquals(4, 5, 6);
     }
-     */    
+     */
+    
+    
+    @Test
+    public void testPipe() {
+        Keep<String> keep = new Keep<>();
+        Builder.from(1, 2, 3, 4, 5).
+        next(makePipe()).
+        next(keep).
+        start(1);
+    }
+    
+    private Processor<Integer, String> makePipe() {
+        return Builder.<Integer, Integer> asPipe().
+                filter(v -> v % 2 == 0).
+                map(v -> "x" + v).<Integer> pipe();
+    }
     @Test
     public void testDelegate1() {
         Keep<Integer> keep = new Keep<>();

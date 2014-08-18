@@ -104,6 +104,8 @@ public interface Operations<T> extends Publisher<T> {
      */
     public Operations<T> done();
     
+    public <R> Processor<R, T> pipe();
+    
     /**
      * Add a <code>filter</code> operation to the output from this publisher. 
      * The filter operation will emit all the elements where the predicate <code>func</code> 
@@ -226,7 +228,16 @@ public interface Operations<T> extends Publisher<T> {
      */
     public <R> Operations<R> onFinally(Func0<Operations<R>> func);
 
+    /**
+     * Add an <code>onFinally</code> operation to the output from this publisher. 
+     * After this publisher ends, with either onComplete() or onError(), the <code>func</code>
+     * is called and the original end event is passed on.
+     * @param <R> the type of the output values.
+     * @param func the function that is called when this publisher ends.
+     * @return a new Builder that wraps the output.
+     */
     public <R> Operations<R> onFinally(Proc0 func);
+
 
     /**
      * Add a <code>delegate</code> operation to the output from this publisher. 

@@ -69,6 +69,7 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
     /**
      * Wrap a publisher as an Operations object.
      * @param publisher the publisher to wrap.
+     * @param <T> the type of publisher.
      * @return the operations object.
      */
     public static <T> Operations<T> as(Publisher<T> publisher) {
@@ -225,6 +226,10 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
     public Operations<T> nop() {
         return next(new NopOp<T>());
     }
+    
+    public <R> Processor<R, T> pipe() {
+        return null;
+    }
 
     @Override
     public Operations<T> done() {
@@ -368,6 +373,62 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
                 func.apply();
             }
         });
+    }
+
+    /**
+     * @param <T>
+     * @param <R>
+     * @return a new pipe
+     */
+    public static <T, R> Pipe<T, R> asPipe() {
+        return new PipeImpl<T, R>(null, null);
+    }
+    
+    static class PipeImpl<T, R> extends Builder<R> implements Pipe<T, R> {
+        Publisher<T> head;
+        
+        protected PipeImpl(Publisher<T> head, Processor<?, R> tail) {
+            super(tail);
+            this.head = head;
+        }
+
+        @Override
+        public void onSubscribe(Subscription s) {
+            System.out.println("onSubscribe:" + s);
+            
+        }
+
+        @Override
+        public void onNext(T t) {
+        }
+
+        @Override
+        public void onError(Throwable t) {
+        }
+
+        @Override
+        public void onComplete() {
+        }
+
+        @Override
+        public <X> Operations<X> next(Processor<R, X> processor) {
+            return new PipeImpl<R, X>(null, processor);
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public  Processor<T, R> pipe() {
+            return this;
+        }
+
+        /* (non-Javadoc)
+         * @see com.github.bckfnn.reactstreams.Builder#subscribe(org.reactivestreams.Subscriber)
+         */
+        @Override
+        public void subscribe(Subscriber<R> s) {
+            // TODO Auto-generated method stub
+            super.subscribe(s);
+        }
     }
 
     @Override
