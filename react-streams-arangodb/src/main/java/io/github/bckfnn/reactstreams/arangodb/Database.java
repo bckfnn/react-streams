@@ -1,9 +1,8 @@
 package io.github.bckfnn.reactstreams.arangodb;
 
+import org.reactivestreams.Processor;
 import org.reactivestreams.Publisher;
 import org.vertx.java.core.json.JsonObject;
-
-import com.github.bckfnn.reactstreams.Processor;
 
 public class Database {
     private Client client;

@@ -5,12 +5,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-import com.github.bckfnn.reactstreams.BaseProcessor;
-import com.github.bckfnn.reactstreams.BaseSubscription;
-import com.github.bckfnn.reactstreams.Builder;
-import com.github.bckfnn.reactstreams.Operations;
-import com.github.bckfnn.reactstreams.Processor;
-
+import org.reactivestreams.Processor;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.slf4j.Logger;
@@ -24,6 +19,10 @@ import org.vertx.java.core.net.NetClient;
 import org.vertx.java.core.net.NetSocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.bckfnn.reactstreams.BaseProcessor;
+import com.github.bckfnn.reactstreams.BaseSubscription;
+import com.github.bckfnn.reactstreams.Builder;
+import com.github.bckfnn.reactstreams.Operations;
 
 public class Client {
 	private static Logger LOG = LoggerFactory.getLogger(Client.class);

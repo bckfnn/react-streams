@@ -17,6 +17,7 @@ import java.io.PrintStream;
 import java.util.Collection;
 import java.util.List;
 
+import org.reactivestreams.Processor;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;

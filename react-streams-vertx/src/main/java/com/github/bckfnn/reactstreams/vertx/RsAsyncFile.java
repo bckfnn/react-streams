@@ -1,5 +1,6 @@
 package com.github.bckfnn.reactstreams.vertx;
 
+import org.reactivestreams.Processor;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.vertx.java.core.AsyncResult;
@@ -11,7 +12,6 @@ import com.github.bckfnn.reactstreams.BaseProcessor;
 import com.github.bckfnn.reactstreams.BaseSubscription;
 import com.github.bckfnn.reactstreams.Builder;
 import com.github.bckfnn.reactstreams.Operations;
-import com.github.bckfnn.reactstreams.Processor;
 
 public class RsAsyncFile {
     private AsyncFile asyncFile;

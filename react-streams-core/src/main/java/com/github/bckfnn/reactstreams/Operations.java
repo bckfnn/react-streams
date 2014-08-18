@@ -16,6 +16,7 @@ package com.github.bckfnn.reactstreams;
 import java.io.PrintStream;
 import java.util.List;
 
+import org.reactivestreams.Processor;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 

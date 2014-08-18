@@ -13,6 +13,7 @@
  */
 package com.github.bckfnn.reactstreams;
 
+import org.reactivestreams.Processor;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
