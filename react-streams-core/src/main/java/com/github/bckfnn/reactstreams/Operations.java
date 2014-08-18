@@ -109,7 +109,7 @@ public interface Operations<T> extends Publisher<T> {
      * @param <R> the type of the input values to the pipe.
      * @return the operation as a pipe.
      */
-    public <R> Processor<R, T> pipe();
+    public <R> Processor<T, R> pipe();
     
     /**
      * Add a <code>filter</code> operation to the output from this publisher. 

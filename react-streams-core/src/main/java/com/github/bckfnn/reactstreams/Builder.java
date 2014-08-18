@@ -227,7 +227,7 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
         return next(new NopOp<T>());
     }
     
-    public <R> Processor<R, T> pipe() {
+    public <R> Processor<T, R> pipe() {
         return null;
     }
 
@@ -412,21 +412,17 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
 
         @Override
         public <X> Operations<X> next(Processor<R, X> processor) {
-            return new PipeImpl<R, X>(null, processor);
+            return new PipeImpl<T, X>(head, processor);
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public  Processor<T, R> pipe() {
+        public Processor<T, R> pipe() {
             return this;
         }
 
-        /* (non-Javadoc)
-         * @see com.github.bckfnn.reactstreams.Builder#subscribe(org.reactivestreams.Subscriber)
-         */
         @Override
         public void subscribe(Subscriber<R> s) {
-            // TODO Auto-generated method stub
             super.subscribe(s);
         }
     }
