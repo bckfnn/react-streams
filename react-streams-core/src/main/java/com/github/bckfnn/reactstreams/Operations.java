@@ -104,6 +104,11 @@ public interface Operations<T> extends Publisher<T> {
      */
     public Operations<T> done();
     
+    /**
+     * Return this operation as a pipe.
+     * @param <R> the type of the input values to the pipe.
+     * @return the operation as a pipe.
+     */
     public <R> Processor<R, T> pipe();
     
     /**

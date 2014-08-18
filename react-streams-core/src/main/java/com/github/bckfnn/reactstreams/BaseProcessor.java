@@ -37,6 +37,12 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 		this.inputSubscription = s;
 	}
 
+	/**
+	 * Implementation method for a baseProcessor. This method will be called for each element received.
+	 * It is the responsibility of the implementation to either call sendNext() or sendRequest(1) for each input element, 
+	 * and then to handled().
+	 * @param value the received value.
+	 */
 	public abstract void doNext(I value);
 	
 	@Override 
