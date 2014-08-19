@@ -798,9 +798,10 @@ public class SimpleTest {
     }
     
     private Processor<Integer, String> makePipe() {
-        return Builder.<Integer, Integer> asPipe().
+        return Builder.<Integer> newPipe().
                 filter(v -> v % 2 == 0).
-                map(v -> "x" + v).<Integer> pipe();
+                map(v -> "x" + v).
+                asPipe();
     }
     @Test
     public void testDelegate1() {

@@ -158,6 +158,18 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
         return new Builder<Tuple<T1, T2>>(new ZipOp<T1, T2>(p1, p2));
     }
 
+    /**
+     * @param <T>
+     * @param <R>
+     * @return a new pipe
+     */
+    public static <T> Pipe<T, T> newPipe() {
+        BaseProcessor<T, T> head = new NopOp<T>() {
+ 
+        };
+        return new PipeImpl<T, T>(head, head);
+    }
+    
     @Override
     public <R> Operations<R> next(Processor<T, R> processor) {
         publisher.subscribe(processor);
@@ -227,7 +239,7 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
         return next(new NopOp<T>());
     }
     
-    public <R> Processor<T, R> pipe() {
+    public <R> Processor<R, T> asPipe() {
         return null;
     }
 
@@ -375,19 +387,12 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
         });
     }
 
-    /**
-     * @param <T>
-     * @param <R>
-     * @return a new pipe
-     */
-    public static <T, R> Pipe<T, R> asPipe() {
-        return new PipeImpl<T, R>(null, null);
-    }
+
     
-    static class PipeImpl<T, R> extends Builder<R> implements Pipe<T, R> {
-        Publisher<T> head;
+    static class PipeImpl<H, T> extends Builder<T> implements Pipe<H, T> {
+        Publisher<H> head;
         
-        protected PipeImpl(Publisher<T> head, Processor<?, R> tail) {
+        protected PipeImpl(Publisher<H> head, Processor<?, T> tail) {
             super(tail);
             this.head = head;
         }
@@ -395,11 +400,11 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
         @Override
         public void onSubscribe(Subscription s) {
             System.out.println("onSubscribe:" + s);
-            
+            head.subscribe(this);
         }
 
         @Override
-        public void onNext(T t) {
+        public void onNext(H value) {
         }
 
         @Override
@@ -411,18 +416,18 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
         }
 
         @Override
-        public <X> Operations<X> next(Processor<R, X> processor) {
-            return new PipeImpl<T, X>(head, processor);
+        public <X> Operations<X> next(Processor<T, X> processor) {
+            return new PipeImpl<H, X>(head, processor);
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public Processor<T, R> pipe() {
+        public Processor<H, T> asPipe() {
             return this;
         }
 
         @Override
-        public void subscribe(Subscriber<R> s) {
+        public void subscribe(Subscriber<T> s) {
             super.subscribe(s);
         }
     }
