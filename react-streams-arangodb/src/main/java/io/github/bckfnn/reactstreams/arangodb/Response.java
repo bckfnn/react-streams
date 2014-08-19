@@ -62,10 +62,7 @@ public class Response {
         long t = System.currentTimeMillis() - time;
         System.out.println("response took:" + t + " " + body);
         if (t > 100) {
-            System.out.println("Response took:" + t);
-            System.out.println("request started:" + time);
-            System.out.println(headers);
-            System.out.println(body);
+            LOG.info("Response took:{} {}", t, body);
         }
     }
     
