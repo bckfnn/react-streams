@@ -803,6 +803,7 @@ public class SimpleTest {
                 map(v -> "x" + v).
                 asPipe();
     }
+
     @Test
     public void testDelegate1() {
         Keep<Integer> keep = new Keep<>();
