@@ -7,9 +7,9 @@
         <vertx.testtools.version>2.0.3-final</vertx.testtools.version>
     </properties>
 
-    <groupId>com.github.bckfnn</groupId>
+    <groupId>io.github.bckfnn</groupId>
     <artifactId>react-streams</artifactId>
-    <version>0.1</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>react-streams</name>
     <url>http://bckfnn.github.io/react-streams/</url>
@@ -33,17 +33,16 @@
         </site>
     </distributionManagement>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.reactivestreams</groupId>
-            <artifactId>reactive-streams</artifactId>
-            <version>0.4.0.M1</version>
-        </dependency>
-    </dependencies>
 
     <dependencyManagement>
 
         <dependencies>
+            <dependency>
+                <groupId>org.reactivestreams</groupId>
+                <artifactId>reactive-streams</artifactId>
+                <version>0.4.0.M1</version>
+            </dependency>
+
             <dependency>
                 <groupId>io.vertx</groupId>
                 <artifactId>vertx-core</artifactId>
