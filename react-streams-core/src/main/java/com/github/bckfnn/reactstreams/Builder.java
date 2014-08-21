@@ -160,7 +160,6 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
 
     /**
      * @param <T>
-     * @param <R>
      * @return a new pipe
      */
     public static <T> Pipe<T, T> newPipe() {
