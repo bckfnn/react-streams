@@ -23,7 +23,7 @@
             <groupId>org.reactivestreams</groupId>
             <artifactId>reactive-streams</artifactId>
         </dependency>
-    
+
         <!-- testing -->
         <dependency>
             <groupId>junit</groupId>
