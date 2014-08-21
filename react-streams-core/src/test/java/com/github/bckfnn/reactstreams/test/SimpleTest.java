@@ -30,7 +30,6 @@ import org.reactivestreams.Subscription;
 import com.github.bckfnn.reactstreams.Builder;
 import com.github.bckfnn.reactstreams.Func1;
 import com.github.bckfnn.reactstreams.Operations;
-import com.github.bckfnn.reactstreams.Pipe;
 import com.github.bckfnn.reactstreams.Tuple;
 import com.github.bckfnn.reactstreams.ops.AccumulatorOp;
 import com.github.bckfnn.reactstreams.ops.FilterOp;
