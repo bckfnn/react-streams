@@ -26,7 +26,7 @@ public class CounterOp implements Publisher<Integer> {
 	}
 
 	@Override
-	public void subscribe(Subscriber<Integer> subscriber) {
+	public void subscribe(Subscriber<? super Integer> subscriber) {
 		subscriber.onSubscribe(new ActiveSubscription<Integer>(subscriber) {
 			int count = start;
 			

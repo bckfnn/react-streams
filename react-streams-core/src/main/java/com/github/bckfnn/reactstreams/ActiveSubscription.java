@@ -27,7 +27,7 @@ public abstract class ActiveSubscription<T> extends BaseSubscription<T> {
 	 * Constructor.
 	 * @param subscriber the subscriber that will recieve the elements.
 	 */
-	public ActiveSubscription(Subscriber<T> subscriber) {
+	public ActiveSubscription(Subscriber<? super T> subscriber) {
 		super(subscriber);
 	}
 
@@ -42,7 +42,7 @@ public abstract class ActiveSubscription<T> extends BaseSubscription<T> {
 	public abstract T getOne();
 
 	@Override
-	public void request(int elements) {
+	public void request(long elements) {
 		super.request(elements);
 		if (recursion) {
 			return;

@@ -59,7 +59,7 @@ public class PrintStreamOp<T> extends BaseProcessor<T, T> {
     }
 
     @Override
-    public void sendRequest(int n) {
+    public void sendRequest(long n) {
         printStream.println(prefix + " request(" + n + ")");
         //new Exception().printStackTrace();
         super.sendRequest(n);

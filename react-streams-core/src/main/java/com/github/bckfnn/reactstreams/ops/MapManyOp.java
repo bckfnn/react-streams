@@ -61,7 +61,7 @@ public abstract class MapManyOp<T, R> extends BaseProcessor<T, R> {
     }
 
     @Override
-    public void sendRequest(int n) {
+    public void sendRequest(long n) {
         if (childSubscription!= null) {
             childSubscription.request(n);
         } else {

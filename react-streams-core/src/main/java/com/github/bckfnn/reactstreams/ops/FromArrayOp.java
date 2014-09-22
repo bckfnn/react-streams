@@ -27,7 +27,7 @@ public class FromArrayOp<T> implements Publisher<T> {
     }
 
     @Override
-    public void subscribe(final Subscriber<T> subscriber) {
+    public void subscribe(final Subscriber<? super T> subscriber) {
         subscriber.onSubscribe(new ActiveSubscription<T>(subscriber) {
             private int idx = 0;
 

@@ -34,7 +34,7 @@ public class FromIteratorOp<T> implements Publisher<T> {
     }
 
     @Override
-    public void subscribe(final Subscriber<T> subscriber) {
+    public void subscribe(final Subscriber<? super T> subscriber) {
         subscriber.onSubscribe(new ActiveSubscription<T>(subscriber) {
             @Override
             public boolean hasMore() {

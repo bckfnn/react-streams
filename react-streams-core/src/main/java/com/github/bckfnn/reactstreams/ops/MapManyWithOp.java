@@ -62,7 +62,7 @@ public abstract class MapManyWithOp<T, R> extends BaseProcessor<T, Tuple<T, R>> 
     }
 
     @Override
-    public void sendRequest(int n) {
+    public void sendRequest(long n) {
         if (childSubscription!= null) {
             childSubscription.request(n);
         } else {
