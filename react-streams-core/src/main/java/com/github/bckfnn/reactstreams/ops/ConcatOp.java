@@ -37,11 +37,11 @@ public class ConcatOp<T> implements Publisher<T> {
     }
     
     @Override
-    public void subscribe(Subscriber<T> s) {
+    public void subscribe(Subscriber<? super T> s) {
         list.get(i++).subscribe(new Sub());
         s.onSubscribe(outputSubscription = new BaseSubscription<T>(s) {
             @Override
-            public void request(int elements) {
+            public void request(long elements) {
                 super.request(elements);
                 currentInputSubscription.request(outputSubscription.getPendingDemand());
             }

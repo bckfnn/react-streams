@@ -24,7 +24,13 @@
             <artifactId>reactive-streams</artifactId>
         </dependency>
 
+
         <!-- testing -->
+        <dependency>
+            <groupId>org.reactivestreams</groupId>
+            <artifactId>reactive-streams-tck</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

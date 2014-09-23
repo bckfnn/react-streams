@@ -108,7 +108,7 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 	 * Send a request signal to the input subscription.
 	 * @param n the number of element requested.
 	 */
-	public void sendRequest(int n) {
+	public void sendRequest(long n) {
 	    inputSubscription.request(n);
 	}
 
@@ -120,10 +120,10 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 	}
 	
 	@Override
-	public void subscribe(Subscriber<O> subscriber) {
+	public void subscribe(Subscriber<? super O> subscriber) {
 		subscriber.onSubscribe(outputSubscription = new BaseSubscription<O>(subscriber) {
 			@Override
-			public void request(int n) {
+			public void request(long n) {
 				super.request(n);
 				sendRequest(n);
 			}

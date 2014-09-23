@@ -33,10 +33,10 @@ public class FromValueOp<T> implements Publisher<T> {
     }
 
     @Override
-    public void subscribe(final Subscriber<T> subscriber) {
+    public void subscribe(final Subscriber<? super T> subscriber) {
         subscriber.onSubscribe(new BaseSubscription<T>(subscriber) {
             @Override
-            public void request(int elements) {
+            public void request(long elements) {
                 if (!finished) {
                     finished = true;
                     sendNext(value);

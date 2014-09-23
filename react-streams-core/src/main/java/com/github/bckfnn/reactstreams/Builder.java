@@ -426,7 +426,7 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
         }
 
         @Override
-        public void subscribe(Subscriber<T> s) {
+        public void subscribe(Subscriber<? super T> s) {
             super.subscribe(s);
         }
     }
@@ -452,7 +452,7 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
     }
 
     @Override
-    public void subscribe(Subscriber<T> s) {
+    public void subscribe(Subscriber<? super T> s) {
         publisher.subscribe(s);
     }
 
@@ -484,4 +484,5 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
             }
         });
     }
+
 }

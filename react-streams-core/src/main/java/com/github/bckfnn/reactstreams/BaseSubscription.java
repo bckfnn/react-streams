@@ -25,16 +25,16 @@ import org.reactivestreams.Subscription;
  * @param <T>
  */
 public class BaseSubscription<T> implements Subscription {
-	private Subscriber<T> subscriber;
+	private Subscriber<? super T> subscriber;
 	private boolean cancelled = false;
 	private int pendingDemand;
 	
 	/**
 	 * Constructor.
-	 * @param subscriber the output subscriber.
+	 * @param subscriber2 the output subscriber.
 	 */
-	public BaseSubscription(Subscriber<T> subscriber) {
-		this.subscriber = subscriber;
+	public BaseSubscription(Subscriber<? super T> subscriber2) {
+		this.subscriber = subscriber2;
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class BaseSubscription<T> implements Subscription {
 	}
 	
 	@Override
-	public void request(int elements) {
+	public void request(long elements) {
 	    pendingDemand += elements;
 	}
 

@@ -39,7 +39,7 @@ public class ZipOp<T1, T2> implements Publisher<Tuple<T1, T2>> {
 	}
 	
 	@Override
-	public void subscribe(final Subscriber<Tuple<T1, T2>> subscriber) {
+	public void subscribe(final Subscriber<? super Tuple<T1, T2>> subscriber) {
 		
 		Subscriber<T1> s1 = new Subscriber<T1>() {
 			@Override
@@ -114,7 +114,7 @@ public class ZipOp<T1, T2> implements Publisher<Tuple<T1, T2>> {
 		
 		subscriber.onSubscribe(new Subscription() {
 			@Override
-			public void request(int n) {
+			public void request(long n) {
 			    if (!v1stop) {
 			        i1.request(n);
 			    }

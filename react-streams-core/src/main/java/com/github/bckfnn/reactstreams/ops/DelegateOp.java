@@ -28,12 +28,12 @@ public class DelegateOp<R> extends BaseProcessor<R, R> {
     
     
 	@Override
-	public void subscribe(Subscriber<R> subscriber) {
+	public void subscribe(Subscriber<? super R> subscriber) {
 		super.subscribe(subscriber);
 
         target.onSubscribe(new Subscription() {
             @Override
-            public void request(int n) {
+            public void request(long n) {
             	delegateQueue += n;
             	int min = 1;
                 sendRequest(min);
