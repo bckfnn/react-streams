@@ -1,5 +1,7 @@
 package io.github.bckfnn.reactstreams.arangodb.test;
 
+import io.github.bckfnn.reactstreams.Builder;
+import io.github.bckfnn.reactstreams.Operations;
 import io.github.bckfnn.reactstreams.arangodb.Client;
 
 import java.util.ArrayList;
@@ -9,9 +11,6 @@ import org.junit.Test;
 import org.vertx.java.core.json.JsonObject;
 import org.vertx.testtools.TestVerticle;
 import org.vertx.testtools.VertxAssert;
-
-import com.github.bckfnn.reactstreams.Builder;
-import com.github.bckfnn.reactstreams.Operations;
 
 
 

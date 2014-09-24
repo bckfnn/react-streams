@@ -1,5 +1,10 @@
 package io.github.bckfnn.reactstreams.arangodb;
 
+import io.github.bckfnn.reactstreams.BaseProcessor;
+import io.github.bckfnn.reactstreams.BaseSubscription;
+import io.github.bckfnn.reactstreams.Builder;
+import io.github.bckfnn.reactstreams.Operations;
+
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 import java.util.Map;
@@ -19,10 +24,6 @@ import org.vertx.java.core.net.NetClient;
 import org.vertx.java.core.net.NetSocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.bckfnn.reactstreams.BaseProcessor;
-import com.github.bckfnn.reactstreams.BaseSubscription;
-import com.github.bckfnn.reactstreams.Builder;
-import com.github.bckfnn.reactstreams.Operations;
 
 public class Client {
 	private static Logger LOG = LoggerFactory.getLogger(Client.class);
