@@ -13,4 +13,12 @@ public class Examples {
         .printStream("filter", System.out)
         .start(1);
     }
+
+    @Test
+    public void testLast() {
+        Builder.from(1, 2, 3, 4)
+        .last()
+        .printStream("last", System.out)
+        .start(1);
+    }
 }

@@ -14,10 +14,15 @@ Builder.from(1, 2, 3, 4, 5, 6, 7)
 ```
 
 ```none
-filter onNext: 2
-filter onNext: 4
-filter onNext: 6
-filter onCompleted 
+filter onSubScribe:Subscription to PrintStreamOp
+filter request(1)
+filter onNext:2
+filter request(1)
+filter onNext:4
+filter request(1)
+filter onNext:6
+filter request(1)
+filter onComplete
 ```
 
 ### last()
@@ -34,7 +39,10 @@ Builder.from(1, 2, 3, 4)
 ```
 
 ```
-last onNext: 4
+last onSubScribe:Subscription to PrintStreamOp
+last request(1)
+last onNext:4
+last request(1)
 last onComplete
 ```
 
