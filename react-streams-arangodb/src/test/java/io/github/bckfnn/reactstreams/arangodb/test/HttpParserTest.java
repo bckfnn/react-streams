@@ -65,7 +65,7 @@ public class HttpParserTest {
 
     }
 
-    @Test
+    //@Test
     public void testGooglePerformance() throws Exception {
         final byte[] input = read("google.dk-resp.txt");
         final HttpParser p = new HttpParser();
