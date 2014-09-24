@@ -1,0 +1,2 @@
+<text xml:space="preserve" text-anchor="middle" font-family="serif" font-size="12"  x="@{actor.x}" y="30" stroke-width="0" stroke="#000000">@{actor.name}</text>
+<line x1="@{actor.x}" x2="@{actor.x}" y1="50" y2="@{y + 20}" stroke-width="1" stroke="#000000"/>

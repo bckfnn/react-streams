@@ -1,0 +1,9 @@
+@code{
+    tox = call.to.x + (call.to.x > call.from.x ? -1 : 1);
+    fromx = call.from.x;
+} 
+<line x1="@{fromx}" x2="@{tox}" y1="@{call.y}" y2="@{call.y}" stroke-width="2" stroke-linecap="round" stroke="#000000"/>
+<line x1="@{tox}" x2="@{tox + 5 * (tox > fromx ? -1 : 1)}" y1="@{call.y}" y2="@{call.y-5}" stroke-width="1" stroke="#000000"/>
+<line x1="@{tox}" x2="@{tox + 5 * (tox > fromx ? -1 : 1)}" y1="@{call.y}" y2="@{call.y+5}" stroke-width="1" stroke="#000000"/>
+<text xml:space="preserve" text-anchor="middle" font-family="serif" font-size="12" x="@{(tox + fromx) / 2}" y="@{call.y-5}" stroke-width="0" stroke="#000000">@{call.name}</text>
+

@@ -7,14 +7,10 @@
  <g>
   <title>Layer 1</title>
   @foreach{actor : actors}
-   <text xml:space="preserve" text-anchor="middle" font-family="serif" font-size="12"  x="@{actor.x}" y="30" stroke-width="0" stroke="#000000">@{actor.name}</text>
-   <line x1="@{actor.x}" x2="@{actor.x}" y1="50" y2="@{calls.length * 20 + 70}" stroke-width="1" stroke="#000000"/>
+   @include{actor.template()}
   @end{}
   @foreach{call : calls}
-   <line x1="@{call.from.x}" x2="@{call.to.x}" y1="@{call.y}" y2="@{call.y}" stroke-width="2" stroke="#000000"/>
-   <line x1="@{call.to.x}" x2="@{call.to.x + 5 * (call.to.x > call.from.x ? -1 : 1)}" y1="@{call.y}" y2="@{call.y-5}" stroke-width="2" stroke="#000000"/>
-   <line x1="@{call.to.x}" x2="@{call.to.x + 5 * (call.to.x > call.from.x ? -1 : 1)}" y1="@{call.y}" y2="@{call.y+5}" stroke-width="2" stroke="#000000"/>
-   <text xml:space="preserve" text-anchor="middle" font-family="serif" font-size="12" x="@{(call.to.x + call.from.x) / 2}" y="@{call.y-5}" stroke-width="0" stroke="#000000">@{call.name}</text>
+    @include{call.template()}
   @end{}
  </g>
 </svg>

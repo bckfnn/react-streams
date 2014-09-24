@@ -1,90 +1,53 @@
 package com.github.bckfnn.docs;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import org.mvel2.ParserContext;
-import org.mvel2.templates.CompiledTemplate;
-import org.mvel2.templates.TemplateCompiler;
-import org.mvel2.templates.TemplateRuntime;
 
 public class SequenceDiag {
     public Actor[] actors;
-    public Call[] calls;
+    public Invoke[] calls;
 
-    public SequenceDiag() {
-        Actor in = new Actor("input");
-        Actor op = new Actor("LastOp");
-        Actor out = new Actor("output");
+    public void makeSubscribeChain() {
+        Diagram d = new Diagram("subscription-chain");
+        Actor s = d.actor("Subscriber", 150);
+        Actor p = d.actor("Publisher", 150);
         
-        actors = new Actor[] {
-                in,
-                op,
-                out,
-        };
-        
-        calls = new Call[] {
-                new Call(out, op, "request(n)"),
-                new Call(op, in, "request(n)"),
-                new Call(in, op, "onNext(T1)"),
-                new Call(in, op, "onNext(T2)"),
-                new Call(in, op, "onNext(T3)"),
-                new Call(in, op, "onComplete()"),
-                new Call(op, out, "onNext(T3)"),
-                new Call(op, out, "onComplete()"),
-        };
-        
-        generate();
+        d.call(s, "subscribe", p);
+        d.call(p, "onSubscribe(subscription)", s);
+        d.returnTo(s, p).returnTo(s, 20);
+        d.generate();
     }
     
-    public void generate() {
-        int x = 50;
-        for (Actor a : actors) {
-            a.x = x;
-            x += 70;
-        }
-
-        int y = 70;
-        for (Call c : calls) {
-            c.y = y;
-            y += 20;
-        }
+    public void makeSubscribeActive() {
+        Diagram d = new Diagram("subscription-active");
+        Actor a = d.actor("Application", 100);
+        Actor p = d.actor("Publisher", 60);
+        Actor sub = d.actor("Subscription", 200);
+        Actor s = d.actor("Subscriber", 170);
         
-        try {
-            ParserContext context = new ParserContext();
-            CompiledTemplate templ = TemplateCompiler.compileTemplate(getClass().getResourceAsStream("/sequenceDiag.mvel"), context);
-            FileOutputStream out = new FileOutputStream("target/out.svg");
-            TemplateRuntime.execute(templ, this, out);
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        a
+        .call("p.subscribe(s)", p)
+        .call("s.onSubscribe(sub)", s)
+        .call("sub.request(long)", sub)
+        .returnTo(s)
+        .returnTo(p)
+        .call("s.onNext()", s)
+        .call("sub.request(long)", sub).returnTo(s)
+        .returnTo(p)
+        .call("s.onNext()", s)
+        .call("sub.request(long)", sub).returnTo(s)
+        .returnTo(p)
+        .call("s.onComplete()", s)
+        .returnTo(p)
+        .returnTo(a);
+        
+        d.generate();
     }
     
+        
     public static void main(String[] args) {
         new SequenceDiag();
     }
-    
-    public static class Actor {
-        public String name;
-        public int x;
-
-        public Actor(String name) {
-            this.name = name;
-        }
+    public SequenceDiag() {
+        makeSubscribeChain();
+        makeSubscribeActive();
     }
-    
-    public static class Call {
-        public Actor from;
-        public Actor to;
-        public String name;
-        public int y;
-        
-        public Call(Actor from, Actor to, String name) {
-            this.from = from;
-            this.to = to;
-            this.name = name;
-        }
-    }
-    
 }
