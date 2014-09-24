@@ -28,7 +28,7 @@ public class BaseSubscription<T> implements Subscription {
 	private Subscriber<? super T> subscriber;
 	private boolean cancelled = false;
 	private long pendingDemand;
-	protected boolean active = false;
+	private boolean active = false;
 	
 	/**
 	 * Constructor.
@@ -53,6 +53,16 @@ public class BaseSubscription<T> implements Subscription {
 	    pendingDemand += elements;
 	}
 	
+	/**
+	 * @return is the subscription have been activated.
+	 */
+	public boolean isActive() {
+	    return active;
+	}
+	
+	/**
+	 * Activate the subscription.
+	 */
 	public void activate() {
 	    active = true;
 	}

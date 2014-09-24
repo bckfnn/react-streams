@@ -21,6 +21,9 @@ import org.reactivestreams.Subscriber;
  * @param <T> type of elements.
  */
 public abstract class ActiveSubscription<T> extends BaseSubscription<T> {
+    /**
+     * True when request(n) have been entered once.
+     */
     public boolean recursion = false;
     
 	/**

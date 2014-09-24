@@ -126,7 +126,7 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 			@Override
 			public void request(long n) {
 				super.request(n);
-				if (active) {
+				if (isActive()) {
 				    sendRequest(n);
 				}
 			}
