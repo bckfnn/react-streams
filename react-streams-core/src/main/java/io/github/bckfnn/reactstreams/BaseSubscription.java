@@ -22,7 +22,7 @@ import org.reactivestreams.Subscription;
  * yet been send to the subscriber with the sendNext() method.
  * It also track is the subscription have been cancelled. 
  *
- * @param <T>
+ * @param <T> type of output elements.
  */
 public class BaseSubscription<T> implements Subscription {
 	private Subscriber<? super T> subscriber;

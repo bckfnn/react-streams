@@ -159,7 +159,7 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
     }
 
     /**
-     * @param <T>
+     * @param <T> type of the builder.
      * @return a new pipe
      */
     public static <T> Pipe<T, T> newPipe() {
