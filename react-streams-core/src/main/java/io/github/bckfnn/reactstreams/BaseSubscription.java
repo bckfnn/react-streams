@@ -110,6 +110,6 @@ public class BaseSubscription<T> implements Subscription {
 	}
 	
 	public String toString() {
-		return "Subscription to " + subscriber;
+		return "Subscription to " + subscriber.getClass().getSimpleName();
 	}
 }
