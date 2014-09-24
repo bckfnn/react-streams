@@ -32,14 +32,6 @@ public abstract class MapManyWithOp<T, R> extends BaseProcessor<T, Tuple<T, R>> 
     
     public abstract Operations<R> map(T value) throws Throwable;
 
-    
-    @Override
-	public void onSubscribe(Subscription s) {
-		// TODO Auto-generated method stub
-		super.onSubscribe(s);
-	}
-
-
 	@Override
     public void doNext(T value) {
         try {

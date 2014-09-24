@@ -424,11 +424,6 @@ public class Builder<T> implements Operations<T>, Publisher<T> {
         public Processor<H, T> asPipe() {
             return this;
         }
-
-        @Override
-        public void subscribe(Subscriber<? super T> s) {
-            super.subscribe(s);
-        }
     }
 
     @Override

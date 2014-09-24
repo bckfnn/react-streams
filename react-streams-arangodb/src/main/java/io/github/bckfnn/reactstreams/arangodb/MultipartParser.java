@@ -45,7 +45,7 @@ public class MultipartParser {
         int mark = 0;
         while (i < len) {
             byte c = buf[i];
-            boolean is_last = (i == (len - 1));
+            boolean is_last = (i == len - 1);
 
             switch (state) {
             case s_start:
@@ -62,7 +62,7 @@ public class MultipartParser {
                     }
                     index++;
                     break;
-                } else if (index == (boundary.length() + 1)) {
+                } else if (index == boundary.length() + 1) {
                     if (c != LF) {
                         return i;
                     }
@@ -106,7 +106,7 @@ public class MultipartParser {
                     return i;
                 }
                 if (is_last)
-                    data_header_field(buf, mark, (i - mark) + 1);
+                    data_header_field(buf, mark, i - mark + 1);
                 break;
 
             case s_headers_almost_done:
@@ -135,7 +135,7 @@ public class MultipartParser {
                     state = s_header_value_almost_done;
                 }
                 if (is_last)
-                    data_header_value(buf, mark, (i - mark) + 1);
+                    data_header_value(buf, mark, i - mark + 1);
                 break;
 
             case s_header_value_almost_done:
@@ -164,7 +164,7 @@ public class MultipartParser {
                     break;
                 }
                 if (is_last) {
-                    data_part_data(buf, mark, (i - mark) + 1);
+                    data_part_data(buf, mark, i - mark + 1);
                 }
                 break;
             case s_part_data_almost_boundary:
@@ -189,7 +189,7 @@ public class MultipartParser {
                     break;
                 }
                 lookbehind[2 + index] = c;
-                if ((++ index) == boundary.length()) {
+                if (++index == boundary.length()) {
                     part_data_end();
                     state = s_part_data_almost_end;
                 }

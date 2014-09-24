@@ -33,13 +33,13 @@ public interface Operations<T> extends Publisher<T> {
      * @param <R> type the new builder that is returned.
      * @return a new builder that wraps the processor.
      */
-    public <R> Operations<R> next(Processor<T, R> processor);
+    <R> Operations<R> next(Processor<T, R> processor);
 
     /**
      * Add a subscriber to this publisher.
      * @param subscriber the subscriber to add.
      */
-    public void then(Subscriber<T> subscriber);
+    void then(Subscriber<T> subscriber);
     
     /**
      * Add a map operation to the output from this publisher.
@@ -47,7 +47,7 @@ public interface Operations<T> extends Publisher<T> {
      * @param <R> type the output from the transform.
      * @return a new builder that wraps the output.
      */
-    public <R> Operations<R> map(final Func1<T, R> mapFunc);
+    <R> Operations<R> map(final Func1<T, R> mapFunc);
 
     /**
      * Add a mapMany operation to the output from this publisher.
@@ -55,7 +55,7 @@ public interface Operations<T> extends Publisher<T> {
      * @param <R> type the output from the transform.
      * @return a new builder that wraps the output.
      */
-    public <R> Operations<R> mapMany(final Func1<T, Operations<R>> mapFunc);
+    <R> Operations<R> mapMany(final Func1<T, Operations<R>> mapFunc);
     
     /**
      * Add a mapManyWith operation to the output from this publisher.
@@ -63,14 +63,14 @@ public interface Operations<T> extends Publisher<T> {
      * @param <R> type the output from the transform.
      * @return a new builder that wraps the output.
      */
-    public <R> Operations<Tuple<T, R>> mapManyWith(final Func1<T, Operations<R>> mapFunc);
+    <R> Operations<Tuple<T, R>> mapManyWith(final Func1<T, Operations<R>> mapFunc);
     
     /**
      * Add a <code>last</code> operation to the output from this publisher. 
      * The last operation will ignore all output except the very last element. 
      * @return a new builder that wraps the output.
      */
-    public Operations<T> last();
+    Operations<T> last();
     
     /**
      * Add a <code>skip</code> operation to the output from this publisher. 
@@ -78,7 +78,7 @@ public interface Operations<T> extends Publisher<T> {
      * @param cnt the number of elements to skip. 
      * @return a new builder that wraps the output.
      */
-    public Operations<T> skip(int cnt);
+    Operations<T> skip(int cnt);
     
     /**
      * Add a <code>take</code> operation to the output from this publisher. 
@@ -87,14 +87,14 @@ public interface Operations<T> extends Publisher<T> {
      * @param cnt the number of elements to take.
      * @return a new builder that wraps the output.
      */
-    public Operations<T> take(int cnt);
+    Operations<T> take(int cnt);
 
     /**
      * Add a <code>nop</code> operation to the output from this publisher. 
      * The nop operation does nothing at all.
      * @return a new builder that wraps the output.
      */
-    public Operations<T> nop();
+    Operations<T> nop();
 
     /**
      * Add a <code>done</code> operation to the output from this publisher. 
@@ -102,14 +102,14 @@ public interface Operations<T> extends Publisher<T> {
      * and emit a <code>onComplete()</code>.
      * @return a new builder that wraps the output.
      */
-    public Operations<T> done();
+    Operations<T> done();
     
     /**
      * Return this operation as a pipe.
      * @param <R> the type of the input values to the pipe.
      * @return the operation as a pipe.
      */
-    public <R> Processor<R, T> asPipe();
+    <R> Processor<R, T> asPipe();
     
     /**
      * Add a <code>filter</code> operation to the output from this publisher. 
@@ -118,7 +118,7 @@ public interface Operations<T> extends Publisher<T> {
      * @param func the predicate function.
      * @return a new builder that wraps the output.
      */ 
-    public Operations<T> filter(Func1<T, Boolean> func);
+    Operations<T> filter(Func1<T, Boolean> func);
 
     /**
      * Add a <code>whenDoneValue</code> operation to the output from this publisher. 
@@ -128,7 +128,7 @@ public interface Operations<T> extends Publisher<T> {
      * @param <R> the type of the output value.
      * @return a new builder that wraps the output.
      */ 
-    public <R> Operations<R> whenDoneValue(R value);
+    <R> Operations<R> whenDoneValue(R value);
 
     /**
      * Add a <code>whenDoneError</code> operation to the output from this publisher. 
@@ -137,7 +137,7 @@ public interface Operations<T> extends Publisher<T> {
      * @param error the error.
      * @return a new builder that wraps the output.
      */ 
-    public Operations<T> whenDoneError(Throwable error);
+    Operations<T> whenDoneError(Throwable error);
 
     /**
      * Add a <code>whenDone</code> operation to the output from this publisher. 
@@ -146,7 +146,7 @@ public interface Operations<T> extends Publisher<T> {
      * @param func the function to call.
      * @return a new builder that wraps the output.
      */ 
-    public Operations<T> whenDone(Proc0 func);
+    Operations<T> whenDone(Proc0 func);
 
     /**
      * Add a <code>whenDone</code> operation to the output from this publisher. 
@@ -156,7 +156,7 @@ public interface Operations<T> extends Publisher<T> {
      * @param <R> the type of the output values.
      * @return a new builder that wraps the output.
      */ 
-    public <R> Operations<R> whenDone(Func0<R> func);
+    <R> Operations<R> whenDone(Func0<R> func);
     
     /**
      * Add a <code>whenDone</code> operation to the output from this publisher. 
@@ -166,7 +166,7 @@ public interface Operations<T> extends Publisher<T> {
      * @param <R> the type of the output values.
      * @return a new builder that wraps the output.
      */ 
-    public <R> Operations<R> whenDone(Publisher<R> publisher);
+    <R> Operations<R> whenDone(Publisher<R> publisher);
     
     /**
      * Add a <code>continueWithValue</code> operation to the output from this publisher. 
@@ -175,7 +175,7 @@ public interface Operations<T> extends Publisher<T> {
      * @param value the value.
      * @return a new builder that wraps the output.
      */ 
-    public Operations<T> continueWithValue(T value);
+    Operations<T> continueWithValue(T value);
     
     /**
      * Add a <code>continueWithError</code> operation to the output from this publisher. 
@@ -184,7 +184,7 @@ public interface Operations<T> extends Publisher<T> {
      * @param error the error exception.
      * @return a new builder that wraps the output.
      */ 
-    public Operations<T> continueWithError(Throwable error);
+    Operations<T> continueWithError(Throwable error);
 
     /**
      * Add a <code>continueWith</code> operation to the output from this publisher. 
@@ -194,7 +194,7 @@ public interface Operations<T> extends Publisher<T> {
      * @param func the function to call when all elements is processed.
      * @return a new builder that wraps the output.
      */ 
-    public Operations<T> continueWith(Proc0 func);
+    Operations<T> continueWith(Proc0 func);
 
     /**
      * Add a <code>continueWith</code> operation to the output from this publisher. 
@@ -204,7 +204,7 @@ public interface Operations<T> extends Publisher<T> {
      * @param publisher the publisher.
      * @return a new builder that wraps the output.
      */ 
-    public Operations<T> continueWith(Publisher<T> publisher);
+    Operations<T> continueWith(Publisher<T> publisher);
     
     /**
      * Add an <code>onEach</code> operation to the output from this publisher.
@@ -212,7 +212,7 @@ public interface Operations<T> extends Publisher<T> {
      * The input elements are not passed through.
      * @return a new builder that wraps the output.
      */
-    public Operations<T> onEach(Proc2<T, BaseProcessor<T, T>> func);
+    Operations<T> onEach(Proc2<T, BaseProcessor<T, T>> func);
 
     /**
      * Add an <code>each</code> operation to the output from this publisher.
@@ -220,7 +220,7 @@ public interface Operations<T> extends Publisher<T> {
      * The input elements are passed through.
      * @return a new builder that wraps the output.
      */
-    public Operations<T> each(Proc1<T> func);
+    Operations<T> each(Proc1<T> func);
     
     /**
      * Add an <code>onFinally</code> operation to the output from this publisher.
@@ -231,7 +231,7 @@ public interface Operations<T> extends Publisher<T> {
      * @param <R> the type of the output values.
      * @return a new builder that wraps the output.
      */
-    public <R> Operations<R> onFinally(Func0<Operations<R>> func);
+    <R> Operations<R> onFinally(Func0<Operations<R>> func);
 
     /**
      * Add an <code>onFinally</code> operation to the output from this publisher. 
@@ -241,7 +241,7 @@ public interface Operations<T> extends Publisher<T> {
      * @param func the function that is called when this publisher ends.
      * @return a new Builder that wraps the output.
      */
-    public <R> Operations<R> onFinally(Proc0 func);
+    <R> Operations<R> onFinally(Proc0 func);
 
 
     /**
@@ -250,7 +250,7 @@ public interface Operations<T> extends Publisher<T> {
      * @param subscriber the subscriber.
      * @return a new builder that wraps the output.
      */ 
-    public Operations<T> delegate(Subscriber<T> subscriber);
+    Operations<T> delegate(Subscriber<T> subscriber);
 
     /**
      * Add a <code>toList</code> operation to the output from this publisher. 
@@ -258,7 +258,7 @@ public interface Operations<T> extends Publisher<T> {
      * the publisher is complete it will emit the list..
      * @return a new builder that wraps the output.
      */ 
-    public Operations<List<T>> toList();
+    Operations<List<T>> toList();
 
     /**
      * Add a <code>accumulate</code> operation to the output from this publisher. 
@@ -269,7 +269,7 @@ public interface Operations<T> extends Publisher<T> {
      * @param func the accumulate function.
      * @return a new builder that wraps the output.
      */
-    public Operations<T> accumulate(T initial, Func2<T, T, T> func);
+    Operations<T> accumulate(T initial, Func2<T, T, T> func);
 
     /**
      * Add a <code>printStream</code> operation to the output from this publisher. 
@@ -280,13 +280,13 @@ public interface Operations<T> extends Publisher<T> {
  	 * @param stream the print stream that is written to.
      * @return a new builder that wraps the output.
      */ 
-    public Operations<T> printStream(String name, PrintStream stream);
+    Operations<T> printStream(String name, PrintStream stream);
 
     /**
      * Add a <code>start</code> operation that will send a <code>request(n)</code> up the 
      * chain of publisher and start the data flowing. 
      * @param elements the number of elements.
      */
-    public void start(int elements);
+    void start(int elements);
 
 }

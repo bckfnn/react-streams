@@ -55,7 +55,7 @@ public class HttpHeaderParser {
     final private int state(byte ch) {
         int code = clas[ch]; 
 
-        int idx = ((state * 6) + code) << 1;
+        int idx = (state * 6 + code) << 1;
         state = states[idx];
         return states[idx+1];
     }
@@ -78,7 +78,7 @@ public class HttpHeaderParser {
             case CONT:
                 break;
             case CODE:
-            	status = status * 10 + (ch - 48);
+            	status = status * 10 + ch - 48;
                 break;
             case ERR:
                 onError();
