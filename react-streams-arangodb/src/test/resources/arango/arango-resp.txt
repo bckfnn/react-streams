@@ -1,0 +1,8 @@
+HTTP/1.1 200 OK
+server: ArangoDB
+content-type: application/json; charset=utf-8
+etag: "1228789079"
+connection: Keep-Alive
+content-length: 80
+
+{"field":"data","_id":"test/1225446743","_rev":"1228789079","_key":"1225446743"}

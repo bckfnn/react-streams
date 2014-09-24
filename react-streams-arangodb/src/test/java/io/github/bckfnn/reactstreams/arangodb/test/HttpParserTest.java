@@ -16,13 +16,14 @@ public class HttpParserTest {
 	    
 	}
 	
+	@Test
 	public void testArrangoResponse() throws Exception {
 		byte[] input = read("arango-resp.txt");
 		HttpParser p = new HttpParser();
 		p.parse(new Buffer(input));
 	}
 	
-	//@Test
+	@Test
 	public void testGoogle() throws Exception {
 		byte[] input = read("google.dk-resp.txt");
 		HttpParser p = new HttpParser() {
@@ -64,7 +65,7 @@ public class HttpParserTest {
 		
 	}
 	
-	//@Test
+	@Test
 	public void testGooglePerformance() throws Exception {
 		final byte[] input = read("google.dk-resp.txt");
 		final HttpParser p = new HttpParser();
