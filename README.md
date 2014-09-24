@@ -7,6 +7,11 @@ The core interfaces used (Publisher/Subscriber/Subscription) are taken directly 
 **react-stream** connects each step in a procesing pipeline through Publisher and Subscriber but unlike reactive-streams, does not mandate that back pressure events must be asynchronious. Instead the back-pressure must be non-recursive.
 **react-stream** steps can only support a single subscriber. If multiple subscribers are needed, a delegate() step must added.
 
+
+### Travis
+
+![Travis Status](https://travis-ci.org/bckfnn/react-streams.svg?branch=master)
+
 ### License
 
 Apache License, Version 2.0
