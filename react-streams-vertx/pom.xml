@@ -31,9 +31,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.bckfnn</groupId>
+            <groupId>io.github.bckfnn</groupId>
             <artifactId>react-streams-core</artifactId>
-            <version>0.1</version>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <!-- testing -->
