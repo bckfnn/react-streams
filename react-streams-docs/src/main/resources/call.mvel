@@ -1,7 +1,7 @@
 @code{
-    tox = call.to.x + (call.to.x > call.from.x ? -1 : 1);
-    fromx = call.from.x;
-} 
+    tox = call.to.x + (call.to.x > call.from.x ? -4 : 4);
+    fromx = call.from.x + (call.from.x > call.to.x ? -4 : 4);;
+}
 <line x1="@{fromx}" x2="@{tox}" y1="@{call.y}" y2="@{call.y}" stroke-width="2" stroke-linecap="round" stroke="#000000"/>
 <line x1="@{tox}" x2="@{tox + 5 * (tox > fromx ? -1 : 1)}" y1="@{call.y}" y2="@{call.y-5}" stroke-width="1" stroke="#000000"/>
 <line x1="@{tox}" x2="@{tox + 5 * (tox > fromx ? -1 : 1)}" y1="@{call.y}" y2="@{call.y+5}" stroke-width="1" stroke="#000000"/>

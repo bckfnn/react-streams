@@ -1,16 +1,24 @@
 <svg width="640" height="480" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
- <defs>
-  <filter id="svg_3_blur">
-   <feGaussianBlur stdDeviation="0.1" in="SourceGraphic"/>
-  </filter>
- </defs>
+ 
  <g>
-  <title>Layer 1</title>
+  <title>Title</title>
   @foreach{actor : actors}
    @include{actor.template()}
   @end{}
   @foreach{call : calls}
+    @code{call.exec()}
     @include{call.template()}
+    @foreach{actor : actors}
+    @if{actor.stack > 0}
+      <polyline points="@{actor.x-3},@{call.y+call.height} @{actor.x-3},@{call.y-6} @{actor.x+3},@{call.y-6} @{actor.x+3},@{call.y+call.height}"
+        style="fill:white;stroke:none" />
+      <line x1="@{actor.x-4}" x2="@{actor.x-4}" y1="@{call.y+call.height-6}" y2="@{call.y-6}"
+        stroke-width="1" stroke="#000000" />
+      <line x1="@{actor.x+4}" x2="@{actor.x+4}" y1="@{call.y+call.height-6}" y2="@{call.y-6}"
+        stroke-width="1" stroke="#000000" />
+     @end{}
+    @end{}
+    
   @end{}
  </g>
 </svg>

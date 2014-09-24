@@ -4,6 +4,7 @@ public class Actor {
     public Diagram diagram;
     public String name;
     public int x;
+    public int stack = 0;
 
     public Actor(Diagram diagram, String name, int x) {
         this.diagram = diagram;

@@ -1,7 +1,7 @@
 package com.github.bckfnn.docs;
 
 
-public class Invoke {
+public abstract class Invoke {
     public Actor from;
     public Actor to;
     public int y;
@@ -14,4 +14,6 @@ public class Invoke {
     public boolean isMethod() {
         return false;
     }
+    
+    abstract void exec();
 }

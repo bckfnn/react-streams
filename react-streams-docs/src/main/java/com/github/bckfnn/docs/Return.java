@@ -16,4 +16,8 @@ public class Return extends Invoke {
         return "src/main/resources/return.mvel";
     }
 
+    public void exec() {
+        from.stack--;
+    }
+
 }

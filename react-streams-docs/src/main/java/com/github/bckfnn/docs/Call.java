@@ -16,5 +16,9 @@ public class Call extends Invoke {
     public String template() {
         return "src/main/resources/call.mvel";
     }
+    
+    public void exec() {
+        to.stack++;
+    }
 
 }
