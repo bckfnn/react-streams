@@ -32,6 +32,7 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 	/** true when onComplete is received. */
 	private boolean complete = false;
 	
+	
 	@Override
 	public void onSubscribe(Subscription s) {
 		this.inputSubscription = s;
@@ -121,11 +122,13 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 	
 	@Override
 	public void subscribe(Subscriber<? super O> subscriber) {
-		subscriber.onSubscribe(outputSubscription = new BaseSubscription<O>(subscriber) {
+		outputSubscription = new BaseSubscription<O>(subscriber) {
 			@Override
 			public void request(long n) {
 				super.request(n);
-				sendRequest(n);
+				if (active) {
+				    sendRequest(n);
+				}
 			}
 
 			@Override
@@ -134,10 +137,14 @@ public abstract class BaseProcessor<I, O> implements Processor<I, O> {
 				sendCancel();
 			}
 			
-			public String toString() {
-				return "BaseSubscription from " + BaseProcessor.this + " to " + subscriber;
+			public void activate() {
+			    super.activate();
+			    if (getPendingDemand() > 0) {
+			        sendRequest(getPendingDemand());
+			    }
 			}
-		});
+		};
+		subscriber.onSubscribe(outputSubscription);
+		outputSubscription.activate();
 	}
-
 }

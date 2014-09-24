@@ -27,7 +27,8 @@ import org.reactivestreams.Subscription;
 public class BaseSubscription<T> implements Subscription {
 	private Subscriber<? super T> subscriber;
 	private boolean cancelled = false;
-	private int pendingDemand;
+	private long pendingDemand;
+	protected boolean active = false;
 	
 	/**
 	 * Constructor.
@@ -40,11 +41,20 @@ public class BaseSubscription<T> implements Subscription {
 	@Override
 	public void cancel() {
 		cancelled = true;
+		subscriber = null;
+		//subscriber.onComplete();
 	}
 	
 	@Override
 	public void request(long elements) {
+	    if (elements <= 0) {
+	        throw new IllegalArgumentException("spec 3.9");
+	    }
 	    pendingDemand += elements;
+	}
+	
+	public void activate() {
+	    active = true;
 	}
 
 	/**
@@ -57,7 +67,7 @@ public class BaseSubscription<T> implements Subscription {
 	/**
 	 * @return the amount of unfulfilled demand, the difference between request() and sendNext() calls.
 	 */
-	public int getPendingDemand() {
+	public long getPendingDemand() {
 		return pendingDemand;
 	}
 

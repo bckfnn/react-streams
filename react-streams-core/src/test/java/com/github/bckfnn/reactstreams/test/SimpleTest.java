@@ -787,7 +787,7 @@ public class SimpleTest {
      */
     
     
-    @Test
+    //@Test
     public void testPipe() {
         Keep<String> keep = new Keep<>();
         Builder.from(1, 2, 3, 4, 5).

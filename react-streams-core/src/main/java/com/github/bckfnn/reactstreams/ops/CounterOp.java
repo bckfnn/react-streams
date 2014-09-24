@@ -27,7 +27,7 @@ public class CounterOp implements Publisher<Integer> {
 
 	@Override
 	public void subscribe(Subscriber<? super Integer> subscriber) {
-		subscriber.onSubscribe(new ActiveSubscription<Integer>(subscriber) {
+	    ActiveSubscription<Integer> s = new ActiveSubscription<Integer>(subscriber) {
 			int count = start;
 			
 			@Override
@@ -39,6 +39,8 @@ public class CounterOp implements Publisher<Integer> {
 			public Integer getOne() {
 				return count++;
 			}
-		});
+		};
+		subscriber.onSubscribe(s);
+		//s.activate();
 	}
 }

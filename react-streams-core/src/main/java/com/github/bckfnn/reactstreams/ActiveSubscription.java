@@ -21,8 +21,8 @@ import org.reactivestreams.Subscriber;
  * @param <T> type of elements.
  */
 public abstract class ActiveSubscription<T> extends BaseSubscription<T> {
-	private boolean recursion = false;
-
+    public boolean recursion = false;
+    
 	/**
 	 * Constructor.
 	 * @param subscriber the subscriber that will recieve the elements.
