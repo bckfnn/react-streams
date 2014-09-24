@@ -62,11 +62,9 @@ public class TckTest {
         List<String> res = new ArrayList<String>();
 
         op.subscribe(new Subscriber<Integer>() {
-            Subscription s;
 
             @Override
             public void onSubscribe(Subscription s) {
-                this.s = s;
                 res.add("preOnSubscribe");
                 s.request(Long.MAX_VALUE);
                 res.add("postOnSubscribe");
