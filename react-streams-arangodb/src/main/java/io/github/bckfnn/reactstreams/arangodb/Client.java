@@ -58,10 +58,10 @@ public class Client {
 			boolean init = false;
 
 			@Override
-			public void subscribe(Subscriber<JsonObject> subscriber) {
+			public void subscribe(Subscriber<? super JsonObject> subscriber) {
 				subscriber.onSubscribe(new BaseSubscription<JsonObject>(subscriber) {
 					@Override
-					public void request(int elements) {
+					public void request(long elements) {
 						if (init) {
 							return;
 						}
@@ -173,9 +173,10 @@ public class Client {
 		return Builder.as(new Publisher<Void>()  {
 			boolean done = false;
 			@Override
-			public void subscribe(Subscriber<Void> subscriber) {
+			public void subscribe(Subscriber<? super Void> subscriber) {
 				subscriber.onSubscribe(new BaseSubscription<Void>(subscriber) {
-					public void request(int elements) {
+				    @Override
+					public void request(long elements) {
 						if (done) {
 							return;
 						}

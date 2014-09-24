@@ -25,11 +25,11 @@ public class RsFileSystem {
 	public Operations<RsAsyncFile> open(String path) {
 		return Builder.as(new Publisher<RsAsyncFile>() {
 			@Override
-			public void subscribe(Subscriber<RsAsyncFile> subscriber) {
+			public void subscribe(Subscriber<? super RsAsyncFile> subscriber) {
 				subscriber.onSubscribe(new BaseSubscription<RsAsyncFile>(subscriber) {
 					boolean done = false;
 					@Override
-					public void request(int elements) {
+					public void request(long elements) {
 						System.out.println("request:" + elements);
 						super.request(elements);
 						if (done) {
@@ -58,7 +58,7 @@ public class RsFileSystem {
 			subscriber.onSubscribe(new BaseSubscription<RsAsyncFile>(subscriber) {
 				boolean done = false;
 				@Override
-				public void request(int elements) {
+				public void request(long elements) {
 					System.out.println("request:" + elements);
 					super.request(elements);
 					if (done) {

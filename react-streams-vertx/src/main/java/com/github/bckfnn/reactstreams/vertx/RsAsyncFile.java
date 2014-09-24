@@ -23,7 +23,7 @@ public class RsAsyncFile {
     public Operations<Buffer> read() {
         return Builder.as(new Publisher<Buffer>() {
             @Override
-            public void subscribe(Subscriber<Buffer> subscriber) {
+            public void subscribe(Subscriber<? super Buffer> subscriber) {
                 subscriber.onSubscribe(new BaseSubscription<Buffer>(subscriber) {
                     boolean started = false;
                     
@@ -37,7 +37,7 @@ public class RsAsyncFile {
 					}
 
 					@Override
-                    public void request(int elements) {
+                    public void request(long elements) {
                         super.request(elements);
                         if (getPendingDemand() <= 0) {
                             asyncFile.pause();
@@ -97,11 +97,11 @@ public class RsAsyncFile {
     public Operations<Void> close() {
         return Builder.as(new Publisher<Void>() {
             @Override
-            public void subscribe(Subscriber<Void> subscriber) {
+            public void subscribe(Subscriber<? super Void> subscriber) {
                 subscriber.onSubscribe(new BaseSubscription<Void>(subscriber) {
                     boolean started = false;
                     @Override
-                    public void request(int elements) {
+                    public void request(long elements) {
                         if (started) {
                             return;
                         }

@@ -25,7 +25,7 @@ public class RsEventBus {
 			subscriber.onSubscribe(new BaseSubscription<JsonObject>(subscriber) {
 				boolean done = false;
 				@Override
-				public void request(int elements) {
+				public void request(long elements) {
 					System.out.println("request:" + elements);
 					super.request(elements);
 					if (done) {
