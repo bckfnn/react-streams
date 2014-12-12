@@ -46,8 +46,6 @@ import java.io.PrintStream;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
 import org.reactivestreams.Processor;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -142,7 +140,7 @@ public interface Stream<O> extends Publisher<O> {
     }
     
     /**
-     * @param <T> type of the builder.
+     * @param <O> type of the builder.
      * @return a new pipe
      */
     public static <O> Pipe<O, O> newPipe() {
@@ -152,11 +150,11 @@ public interface Stream<O> extends Publisher<O> {
     /**
      * Chain the publisher in this builder to the specified processor.
      * Return a new builder with the processor as the publisher.
-     * @param processor the subscriber / publisher that is chained to this.
+     * @param subscriber the subscriber / publisher that is chained to this.
      * @param <S> type the new builder that is returned.
      * @return a new builder that wraps the processor.
      */
-    default public <S extends Subscriber<? super O>> S chain(@Nonnull final S subscriber) {
+    default public <S extends Subscriber<? super O>> S chain(final S subscriber) {
         this.subscribe(subscriber);
         return subscriber;
     }
@@ -401,8 +399,8 @@ public interface Stream<O> extends Publisher<O> {
      * @param subscriber the subscriber.
      * @return a new builder that wraps the output.
      */ 
-    default public Stream<O> delegate(Subscriber<O> x) {
-        return chain(new DelegateOp<O>(x));
+    default public Stream<O> delegate(Subscriber<O> subscriber) {
+        return chain(new DelegateOp<O>(subscriber));
     }
 
     /**
@@ -512,8 +510,8 @@ public interface Stream<O> extends Publisher<O> {
      * The printStream operation output debug information about all events that 
      * pass through this step to the specified <code>PrintStream</code>.
      * The output is prefixed with the <code>name</code>.
-     * @param name the prefix in the output.
-     * @param stream the print stream that is written to.
+     * @param prefix the prefix in the output.
+     * @param printStream the print stream that is written to.
      * @return a new builder that wraps the output.
      */ 
     default public Stream<O> printStream(String prefix, PrintStream printStream) {
