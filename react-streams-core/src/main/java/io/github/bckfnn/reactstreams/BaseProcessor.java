@@ -24,7 +24,7 @@ import org.reactivestreams.Subscription;
  * @param <I> type of input elements.
  * @param <O> type of output elements.
  */
-public abstract class BaseProcessor<I, O> implements Processor<I, O> {
+public abstract class BaseProcessor<I, O> implements Stream<O>, Processor<I, O> {
 	private Subscription inputSubscription;
 	private BaseSubscription<O> outputSubscription;
 	/** the number received elements that have not yet been handled. */

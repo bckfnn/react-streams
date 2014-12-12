@@ -13,9 +13,9 @@
  */
 package io.github.bckfnn.reactstreams.test;
 
-import io.github.bckfnn.reactstreams.Builder;
+import io.github.bckfnn.reactstreams.Pipe;
+import io.github.bckfnn.reactstreams.Stream;
 import io.github.bckfnn.reactstreams.Func1;
-import io.github.bckfnn.reactstreams.Operations;
 import io.github.bckfnn.reactstreams.Tuple;
 import io.github.bckfnn.reactstreams.ops.AccumulatorOp;
 import io.github.bckfnn.reactstreams.ops.FilterOp;
@@ -72,9 +72,9 @@ public class SimpleTest {
     @Test
     public void testIterable() {
         Keep<String> keep = new Keep<>();
-        Builder
+        Stream
         .from(Arrays.asList("12", "34", "56"))
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals("12", "34", "56");
@@ -83,9 +83,9 @@ public class SimpleTest {
     @Test
     public void testIterableEmpty() {
         Keep<String> keep = new Keep<>();
-        Builder
+        Stream
         .from(Arrays.<String> asList())
-        .next(keep)
+        .chain(keep)
         .start(1);
         keep.assertEquals();
     }
@@ -93,9 +93,9 @@ public class SimpleTest {
     @Test
     public void testArray() {
         Keep<String> keep = new Keep<>();
-        Builder
+        Stream
         .from("12", "34", "56")
-        .next(keep)
+        .chain(keep)
         .start(1);
         keep.assertEquals("12", "34", "56");
     }
@@ -103,9 +103,9 @@ public class SimpleTest {
     @Test
     public void testOne() {
         Keep<String> keep = new Keep<>();
-        Builder
+        Stream
         .from("12")
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals("12");
@@ -115,9 +115,9 @@ public class SimpleTest {
     @Test
     public void testSingle() {
         Keep<String> keep = new Keep<>();
-        Builder
+        Stream
         .from("abc")
-        .next(keep)
+        .chain(keep)
         .start(1);
         keep.assertEquals("abc");
     }
@@ -125,9 +125,9 @@ public class SimpleTest {
     @Test
     public void testError() {
         Keep<String> keep = new Keep<>();
-        Builder
+        Stream
         .<String> error(new RuntimeException("test"))
-        .next(keep)
+        .chain(keep)
         .start(1);
         keep.assertException(new RuntimeException("test"));
     }
@@ -135,10 +135,10 @@ public class SimpleTest {
     @Test
     public void testDone1() {
         Keep<Integer> keep = new Keep<>();
-        Builder
+        Stream
         .from(1, 2, 3)
         .done()
-        .next(keep)
+        .chain(keep)
         .start(1);
         keep.assertEquals();
 
@@ -147,10 +147,10 @@ public class SimpleTest {
     @Test
     public void testCounter() {
         Keep<Integer> keep = new Keep<>();
-        Builder
+        Stream
         .counter()
         .take(5)
-        .next(keep)
+        .chain(keep)
         .start(1);
         keep.assertEquals(0, 1, 2, 3, 4);
     }
@@ -158,10 +158,10 @@ public class SimpleTest {
     @Test
     public void testCounter2() {
         Keep<Integer> keep = new Keep<>();
-        Builder
+        Stream
         .counter(3)
         .take(5)
-        .next(keep)
+        .chain(keep)
         .start(1);
         keep.assertEquals(3, 4, 5, 6, 7);
     }
@@ -169,20 +169,20 @@ public class SimpleTest {
     @Test
     public void testCounter3() {
         Keep<Integer> keep = new Keep<>();
-        Builder
+        Stream
         .counter(3)
         .take(1000000)
-        .next(keep)
+        .chain(keep)
         .start(1);
     }
 
     @Test
     public void testCounter4() {
         Keep<Integer> keep = new Keep<>();
-        Builder
+        Stream
         .counter(3)
         .take(1000000)
-        .next(keep)
+        .chain(keep)
         .start(100);
     }
 
@@ -191,8 +191,8 @@ public class SimpleTest {
     public void testZip1() {
         Keep<Tuple<Integer, String>> keep = new Keep<>();
 
-        Builder.zip(Builder.counter(), Builder.from("a", "b", "c"))
-        .next(keep)
+        Stream.zip(Stream.counter(), Stream.from("a", "b", "c"))
+        .chain(keep)
         .start(1);
         keep.assertEquals(new Tuple<>(0, "a"), new Tuple<>(1, "b"), new Tuple<>(2, "c"));
     }
@@ -202,8 +202,8 @@ public class SimpleTest {
     public void testZip2() {
         Keep<Tuple<String, Integer>> keep = new Keep<>();
 
-        Builder.zip(Builder.from("a", "b", "c"), Builder.counter())
-        .next(keep)
+        Stream.zip(Stream.from("a", "b", "c"), Stream.counter())
+        .chain(keep)
         .start(1);
 
         keep.assertEquals(new Tuple<>("a", 0), new Tuple<>("b", 1), new Tuple<>("c", 2));
@@ -213,9 +213,9 @@ public class SimpleTest {
     public void testZip3() {
         Keep<Tuple<Integer, Integer>> keep = new Keep<>();
 
-        Builder.zip(Builder.counter(10), Builder.counter())
+        Stream.zip(Stream.counter(10), Stream.counter())
         .take(1000000)
-        .next(keep)
+        .chain(keep)
         .start(1);
     }
 
@@ -224,8 +224,8 @@ public class SimpleTest {
     public void testZip4() {
         Keep<Tuple<String, Integer>> keep = new Keep<>();
 
-        Builder.zip(Builder.from("a", "b", "c").continueWithError(new Exception("xx")), Builder.counter())
-        .next(keep)
+        Stream.zip(Stream.from("a", "b", "c").continueWithError(new Exception("xx")), Stream.counter())
+        .chain(keep)
         .start(1);
 
         keep.assertException(new Exception("xx"), new Tuple<>("a", 0), new Tuple<>("b", 1));
@@ -234,10 +234,10 @@ public class SimpleTest {
     @Test
     public void testNop() {
         Keep<String> keep = new Keep<>();
-        Builder
+        Stream
         .from("def")
         .nop()
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals("def");
@@ -247,21 +247,21 @@ public class SimpleTest {
     @Test
     public void testMap1() {
         Keep<Integer> keep = new Keep<>();
-        Builder
+        Stream
         .from("12", "34", "56")
-        .next(new MapOp<String, String>() {
+        .chain(new MapOp<String, String>() {
             @Override
             public String map(String value) {
                 return "-" + value;
             }
         })
-        .next(new MapOp<String, Integer>() {
+        .chain(new MapOp<String, Integer>() {
             @Override
             public Integer map(String value) {
                 return Integer.valueOf(value);
             }
         })
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals(-12, -34, -56);
@@ -270,11 +270,11 @@ public class SimpleTest {
     @Test
     public void testMap2() {
         Keep<Integer> keep = new Keep<>();
-        Builder
+        Stream
         .from("12", "34", "56")
         .map((String value) -> "-" + value)
         .map((String value) -> Integer.valueOf(value))
-        .next(keep)
+        .chain(keep)
         .start(1);
         keep.assertEquals(-12, -34, -56); 
     }
@@ -282,9 +282,9 @@ public class SimpleTest {
     @Test
     public void testMap3() {
         Keep<Integer> keep = new Keep<>();
-        Builder
+        Stream
         .from("12", "34", "56")
-        .next(new MapOp<String, String>() {
+        .chain(new MapOp<String, String>() {
             @Override
             public String map(String value) {
                 if (value.equals("34")) {
@@ -293,13 +293,13 @@ public class SimpleTest {
                 return "-" + value;
             }
         })
-        .next(new MapOp<String, Integer>() {
+        .chain(new MapOp<String, Integer>() {
             @Override
             public Integer map(String value) {
                 return Integer.valueOf(value);
             }
         })
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertException(new RuntimeException("stop!"), -12);
@@ -308,7 +308,7 @@ public class SimpleTest {
     @Test
     public void testMap4() {
         Keep<Integer> keep = new Keep<>();
-        Builder
+        Stream
         .from("12", "34", "56")
         .map(new Func1<String, String>() { 
             @Override
@@ -325,7 +325,7 @@ public class SimpleTest {
                 return Integer.valueOf(value);
             }
         })
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertException(new RuntimeException("stop!"), -12);
@@ -334,27 +334,27 @@ public class SimpleTest {
     @Test
     public void testMap5() {
         Keep<Integer> keep = new Keep<>();
-        Builder
+        Stream
         .counter()
         .take(1000000)
         .map((Integer value) -> "-" + value)
         .map((String value) -> Integer.valueOf(value))
-        .next(keep)
+        .chain(keep)
         .start(1);
     }
 
     @Test
     public void testMapMany1() {
         Keep<String> keep = new Keep<>();
-        Builder
+        Stream
         .from("12", "34", "56")
-        .next(new MapManyOp<String, String>() {
+        .chain(new MapManyOp<String, String>() {
             @Override
-            public Operations<String> map(String value) {
-                return Builder.from("x" + value, "y" + value, "z" + value);
+            public Stream<String> map(String value) {
+                return Stream.from("x" + value, "y" + value, "z" + value);
             }
         })
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals("x12", "y12", "z12", "x34", "y34", "z34", "x56", "y56", "z56");
@@ -363,15 +363,15 @@ public class SimpleTest {
     @Test
     public void testMapMany2() {
         Keep<String> keep = new Keep<>();
-        Builder
+        Stream
         .from("12", "34", "56")
-        .mapMany(new Func1<String, Operations<String>>() {
+        .mapMany(new Func1<String, Stream<String>>() {
             @Override
-            public Operations<String> apply(String value) {
-                return Builder.from("x" + value, "y" + value, "z" + value);
+            public Stream<String> apply(String value) {
+                return Stream.from("x" + value, "y" + value, "z" + value);
             }
         })
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals("x12", "y12", "z12", "x34", "y34", "z34", "x56", "y56", "z56");
@@ -380,10 +380,10 @@ public class SimpleTest {
     @Test
     public void testMapMany3() {
         Keep<String> keep = new Keep<>();
-        Builder
+        Stream
         .from("12", "34", "56")
-        .mapMany((String value) -> Builder.from("x" + value, "y" + value, "z" + value))
-        .next(keep)
+        .mapMany((String value) -> Stream.from("x" + value, "y" + value, "z" + value))
+        .chain(keep)
         .start(1);
 
         keep.assertEquals("x12", "y12", "z12", "x34", "y34", "z34", "x56", "y56", "z56");
@@ -392,10 +392,10 @@ public class SimpleTest {
     @Test
     public void testMapMany4() {
         Keep<String> keep = new Keep<>();
-        Builder
+        Stream
         .from("12", "34", "56")
-        .<String> mapMany((String value) -> { throw new Exception("x"); })
-        .next(keep)
+        .<String> mapMany((value) -> { throw new Exception("x"); })
+        .chain(keep)
         .start(1);
 
         keep.assertException(new Exception("x"));
@@ -404,10 +404,10 @@ public class SimpleTest {
     @Test
     public void testMapMany5() {
         Keep<String> keep = new Keep<>();
-        Builder
+        Stream
         .from("12", "34", "56")
-        .mapMany((String value) -> Builder.<String> error(new Exception("x")))
-        .next(keep)
+        .mapMany((String value) -> Stream.<String> error(new Exception("x")))
+        .chain(keep)
         .start(1);
 
         keep.assertException(new Exception("x"));
@@ -418,8 +418,8 @@ public class SimpleTest {
         Keep<String> keep = new Keep<>();
         ScheduledExecutorService s = Executors.newSingleThreadScheduledExecutor();
         s.execute(() -> {
-            Builder.from(1, 2, 3).mapMany(i -> {
-                return Builder.
+            Stream.from(1, 2, 3).mapMany(i -> {
+                return Stream.
                         from("a" + i, "b" + i, "c" + i).
                         onEach((v, op) -> {
                             s.execute(() -> {
@@ -429,7 +429,7 @@ public class SimpleTest {
                         });
             }).
             continueWith(() -> { s.shutdown(); }).
-            next(keep).
+            chain(keep).
             start(1);
         });
         s.awaitTermination(10, TimeUnit.SECONDS);
@@ -440,10 +440,10 @@ public class SimpleTest {
 	@Test
     public void testMapManyWith1() {
         Keep<Tuple<String, String>> keep = new Keep<>();
-        Builder
+        Stream
         .from("12", "34", "56")
-        .mapManyWith(value -> Builder.from("x" + value, "y" + value, "z" + value))
-        .next(keep)
+        .mapManyWith(value -> Stream.from("x" + value, "y" + value, "z" + value))
+        .chain(keep)
         .start(1);
 
         keep.assertEquals(
@@ -455,15 +455,15 @@ public class SimpleTest {
     @Test
     public void testFilter1() {
         Keep<String> keep = new Keep<>();
-        Builder
+        Stream
         .from("12", "34", "56")
-        .next(new FilterOp<String>() {
+        .chain(new FilterOp<String>() {
             @Override
             public boolean check(String value) {
                 return value.equals("34");
             }
         })
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals("34");
@@ -472,10 +472,10 @@ public class SimpleTest {
     @Test
     public void testFilter2() {
         Keep<String> keep = new Keep<>();
-        Builder
+        Stream
         .from("12", "34", "56")
         .filter(x -> x.equals("34") )
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals("34");
@@ -485,11 +485,11 @@ public class SimpleTest {
     @Test
     public void testFilter3() {
         Keep<String> keep = new Keep<>();
-        Builder
+        Stream
         .from("12", "34", "56")
         .continueWithError(new Exception("xx"))
         .filter(x -> x.equals("34") )
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertException(new Exception("xx"), "34");
@@ -498,7 +498,7 @@ public class SimpleTest {
     @Test
     public void testFilter4() {
         Keep<String> keep = new Keep<>();
-        Builder
+        Stream
         .from("12", "34", "56")
         .continueWithError(new Exception("xx"))
         .filter(x -> {
@@ -510,7 +510,7 @@ public class SimpleTest {
             }
             return false;
         })
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertException(new Exception("xx"), "34");
@@ -519,10 +519,10 @@ public class SimpleTest {
     @Test
     public void testLast() {
         Keep<String> keep = new Keep<>();
-        Builder
+        Stream
         .from("12", "34", "56")
         .last()
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals("56");
@@ -531,10 +531,10 @@ public class SimpleTest {
     @Test
     public void testLast2() {
         Keep<String> keep = new Keep<>();
-        Builder
+        Stream
         .<String> from()
         .last()
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals();
@@ -543,10 +543,10 @@ public class SimpleTest {
     @Test
     public void testSkip() {
         Keep<Integer> keep = new Keep<>();
-        Builder
+        Stream
         .from(1, 2, 3)
         .skip(1)
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals(2, 3);
@@ -555,10 +555,10 @@ public class SimpleTest {
     @Test
     public void testSkip2() {
         Keep<Integer> keep = new Keep<>();
-        Builder
+        Stream
         .from(1, 2, 3)
         .skip(5)
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals();
@@ -567,10 +567,10 @@ public class SimpleTest {
     @Test
     public void testTake() {
         Keep<Integer> keep = new Keep<>();
-        Builder
+        Stream
         .from(1, 2, 3)
         .take(2)
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals(1, 2);
@@ -579,10 +579,10 @@ public class SimpleTest {
     @Test
     public void testTake2() {
         Keep<Integer> keep = new Keep<>();
-        Builder
+        Stream
         .from(1, 2, 3)
         .take(5)
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals(1, 2, 3);
@@ -591,15 +591,15 @@ public class SimpleTest {
     @Test
     public void testAccumulator1() {
         Keep<Integer> keep = new Keep<>();
-        Builder
+        Stream
         .from(1, 2, 3)
-        .next(new AccumulatorOp<Integer>(0) {
+        .chain(new AccumulatorOp<Integer>(0) {
             @Override
             public Integer calc(Integer value, Integer nextValue) {
                 return value + nextValue;
             }
         })
-        .next(keep)
+        .chain(keep)
         .start(1);
         keep.assertEquals(0, 1, 3, 6);
     }
@@ -607,10 +607,10 @@ public class SimpleTest {
     @Test
     public void testAccumulator2() {
         Keep<Integer> keep = new Keep<>();
-        Builder
+        Stream
         .from(1, 2, 3)
         .accumulate(0, (value, next) -> value + next)
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals(0, 1, 3, 6);
@@ -619,10 +619,10 @@ public class SimpleTest {
     @Test
     public void testAccumulator3() {
         Keep<Integer> keep = new Keep<>();
-        Builder
+        Stream
         .from(1, 2, 3)
         .accumulate(null, (value, next) -> value + next)
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals(1, 3, 6);
@@ -631,7 +631,7 @@ public class SimpleTest {
     @Test
     public void testAccumulator4() {
         Keep<Integer> keep = new Keep<>();
-        Builder
+        Stream
         .from(1, 2, 3)
         .accumulate(0, (value, next) -> {
             if (next == 3) {
@@ -639,7 +639,7 @@ public class SimpleTest {
             }
             return value + next;
         })
-        .next(keep)
+        .chain(keep)
         .start(1);
         keep.assertException(new Exception("xx"), 0, 1, 3);
     }
@@ -648,9 +648,9 @@ public class SimpleTest {
     public void testConcat() {
         Keep<Integer> keep = new Keep<>();
 
-        Builder
-        .concat(Builder.from(1, 2, 3), Builder.from(4, 5))
-        .next(keep)
+        Stream
+        .concat(Stream.from(1, 2, 3), Stream.from(4, 5))
+        .chain(keep)
         .start(1);
 
         keep.assertEquals(1, 2, 3, 4, 5);
@@ -661,10 +661,10 @@ public class SimpleTest {
     public void testWhenDoneValue1() {
         Keep<Integer> keep = new Keep<>();
 
-        Builder
+        Stream
         .from(1, 2, 3)
         .whenDoneValue(4)
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals(4);
@@ -674,10 +674,10 @@ public class SimpleTest {
     public void testWhenDoneError1() {
         Keep<Integer> keep = new Keep<>();
 
-        Builder
+        Stream
         .from(1, 2, 3)
         .whenDoneError(new Exception("xx"))
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertException(new Exception("xx"));
@@ -687,10 +687,10 @@ public class SimpleTest {
     public void testWhenDoneProc1() {
         Keep<Integer> keep = new Keep<>();
 
-        Builder
+        Stream
         .from(1, 2, 3)
         .whenDone(() -> { keep.doNext(44); })
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals(44);
@@ -700,10 +700,10 @@ public class SimpleTest {
     public void testWhenDonePublisher1() {
         Keep<Integer> keep = new Keep<>();
 
-        Builder
+        Stream
         .from(1, 2, 3)
-        .whenDone(Builder.from(5, 6, 7))
-        .next(keep)
+        .whenDone(Stream.from(5, 6, 7))
+        .chain(keep)
         .start(1);
 
         keep.assertEquals(5, 6, 7);
@@ -713,21 +713,21 @@ public class SimpleTest {
     public void testWhenDonePublisher2() {
         Keep<Integer> keep = new Keep<>();
 
-        Builder
+        Stream
         .from(1, 2, 3)
-        .whenDone(Builder.counter())
+        .whenDone(Stream.counter())
         .take(100000)
-        .next(keep)
+        .chain(keep)
         .start(1);
     }
 
     @Test
     public void testContinueWithError1() {
         Keep<Integer> keep = new Keep<>();
-        Builder
+        Stream
         .from(1, 2, 3)
         .continueWithError(new Exception("xx"))
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertException(new Exception("xx"), 1, 2, 3);
@@ -737,12 +737,12 @@ public class SimpleTest {
     public void testWhenDone2() {
         Keep<Integer> keep = new Keep<>();
 
-        Builder
+        Stream
         .from(1, 2, 3)
         .whenDone(new Proc0() {
             @Override
             public void apply() {
-            	onNext(4);
+            	onchain(4);
             	onComplete();
             }
         })
@@ -757,8 +757,8 @@ public class SimpleTest {
         Keep<Integer> keep = new Keep<>();
         final AtomicLong cnt = new AtomicLong(0);
 
-        Builder.from(1, 2, 3)
-        .<Integer> whenDone(new Builder.Proc0() {
+        Stream.from(1, 2, 3)
+        .<Integer> whenDone(new Stream.Proc0() {
             @Override
             public void call() {
                 cnt.incrementAndGet();
@@ -777,9 +777,9 @@ public class SimpleTest {
     public void testWhenDone4() {
         Keep<Integer> keep = new Keep<>();
 
-        Builder
+        Stream
         .from(1, 2, 3)
-        .whenDone(Builder.from(4, 5, 6))
+        .whenDone(Stream.from(4, 5, 6))
         .then(keep);
 
         keep.assertEquals(4, 5, 6);
@@ -790,17 +790,20 @@ public class SimpleTest {
     //@Test
     public void testPipe() {
         Keep<String> keep = new Keep<>();
-        Builder.from(1, 2, 3, 4, 5).
-        next(makePipe()).
-        next(keep).
+        Stream.from(1, 2, 3, 4, 5).
+        chain(makePipe()).
+        chain(keep).
         start(1);
     }
     
-    private Processor<Integer, String> makePipe() {
-        return Builder.<Integer> newPipe().
+    private Pipe<Integer, String> makePipe() {
+        return null;
+        /*
+        return Stream.<Integer> newPipe().
                 filter(v -> v % 2 == 0).
                 map(v -> "x" + v).
                 asPipe();
+                */
     }
 
     @Test
@@ -809,13 +812,13 @@ public class SimpleTest {
 
         Keep<Integer> keep2 = new Keep<>();
 
-        Builder
+        Stream
         .from(1, 2, 3)
         .delegate(keep)
-        //.next(keep)
+        //.chain(keep)
         //.debug()
         //.stdout("xxx")
-        .next(keep2)
+        .chain(keep2)
         .start(1);
 
         keep.assertEquals(1, 2, 3);
@@ -827,10 +830,10 @@ public class SimpleTest {
     public void testToList1() {
         Keep<List<Integer>> keep = new Keep<>();
 
-        Builder
+        Stream
         .from(1, 2, 3)
         .toList()
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals(Arrays.asList(1, 2, 3));
@@ -840,13 +843,13 @@ public class SimpleTest {
     public void testOnEach1() {
         Keep<Integer> keep = new Keep<>();
 
-        Builder
+        Stream
         .from(1, 2, 3)
         .onEach((v, proc) -> { 
             proc.sendNext(v);
             proc.handled();
         })
-        .next(keep)
+        .chain(keep)
         .start(1);
 
         keep.assertEquals(1, 2, 3);
@@ -864,23 +867,23 @@ public class SimpleTest {
         q.add(new Runnable() {
             @Override
             public void run() {
-                Builder
+                Stream
                 .from(1, 2, 3)
                 .then(new Chain.Counting<Integer, Integer>() {
                     @Override
-                    public void onNext(final Integer value) {
-                        super.onNext(value);
+                    public void onchain(final Integer value) {
+                        super.onchain(value);
                         q.add(new Runnable() {
                             @Override
                             public void run() {
-                                next(value + 10);
+                                chain(value + 10);
                             }
                         });
                     }
                 })
                 //.stdout("xx")
                 .then(keep)
-                .whenDone(new Builder.Proc0()   {
+                .whenDone(new Stream.Proc0()   {
                     @Override
                     public void call() {
                         keep.assertEquals(11, 12, 13);
@@ -899,7 +902,7 @@ public class SimpleTest {
     public void testPipe() {
         final Keep<String> keep = new Keep<>();
 
-        Builder
+        Stream
         .from(1, 2, 3, 4)
         //.stdout("..")
         .then(makePipe())
@@ -912,15 +915,15 @@ public class SimpleTest {
     }
 
     private Chain<Integer, String> makePipe() {
-        return Builder
+        return Stream
         .<Integer>pipe()
-        .map(new Builder.MapFunction<Integer, Integer>() {
+        .map(new Stream.MapFunction<Integer, Integer>() {
             @Override
             public Integer map(Integer value) throws Exception {
                 return value + 10;
             }
         })
-        .map(new Builder.MapFunction<Integer, String>() {
+        .map(new Stream.MapFunction<Integer, String>() {
             @Override
             public String map(Integer value) throws Exception {
                 return String.valueOf(value);

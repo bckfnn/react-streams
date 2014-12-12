@@ -14,11 +14,11 @@
 package io.github.bckfnn.reactstreams.ops;
 
 import io.github.bckfnn.reactstreams.ActiveSubscription;
+import io.github.bckfnn.reactstreams.Stream;
 
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-public class CounterOp implements Publisher<Integer> {
+public class CounterOp implements Stream<Integer> {
 	private int start;
 	
 	public CounterOp(int start) {

@@ -14,14 +14,14 @@
 package io.github.bckfnn.reactstreams.ops;
 
 import io.github.bckfnn.reactstreams.BaseProcessor;
-import io.github.bckfnn.reactstreams.Operations;
+import io.github.bckfnn.reactstreams.Stream;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 public abstract class FinallyOp<T, R> extends BaseProcessor<T, R> {
 
-    public abstract Operations<R> fin() throws Throwable;
+    public abstract Stream<R> fin() throws Throwable;
     
     @Override
     public void doNext(T value) {

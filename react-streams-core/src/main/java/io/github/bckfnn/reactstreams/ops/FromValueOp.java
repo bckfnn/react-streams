@@ -14,6 +14,7 @@
 package io.github.bckfnn.reactstreams.ops;
 
 import io.github.bckfnn.reactstreams.BaseSubscription;
+import io.github.bckfnn.reactstreams.Stream;
 
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -24,7 +25,7 @@ import org.reactivestreams.Subscriber;
  * 
  * @param <T> type of the event.
  */
-public class FromValueOp<T> implements Publisher<T> {
+public class FromValueOp<T> implements Stream<T>, Publisher<T> {
     private T value;
     private boolean finished = false;
 

@@ -14,6 +14,7 @@
 package io.github.bckfnn.reactstreams.ops;
 
 import io.github.bckfnn.reactstreams.BaseSubscription;
+import io.github.bckfnn.reactstreams.Stream;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +23,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-public class ConcatOp<T> implements Publisher<T> {
+public class ConcatOp<T> implements Stream<T> {
     private BaseSubscription<T> outputSubscription;
     private List<Publisher<T>> list;
     private int i = 0;

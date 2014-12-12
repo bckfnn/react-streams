@@ -1,7 +1,6 @@
 package io.github.bckfnn.reactstreams.test;
 
-import io.github.bckfnn.reactstreams.Builder;
-import io.github.bckfnn.reactstreams.Operations;
+import io.github.bckfnn.reactstreams.Stream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,7 @@ public class TckTest {
      */
     @Test
     public void testSeq() {
-        Operations<Integer> op = Builder.counter(1).take(3);
+        Stream<Integer> op = Stream.counter(1).take(3);
 
         List<String> res = new ArrayList<String>();
 
@@ -57,7 +56,7 @@ public class TckTest {
     
     @Test
     public void testMax() {
-        Operations<Integer> op = Builder.counter(1).take(3);
+        Stream<Integer> op = Stream.counter(1).take(3);
 
         List<String> res = new ArrayList<String>();
 

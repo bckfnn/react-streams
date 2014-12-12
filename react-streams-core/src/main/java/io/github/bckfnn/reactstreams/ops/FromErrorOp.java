@@ -14,8 +14,8 @@
 package io.github.bckfnn.reactstreams.ops;
 
 import io.github.bckfnn.reactstreams.BaseSubscription;
+import io.github.bckfnn.reactstreams.Stream;
 
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 /**
@@ -23,7 +23,7 @@ import org.reactivestreams.Subscriber;
  * 
  * @param <T> the type of output elements.
  */
-public class FromErrorOp<T> implements Publisher<T> {
+public class FromErrorOp<T> implements Stream<T> {
     private Throwable exc;
     boolean finished;
     

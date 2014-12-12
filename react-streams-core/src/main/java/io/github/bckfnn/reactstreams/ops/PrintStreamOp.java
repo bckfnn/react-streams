@@ -43,6 +43,7 @@ public class PrintStreamOp<T> extends BaseProcessor<T, T> {
 	@Override
 	public void onError(Throwable error) {
 		printStream.println(prefix + " onError:" + error);
+		error.printStackTrace(printStream);
 		super.onError(error);
 	}
 

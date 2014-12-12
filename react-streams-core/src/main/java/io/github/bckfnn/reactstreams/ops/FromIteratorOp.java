@@ -14,10 +14,10 @@
 package io.github.bckfnn.reactstreams.ops;
 
 import io.github.bckfnn.reactstreams.ActiveSubscription;
+import io.github.bckfnn.reactstreams.Stream;
 
 import java.util.Iterator;
 
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 /**
@@ -26,7 +26,7 @@ import org.reactivestreams.Subscriber;
  * 
  * @param <T> type of the event.
  */
-public class FromIteratorOp<T> implements Publisher<T> {
+public class FromIteratorOp<T> implements Stream<T> {
     private Iterator<T> iterator;
 
     public FromIteratorOp(Iterator<T> iterator) {

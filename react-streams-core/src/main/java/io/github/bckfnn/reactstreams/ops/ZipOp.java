@@ -13,6 +13,7 @@
  */
 package io.github.bckfnn.reactstreams.ops;
 
+import io.github.bckfnn.reactstreams.Stream;
 import io.github.bckfnn.reactstreams.Tuple;
 
 import java.util.LinkedList;
@@ -23,7 +24,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 
-public class ZipOp<T1, T2> implements Publisher<Tuple<T1, T2>> {
+public class ZipOp<T1, T2> implements Stream<Tuple<T1, T2>> {
 	Publisher<T1> o1;
 	Publisher<T2> o2;
 	Subscription i1;

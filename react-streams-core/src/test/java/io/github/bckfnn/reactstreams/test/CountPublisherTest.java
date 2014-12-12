@@ -1,6 +1,6 @@
 package io.github.bckfnn.reactstreams.test;
 
-import io.github.bckfnn.reactstreams.Builder;
+import io.github.bckfnn.reactstreams.Stream;
 
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -15,7 +15,7 @@ public class CountPublisherTest extends PublisherVerification<Integer> {
 
     @Override
     public Publisher<Integer> createPublisher(long elements) {
-        return Builder.counter(1).take((int) elements);
+        return Stream.counter(1).take((int) elements);
     }
 
     @Override

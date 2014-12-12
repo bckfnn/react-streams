@@ -14,7 +14,7 @@
 package io.github.bckfnn.reactstreams.ops;
 
 import io.github.bckfnn.reactstreams.BaseProcessor;
-import io.github.bckfnn.reactstreams.Operations;
+import io.github.bckfnn.reactstreams.Stream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public abstract class MapManyOp<T, R> extends BaseProcessor<T, R> {
     int count = 0;
     Subscription childSubscription;
     
-    public abstract Operations<R> map(T value) throws Throwable;
+    public abstract Stream<R> map(T value) throws Throwable;
 
 	@Override
     public void doNext(T value) {
