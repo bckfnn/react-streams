@@ -38,6 +38,7 @@ import io.github.bckfnn.reactstreams.ops.ToListOp;
 import io.github.bckfnn.reactstreams.ops.WhenDoneErrorOp;
 import io.github.bckfnn.reactstreams.ops.WhenDoneFuncOp;
 import io.github.bckfnn.reactstreams.ops.WhenDoneProcOp;
+import io.github.bckfnn.reactstreams.ops.WhenDonePublisherFuncOp;
 import io.github.bckfnn.reactstreams.ops.WhenDonePublisherOp;
 import io.github.bckfnn.reactstreams.ops.WhenDoneValueOp;
 import io.github.bckfnn.reactstreams.ops.ZipOp;
@@ -430,6 +431,10 @@ public interface Stream<O> extends Publisher<O> {
      */ 
     default public <R> Stream<R> whenDone(Func0<R> func) {
         return chain(new WhenDoneFuncOp<O, R>(func));
+    }
+    
+    default public <R> Stream<R> whenDoneFunc(Func0<Stream<R>> func) {
+        return chain(new WhenDonePublisherFuncOp<O, R>(func));
     }
 
     /**
