@@ -2,11 +2,9 @@ package io.github.bckfnn.reactstreams.vertx;
 
 import io.github.bckfnn.reactstreams.BaseProcessor;
 import io.github.bckfnn.reactstreams.BaseSubscription;
-import io.github.bckfnn.reactstreams.Builder;
-import io.github.bckfnn.reactstreams.Operations;
+import io.github.bckfnn.reactstreams.Stream;
 
 import org.reactivestreams.Processor;
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.Handler;
@@ -20,8 +18,8 @@ public class RsAsyncFile {
         this.asyncFile = asyncFile;
     }
 
-    public Operations<Buffer> read() {
-        return Builder.as(new Publisher<Buffer>() {
+    public Stream<Buffer> read() {
+        return new Stream<Buffer>() {
             @Override
             public void subscribe(Subscriber<? super Buffer> subscriber) {
                 subscriber.onSubscribe(new BaseSubscription<Buffer>(subscriber) {
@@ -70,7 +68,7 @@ public class RsAsyncFile {
                     }
                 });
             }
-        });
+        };
     }
     
     public Processor<Buffer, Void> write() {
@@ -94,8 +92,8 @@ public class RsAsyncFile {
 		};
     }
 
-    public Operations<Void> close() {
-        return Builder.as(new Publisher<Void>() {
+    public Stream<Void> close() {
+        return new Stream<Void>() {
             @Override
             public void subscribe(Subscriber<? super Void> subscriber) {
                 subscriber.onSubscribe(new BaseSubscription<Void>(subscriber) {
@@ -119,6 +117,6 @@ public class RsAsyncFile {
                     }
                 });
             }
-        });
+        };
     }
 }

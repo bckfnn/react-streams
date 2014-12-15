@@ -57,6 +57,89 @@ import org.reactivestreams.Subscription;
  * @param <O> the type of output elements.
  */
 public interface Stream<O> extends Publisher<O> {
+    
+    public static <O> Stream<O> as(Proc2<BaseSubscription<O>, Long> request, Proc1<BaseSubscription<O>> cancel) {
+        return new Stream<O>() {
+            @Override
+            public void subscribe(Subscriber<? super O> s) {
+                s.onSubscribe(new BaseSubscription<O>(s) {
+                    @Override
+                    public void cancel() {
+                        try {
+                            cancel.apply(this);
+                        } catch (Throwable exc) {
+                            s.onError(exc);
+                        }
+                    }
+
+                    @Override
+                    public void request(long elements) {
+                        try {
+                            request.apply(this, elements);
+                        } catch (Throwable exc) {
+                            s.onError(exc);
+                        }
+                    }
+                });
+            }
+        };
+    }
+        
+    
+    public static <O> Stream<O> asOne(Proc1<BaseSubscription<O>> request) {
+        return new Stream<O>() {
+            @Override
+            public void subscribe(Subscriber<? super O> s) {
+                s.onSubscribe(new BaseSubscription<O>(s) {
+                    boolean fired = false;
+                    @Override
+                    public void request(long elements) {
+                        if (fired) {
+                            return;
+                        }
+                        fired = true;
+                        try {
+                            request.apply(this);
+                        } catch (Throwable exc) {
+                            sendError(exc);
+                        }
+                    }
+                });
+            }
+        };
+    }
+    public static <O> Stream<O> as(Proc2<BaseSubscription<O>, Long> request) {
+        return new Stream<O>() {
+            @Override
+            public void subscribe(Subscriber<? super O> s) {
+                s.onSubscribe(new BaseSubscription<O>(s) {
+                    @Override
+                    public void request(long elements) {
+                        try {
+                            request.apply(this, elements);
+                        } catch (Throwable exc) {
+                            s.onError(exc);
+                        }
+                    }
+                });
+            }
+        };
+    }
+        
+ 
+    
+    class SubscriberSpec<T> {
+        Proc1<Integer> onRequest; 
+        Proc0 onCancel;
+        public void next(T value) {}
+        public void handled() {}
+        public void onRequest(Proc1<Integer> func) throws Throwable {
+            onRequest = func;
+        };
+        public void onCancel(Proc0 func) throws Throwable {
+            onCancel = func;
+        };
+    }
     /**
      * Create and return a new <code>Builder</code> that emit a single value.
      * @param value the value.
@@ -148,8 +231,8 @@ public interface Stream<O> extends Publisher<O> {
     }
     
     /**
-     * Chain the publisher in this builder to the specified processor.
-     * Return a new builder with the processor as the publisher.
+     * Chain the publisher in this builder to the specified subscriber.
+     * Return the subscriber.
      * @param subscriber the subscriber / publisher that is chained to this.
      * @param <S> type the new builder that is returned.
      * @return a new builder that wraps the processor.
@@ -159,6 +242,20 @@ public interface Stream<O> extends Publisher<O> {
         return subscriber;
     }
 
+    /**
+     * Chain the publisher in this builder to the specified processor.
+     * Return a new builder with the processor as the publisher.
+     * @param processor the processor that is chained to this.
+     * @param <X> type the new builder that is returned.
+     * @param <S> type the processor that is chained.
+     * @return the processor or a Stream that wrap the processor.
+     */
+
+    default public <X , S extends BaseProcessor<? super O, X>> Stream<X> chain(final S processor) {
+        this.subscribe(processor);
+        return (Stream<X>) processor;
+    }
+    
     /*
      * map operations.
      */
@@ -366,7 +463,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new builder that wraps the output.
      */
     default public Stream<O> continueWithError(Throwable error) {
-        return chain(new ContinueWithErrorOp<>(error));
+        return chain(new ContinueWithErrorOp<O>(error));
     }
 
     /**

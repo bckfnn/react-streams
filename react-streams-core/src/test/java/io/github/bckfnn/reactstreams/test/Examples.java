@@ -21,4 +21,26 @@ public class Examples {
         .printStream("last", System.out)
         .start(1);
     }
+    
+    @Test
+    public void testBuild() {
+        /*
+        Stream.as(s -> {
+            s.onRequest(x -> {
+                s.next("abc");
+                s.handled();
+            });
+            s.onCancel(() -> {});
+        });
+        */
+        
+        Stream
+        .asOne(s -> {
+            System.out.println("req");
+            s.sendNext("abc");
+            s.sendComplete();
+        })
+        .printStream("build", System.out)
+        .start(1);
+    }
 }

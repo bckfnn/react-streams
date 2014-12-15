@@ -1,8 +1,6 @@
 package io.github.bckfnn.reactstreams.vertx;
 
-import io.github.bckfnn.reactstreams.BaseSubscription;
-import io.github.bckfnn.reactstreams.Builder;
-import io.github.bckfnn.reactstreams.Operations;
+import io.github.bckfnn.reactstreams.Stream;
 
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.Vertx;
@@ -20,26 +18,15 @@ public class RsEventBus {
 	}
 
 
-	public Operations<JsonObject> send(String address, JsonObject msg) {
-		return Builder.as(subscriber -> {
-			subscriber.onSubscribe(new BaseSubscription<JsonObject>(subscriber) {
-				boolean done = false;
-				@Override
-				public void request(long elements) {
-					System.out.println("request:" + elements);
-					super.request(elements);
-					if (done) {
-						return;
-					}
-					eventBus.send(address, msg, new Handler<Message<JsonObject>>() {
-						@Override
-						public void handle(Message<JsonObject> event) {
-							sendNext(event.body());
-							sendComplete();
-						}
-					});
-				}
-			});
+	public Stream<JsonObject> send(String address, JsonObject msg) {
+		return Stream.asOne(subscription -> {
+		    eventBus.send(address, msg, new Handler<Message<JsonObject>>() {
+		        @Override
+		        public void handle(Message<JsonObject> event) {
+		            subscription.sendNext(event.body());
+		            subscription.sendComplete();
+		        }
+		    });
 		});
 	}
 }

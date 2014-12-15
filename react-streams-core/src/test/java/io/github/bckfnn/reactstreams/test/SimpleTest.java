@@ -13,9 +13,9 @@
  */
 package io.github.bckfnn.reactstreams.test;
 
+import io.github.bckfnn.reactstreams.Func1;
 import io.github.bckfnn.reactstreams.Pipe;
 import io.github.bckfnn.reactstreams.Stream;
-import io.github.bckfnn.reactstreams.Func1;
 import io.github.bckfnn.reactstreams.Tuple;
 import io.github.bckfnn.reactstreams.ops.AccumulatorOp;
 import io.github.bckfnn.reactstreams.ops.FilterOp;
@@ -32,7 +32,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.reactivestreams.Processor;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
