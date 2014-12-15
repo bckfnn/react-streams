@@ -8,9 +8,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.bckfnn</groupId>
     <artifactId>react-streams-arangodb</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>react-streams-arangodb</name>
 
@@ -34,6 +32,12 @@
             <groupId>io.github.bckfnn</groupId>
             <artifactId>react-streams-core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpasyncclient</artifactId>
+            <version>4.0.2</version>
         </dependency>
 
         <!-- testing -->

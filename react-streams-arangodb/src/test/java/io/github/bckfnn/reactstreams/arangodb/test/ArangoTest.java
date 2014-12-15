@@ -24,13 +24,12 @@ public class ArangoTest extends TestVerticle {
         return client
                 .init("127.0.0.1", 8529)
                 .printStream("after connect", System.out)
-                .whenDoneValue(client.createDatabase("test"))
-                .chain(client.process());
+                .whenDone(client.getDatabase("test").databaseCreate());
     }
 
     //@Test
     public void initTest() {
-        final Client client = new Client(getVertx());
+        final Client client = new Client(null);
         init(client)
         .printStream("after open", System.out)
         .whenDone(client.close())
@@ -43,12 +42,11 @@ public class ArangoTest extends TestVerticle {
 
     //@Test
     public void initListdatabases() {
-        final Client client = new Client(getVertx());
+        final Client client = new Client(null);
         init(client)
         .printStream("after init", System.out)
-        .whenDoneValue(client.listDatabases())
+        .whenDone(client.databasesList())
         .printStream("after list ", System.out)
-        .chain(client.process())
         .printStream("after list process", System.out)
         .whenDone(() -> VertxAssert.testComplete())
         .start(1);
@@ -56,15 +54,14 @@ public class ArangoTest extends TestVerticle {
 
     //@Test
     public void save() {
-        final Client client = new Client(getVertx());
+        final Client client = new Client(null);
         init(client)
         .whenDone(() -> {
             JsonObject v = new JsonObject();
             v.putString("name", "the name");
             v.putNumber("value", 1233);
-            return client.getDatabase("test").getCollection("test").createDocument(v, true);            
+            return client.getDatabase("test").documentCreate("test", true, true, v);            
         })
-        .chain(client.process())
         .printStream("after save", System.out)
         .whenDone(() -> VertxAssert.testComplete())
         .start(1);
@@ -72,7 +69,7 @@ public class ArangoTest extends TestVerticle {
 
     //@Test
     public void saveMultiple() {
-        final Client client = new Client(getVertx());
+        final Client client = new Client(null);
 
         List<Integer> lst = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
@@ -85,9 +82,8 @@ public class ArangoTest extends TestVerticle {
             JsonObject v = new JsonObject();
             v.putString("name", "the name");
             v.putNumber("value", i);
-            return client.getDatabase("test").getCollection("test").createDocument(v, true);
+            return client.getDatabase("test").documentCreate("test", true, true, v);
         })
-        .chain(client.process())
         .printStream("after save", System.out)
         .whenDone(() -> VertxAssert.testComplete())
         .start(1);
@@ -95,21 +91,19 @@ public class ArangoTest extends TestVerticle {
 
     //@Test
     public void load() {
-        final Client client = new Client(getVertx());
+        final Client client = new Client(null);
         init(client)
-        .whenDone(() -> {
+        .whenDoneFunc(() -> {
             JsonObject v = new JsonObject();
             v.putString("name", "the name");
             v.putNumber("value", 1233);
-            return client.getDatabase("test").getCollection("test").createDocument(v, true);            
+            return client.getDatabase("test").documentCreate("test", true, true, v);            
         })
-        .chain(client.process())
-        .map((r) -> r.getBody().getString("_key"))
-        .map((key) -> {
-            return client.getDatabase("test").getCollection("test").loadDocument(key);
+        .map(r -> r._key)
+        .mapMany(key -> {
+            return client.getDatabase("test").documentLoad(key);
         })
-        .chain(client.process())
-        .map((r) -> r.getBody())
+        .map(r -> r.doc)
         .printStream("after load", System.out)
         .whenDone(() -> VertxAssert.testComplete())
         .start(1);
@@ -118,27 +112,24 @@ public class ArangoTest extends TestVerticle {
 
     //@Test
     public void update() {
-        final Client client = new Client(getVertx());
+        final Client client = new Client(null);
         init(client)
-        .whenDone(() -> {
+        .whenDoneFunc(() -> {
             JsonObject v = new JsonObject();
             v.putString("name", "the name");
             v.putNumber("value", 1233);
-            return client.getDatabase("test").getCollection("test").createDocument(v, true);            
+            return client.getDatabase("test").documentCreate("test", true, true, v);            
         })
-        .chain(client.process())
-        .map((r) -> r.getBody().getString("_key"))
-        .map((key) -> {
-            return client.getDatabase("test").getCollection("test").loadDocument(key);
+        .map(r -> r._key)
+        .mapMany(key -> {
+            return client.getDatabase("test").documentLoad(key);
         })
-        .chain(client.process())
-        .map((r) -> r.getBody())
         .printStream("after load", System.out)
-        .map((doc) -> {
-            doc.putNumber("value",  doc.getNumber("value").intValue() + 1);
-            return client.getDatabase("test").getCollection("test").updateDocument(doc);
+        .mapMany(r -> {
+            int n = (Integer) r.doc.get("value");
+            r.doc.put("value",  n + 1);
+            return client.getDatabase("test").documentUpdate(r._key, r._rev, true, true, "pol", r.doc);
         })
-        .chain(client.process())
         .printStream("after save", System.out)
         .whenDone(() -> VertxAssert.testComplete())
         .start(1);
