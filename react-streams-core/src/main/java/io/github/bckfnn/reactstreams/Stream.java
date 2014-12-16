@@ -216,9 +216,9 @@ public interface Stream<O> extends Publisher<O> {
      * Chain the publisher in this stream to the specified processor.
      * Return a new stream with the processor as the publisher.
      * @param processor the processor that is chained to this.
-     * @param <X> type the new stream that is returned.
-     * @param <S> type the processor that is chained.
-     * @return the processor or a Stream that wrap the processor.
+     * @param <X> type of the new stream that is returned.
+     * @param <S> type of the processor that is chained.
+     * @return the processor or a {@code Stream<X>} that wrap the processor.
      */
 
     default public <X , S extends BaseProcessor<? super O, X>> Stream<X> chain(final S processor) {
@@ -233,8 +233,8 @@ public interface Stream<O> extends Publisher<O> {
     /**
      * Add a map operation to the output from this publisher.
      * @param mapFunc a function that transform each value.
-     * @param <R> type the output from the transform.
-     * @return a new stream that wraps the output.
+     * @param <R> type of the output from the transform.
+     * @return a new {@code Stream<R>}.
      */
     default public <R> Stream<R> map(final Func1<O, R> mapFunc) {
         return chain(new MapOp<O, R>() {
@@ -248,8 +248,8 @@ public interface Stream<O> extends Publisher<O> {
     /**
      * Add a mapMany operation to the output from this publisher.
      * @param mapFunc a function that transform each value.
-     * @param <R> type the output from the transform.
-     * @return a new stream that wraps the output.
+     * @param <R> type of the output from the transform.
+     * @return a new {@code Stream<R>}.
      */
     default public <R> Stream<R> mapMany(final Func1<O, Stream<R>> mapFunc) {
         return chain(new MapManyOp<O, R>() {
@@ -263,8 +263,8 @@ public interface Stream<O> extends Publisher<O> {
     /**
     * Add a mapManyWith operation to the output from this publisher.
     * @param mapFunc a function that transform each value.
-    * @param <R> type the output from the transform.
-    * @return a new stream that wraps the output.
+    * @param <R> type of the output from the transform.
+    * @return a new {@code Stream<Tuple<O, R>>} where each tuple contains the input value and mapped value.
     */
     default public <R> Stream<Tuple<O, R>> mapManyWith(final Func1<O, Stream<R>> mapFunc) {
         return chain(new MapManyWithOp<O, R>() {
@@ -283,7 +283,7 @@ public interface Stream<O> extends Publisher<O> {
     /**
      * Add a <code>last</code> operation to the output from this publisher. 
      * The last operation will ignore all output except the very last element. 
-     * @return a new stream that wraps the output.
+     * @return a new {@code Stream<O>} with a single element.
      */
     default public Stream<O> last() {
         return chain(new LastOp<O>());
@@ -293,7 +293,7 @@ public interface Stream<O> extends Publisher<O> {
      * Add a <code>skip</code> operation to the output from this publisher. 
      * The skip operation will ignore the first <code>cnt</code> elements in the output and emit the rest of the output.
      * @param cnt the number of elements to skip. 
-     * @return a new stream that wraps the output.
+     * @return a new {@code Stream<O>}
      */
     default public Stream<O> skip(int cnt) {
         return chain(new SkipOp<O>(cnt));
@@ -304,7 +304,7 @@ public interface Stream<O> extends Publisher<O> {
      * The take operation will output the first <code>cnt</code> elements and then 
      * cancel the this publisher. 
      * @param cnt the number of elements to take.
-     * @return a new stream that wraps the output.
+     * @return a new {@code Stream<O>}
      */
     default public Stream<O> take(int cnt) {
         return chain(new TakeOp<O>(cnt));
@@ -313,10 +313,24 @@ public interface Stream<O> extends Publisher<O> {
     /**
      * Add a <code>nop</code> operation to the output from this publisher. 
      * The nop operation does nothing at all.
-     * @return a new stream that wraps the output.
+     * @return a new {@code Stream<O>}
      */
     default public Stream<O> nop() {
         return chain(new NopOp<O>());
+    }
+    
+    /**
+     * Add a <code>ignore</code> operation to the output from this publisher. 
+     * The ignore operation ignore all values and send only {@link Subscriber#onComplete()} and {@link Subscriber#onError(Throwable)}.
+     * @return a new {@code Stream<O>}
+     */
+    default public Stream<O> ignore() {
+        return chain(new NopOp<O>() {
+            @Override
+            public void doNext(O value) {
+                handled();
+            }
+        });
     }
 
     /**
@@ -333,7 +347,7 @@ public interface Stream<O> extends Publisher<O> {
      * Add a <code>done</code> operation to the output from this publisher. 
      * The done operation will at the first <code>request(n)</code> call cancel this publisher 
      * and emit a <code>onComplete()</code>.
-     * @return a new stream that wraps the output.
+     *@return a new {@link Stream}
      */
     default public Stream<O> done() {
         return chain(new DoneOp<O>());
@@ -344,7 +358,7 @@ public interface Stream<O> extends Publisher<O> {
      * The filter operation will emit all the elements where the predicate <code>func</code> 
      * return true. 
      * @param func the predicate function.
-     * @return a new stream that wraps the output.
+     * @return a new {@link Stream}
      */ 
     default public Stream<O> filter(Func1<O, Boolean> func) {
         return chain(new FilterOp<O>() {
@@ -361,7 +375,7 @@ public interface Stream<O> extends Publisher<O> {
      * is complete it will emit the single <code>value</code> element
      * @param value the value.
      * @param <R> the type of the output value.
-     * @return a new stream that wraps the output.
+     * @return a new {@link Stream}
      */ 
     default public <R> Stream<R> whenDoneValue(R value) {
         return chain(new WhenDoneValueOp<O, R>(value));
@@ -372,7 +386,7 @@ public interface Stream<O> extends Publisher<O> {
      * The whenDoneError operation will ignore all the input elements and when the publisher 
      * is complete it will emit the <code>error</code> event.
      * @param error the error.
-     * @return a new stream that wraps the output.
+     * @return a new {@link Stream}
      */ 
     default public Stream<O> whenDoneError(Throwable error) {
         return chain(new WhenDoneErrorOp<O>(error));
@@ -383,7 +397,7 @@ public interface Stream<O> extends Publisher<O> {
      * The whenDone operation will ignore all the input elements and when the publisher 
      * is complete it will call the function.
      * @param func the function to call.
-     * @return a new stream that wraps the output.
+     * @return a new {@link Stream}
      */ 
     default public Stream<O> whenDone(Proc0 func) {
         return chain(new WhenDoneProcOp<O>(func));
@@ -396,7 +410,7 @@ public interface Stream<O> extends Publisher<O> {
      * is complete it will emit the single element from the specified <code>func</code>.
      * @param func the function that return the next value.
      * @param <R> the type of the output values.
-     * @return a new stream that wraps the output.
+     * @return a new {@link Stream}
      */ 
     default public <R> Stream<R> whenDone(Func0<R> func) {
         return chain(new WhenDoneFuncOp<O, R>(func));
@@ -412,7 +426,7 @@ public interface Stream<O> extends Publisher<O> {
      * is complete it will emit the elements from the specified <code>publisher</code> element.
      * @param publisher the publisher.
      * @param <R> the type of the output values.
-     * @return a new stream that wraps the output.
+     * @return a new {@link Stream}
      */ 
     default public <R> Stream<R> whenDone(Publisher<R> publisher) {
         return chain(new WhenDonePublisherOp<O, R>(publisher));
@@ -423,7 +437,7 @@ public interface Stream<O> extends Publisher<O> {
      * The continueWithValue operation will pass through all the input elements and when 
      * the publisher is complete it will emit the <code>value</code>.
      * @param value the value.
-     * @return a new stream that wraps the output.
+     * @return a new {@link Stream}
      */ 
     default public Stream<O> continueWithValue(O value) {
         return null;
@@ -434,7 +448,7 @@ public interface Stream<O> extends Publisher<O> {
      * The continueWithError operation will pass through all the input elements and when 
      * the publisher is complete it will emit the <code>error</code>.
      * @param error the error exception.
-     * @return a new stream that wraps the output.
+     * @return a new {@link Stream}
      */
     default public Stream<O> continueWithError(Throwable error) {
         return chain(new ContinueWithErrorOp<O>(error));
@@ -446,7 +460,7 @@ public interface Stream<O> extends Publisher<O> {
      * the publisher is complete it will call the <code>func</code> function.
      * It is the responsibility of the <code>func</code> function to call onComplete().
      * @param func the function to call when all elements is processed.
-     * @return a new stream that wraps the output.
+     * @return a new {@link Stream}
      */ 
     default public Stream<O> continueWith(Proc0 func) {
         return chain(new ContinueWithProcOp<O>(func));
@@ -458,7 +472,7 @@ public interface Stream<O> extends Publisher<O> {
      * the publisher is complete it will pass trough all the elements from the 
      * <code>publisher</code>.
      * @param publisher the publisher.
-     * @return a new stream that wraps the output.
+     * @return a new {@link Stream}
      */ 
     default public Stream<O> continueWith(Publisher<O> publisher) {
         return null;
@@ -468,7 +482,7 @@ public interface Stream<O> extends Publisher<O> {
      * Add a <code>delegate</code> operation to the output from this publisher. 
      * The delegate operation send all input events to the specified <code>subscriber</code>. 
      * @param subscriber the subscriber.
-     * @return a new stream that wraps the output.
+     * @return a new {@link Stream}
      */ 
     default public Stream<O> delegate(Subscriber<O> subscriber) {
         return chain(new DelegateOp<O>(subscriber));
@@ -478,7 +492,7 @@ public interface Stream<O> extends Publisher<O> {
      * Add an <code>onEach</code> operation to the output from this publisher.
      * @param func the function to call for each input element. 
      * The input elements are not passed through.
-     * @return a new stream that wraps the output.
+     * @return a new {@link Stream}
      */
     default  public Stream<O> onEach(Proc2<O, BaseProcessor<O, O>> func) {
         return chain(new NopOp<O>() {
@@ -497,7 +511,7 @@ public interface Stream<O> extends Publisher<O> {
      * Add an <code>each</code> operation to the output from this publisher.
      * @param func the function to call for each input element. 
      * The input elements are passed through.
-     * @return a new stream that wraps the output.
+     * @return a new {@link Stream}
      */
     default public Stream<O> each(Proc1<O> func) {
         return chain(new NopOp<O>() {
@@ -522,7 +536,7 @@ public interface Stream<O> extends Publisher<O> {
      * @param func the function to call for each input element. 
      * The input elements are not passed through.
      * @param <R> the type of the output values.
-     * @return a new stream that wraps the output.
+     * @return a new {@link Stream}
      */
     default public <R> Stream<R> onFinally(Func0<Stream<R>> func) {
         return chain(new FinallyOp<O, R>() {
@@ -539,7 +553,7 @@ public interface Stream<O> extends Publisher<O> {
      * is called and the original end event is passed on.
      * @param <R> the type of the output values.
      * @param func the function that is called when this publisher ends.
-     * @return a new stream that wraps the output.
+     * @return a new {@link Stream}
      */
     default public <R> Stream<R> onFinally(Proc0 func) {
         return chain(new BaseProcessor<O, R>() {
@@ -583,7 +597,7 @@ public interface Stream<O> extends Publisher<O> {
      * The output is prefixed with the <code>name</code>.
      * @param prefix the prefix in the output.
      * @param printStream the print stream that is written to.
-     * @return a new stream that wraps the output.
+     * @return a new {@link Stream}
      */ 
     default public Stream<O> printStream(String prefix, PrintStream printStream) {
         return chain(new PrintStreamOp<O>(prefix, printStream));
@@ -593,7 +607,7 @@ public interface Stream<O> extends Publisher<O> {
      * Add a <code>toList</code> operation to the output from this publisher. 
      * The toList operation will collect all the input elements in a java.util.List and when 
      * the publisher is complete it will emit the list..
-     * @return a new stream that wraps the output.
+     * @return a new {@link Stream}
      */ 
     default public Stream<List<O>> toList() {
         return chain(new ToListOp<O>());
@@ -606,7 +620,7 @@ public interface Stream<O> extends Publisher<O> {
      * After each calculation the result is emitted.  
      * @param initial an initial seed value. Can be <code>null</code>.
      * @param func the accumulate function.
-     * @return a new stream that wraps the output.
+     * @return a new {@link Stream}
      */
     default public Stream<O> accumulate(O initial, final Func2<O, O, O> func) {
         return chain(new AccumulatorOp<O>(initial) {
@@ -649,5 +663,4 @@ public interface Stream<O> extends Publisher<O> {
             }
         });
     }
-
 }
