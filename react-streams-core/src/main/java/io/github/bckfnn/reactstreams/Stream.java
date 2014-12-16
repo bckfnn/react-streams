@@ -109,38 +109,7 @@ public interface Stream<O> extends Publisher<O> {
             }
         };
     }
-    public static <O> Stream<O> as(Proc2<BaseSubscription<O>, Long> request) {
-        return new Stream<O>() {
-            @Override
-            public void subscribe(Subscriber<? super O> s) {
-                s.onSubscribe(new BaseSubscription<O>(s) {
-                    @Override
-                    public void request(long elements) {
-                        try {
-                            request.apply(this, elements);
-                        } catch (Throwable exc) {
-                            s.onError(exc);
-                        }
-                    }
-                });
-            }
-        };
-    }
-        
- 
-    
-    class SubscriberSpec<T> {
-        Proc1<Integer> onRequest; 
-        Proc0 onCancel;
-        public void next(T value) {}
-        public void handled() {}
-        public void onRequest(Proc1<Integer> func) throws Throwable {
-            onRequest = func;
-        };
-        public void onCancel(Proc0 func) throws Throwable {
-            onCancel = func;
-        };
-    }
+
     /**
      * Create and return a new <code>Builder</code> that emit a single value.
      * @param value the value.
