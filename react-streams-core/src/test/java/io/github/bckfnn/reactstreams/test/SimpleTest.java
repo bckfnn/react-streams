@@ -927,23 +927,18 @@ public class SimpleTest {
     /**
      * Test pipe.
      */
-    //@Test
+    @Test
     public void testPipe() {
         Keep<String> keep = new Keep<>();
         Stream.from(1, 2, 3, 4, 5).
         chain(makePipe()).
         chain(keep).
         start(1);
+        keep.assertEquals("x2", "x4");
     }
     
     private Pipe<Integer, String> makePipe() {
-        return null;
-        /*
-        return Stream.<Integer> newPipe().
-                filter(v -> v % 2 == 0).
-                map(v -> "x" + v).
-                asPipe();
-                */
+        return Stream.asPipe(pipe -> pipe.filter(v -> v % 2 == 0).map(v -> "x" + v));
     }
 
     /**

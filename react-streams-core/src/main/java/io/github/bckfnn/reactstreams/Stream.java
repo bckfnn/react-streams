@@ -202,12 +202,48 @@ public interface Stream<O> extends Publisher<O> {
     }
     
     /**
-     * @param <O> type of the stream.
+     * Creates a new Pipe around the Stream returned from the function.
+     * A pipe keep track of the head of the sequence.  
+     * @param <T> type of input to the pipe.
+     * @param <O> type of output from the pipe.
      * @return a new pipe
      */
-    public static <O> Pipe<O, O> newPipe() {
-         return null;
-    }
+    public static <T, O> Pipe<T, O> asPipe(Func1<Stream<T>, Stream<O>> func) {
+        BaseProcessor<T, T> head = new NopOp<T>();
+        try {
+            Stream<O> tail = func.apply(head);
+            Pipe<T, O> pipe = new Pipe<T, O>() {
+                @Override
+                public void onSubscribe(Subscription s) {
+                    head.onSubscribe(s);
+                }
+
+                @Override
+                public void onNext(T t) {
+                    head.sendNext(t);
+                }
+
+                @Override
+                public void onError(Throwable t) {
+                    head.sendError(t);
+                }
+
+                @Override
+                public void onComplete() {
+                    head.sendComplete();
+                }
+
+                @Override
+                public void subscribe(Subscriber<? super O> s) {
+                    tail.subscribe(s);
+                }
+            };
+            return pipe;
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+           // return error(e);
+        }
+     }
     
     /**
      * Chain the publisher in this stream to the specified subscriber.
