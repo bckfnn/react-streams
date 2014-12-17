@@ -83,6 +83,8 @@ public class Keep<T> extends BaseProcessor<T, T> {
 
     /**
      * Assert that the publisher emitted the values and then emitted the exc exception.
+     * @param exc the expected exception.
+     * @param values the expected values.
      * @return self.
      */
     @SuppressWarnings("unchecked")
@@ -98,6 +100,7 @@ public class Keep<T> extends BaseProcessor<T, T> {
 
     /**
      * Assert that the publisher emitted the values and then emitted onComplete.
+     * @param values the expected values.
      * @return self.
      */
 	@SuppressWarnings("unchecked")

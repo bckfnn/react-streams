@@ -483,6 +483,7 @@ public class SimpleTest {
 
     /**
      * Test a mapMany operation.
+     * @throws InterruptedException exception.
      */
     @Test
     public void testMapMany6() throws InterruptedException {

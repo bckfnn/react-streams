@@ -62,6 +62,7 @@ public interface Stream<O> extends Publisher<O> {
      * Create a new stream based on the responses from the <code>request</code> and <code>cancel</code> functions.
      * @param request A function called for each invocation of {@link Subscription#request(long)}.
      * @param cancel A function called for the invocation of {@link Subscription#cancel()}
+     * @param <O> type of the stream.
      * @return a new {@link Stream}
      */
     public static <O> Stream<O> as(Proc2<BaseSubscription<O>, Long> request, Proc1<BaseSubscription<O>> cancel) {
@@ -94,6 +95,7 @@ public interface Stream<O> extends Publisher<O> {
     /**
      * Return a new Stream that emit elements from the <code>request</code> function.
      * @param request A function, that is only called once and which can emit elements to the stream
+     * @param <O> type of the stream.
      * @return a new {@link Stream}
      */
     public static <O> Stream<O> asOne(Proc1<BaseSubscription<O>> request) {
@@ -203,7 +205,8 @@ public interface Stream<O> extends Publisher<O> {
     
     /**
      * Creates a new Pipe around the Stream returned from the function.
-     * A pipe keep track of the head of the sequence.  
+     * A pipe keep track of the head of the sequence.
+     * @param func the function that build the stream inside the pipe.  
      * @param <T> type of input to the pipe.
      * @param <O> type of output from the pipe.
      * @return a new pipe
@@ -456,6 +459,7 @@ public interface Stream<O> extends Publisher<O> {
      * The whenDoneFunc will ignore all the input elements and when the publisher is complete it will emit 
      * the elements from the returned Stream.
      * @param func a function that return a another Stream.
+     * @param <R> type of the stream.
      * @return a new {@link Stream}.
      */
     default public <R> Stream<R> whenDoneFunc(Func0<Stream<R>> func) {
