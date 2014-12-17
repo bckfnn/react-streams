@@ -16,7 +16,7 @@ public class Examples {
     public void testFilter() {
         Stream.from(1, 2, 3, 4, 5, 6, 7)
         .filter(x -> (x % 2) == 0)
-        .printStream("filter", System.out)
+        .print("filter", System.out)
         .start(1);
     }
 
@@ -27,7 +27,7 @@ public class Examples {
     public void testLast() {
         Stream.from(1, 2, 3, 4)
         .last()
-        .printStream("last", System.out)
+        .print("last", System.out)
         .start(1);
     }
     
@@ -52,7 +52,7 @@ public class Examples {
             s.sendNext("abc");
             s.sendComplete();
         })
-        .printStream("build", System.out)
+        .print("build", System.out)
         .start(1);
     }
 }

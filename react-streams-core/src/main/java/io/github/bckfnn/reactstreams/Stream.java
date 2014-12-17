@@ -13,34 +13,10 @@
  */
 package io.github.bckfnn.reactstreams;
 
-import io.github.bckfnn.reactstreams.ops.AccumulatorOp;
-import io.github.bckfnn.reactstreams.ops.ConcatOp;
-import io.github.bckfnn.reactstreams.ops.ContinueWithErrorOp;
-import io.github.bckfnn.reactstreams.ops.ContinueWithProcOp;
-import io.github.bckfnn.reactstreams.ops.CounterOp;
-import io.github.bckfnn.reactstreams.ops.DelegateOp;
-import io.github.bckfnn.reactstreams.ops.DoneOp;
-import io.github.bckfnn.reactstreams.ops.FilterOp;
-import io.github.bckfnn.reactstreams.ops.FinallyOp;
-import io.github.bckfnn.reactstreams.ops.FromArrayOp;
-import io.github.bckfnn.reactstreams.ops.FromErrorOp;
-import io.github.bckfnn.reactstreams.ops.FromIteratorOp;
-import io.github.bckfnn.reactstreams.ops.FromValueOp;
-import io.github.bckfnn.reactstreams.ops.LastOp;
-import io.github.bckfnn.reactstreams.ops.MapManyOp;
-import io.github.bckfnn.reactstreams.ops.MapManyWithOp;
-import io.github.bckfnn.reactstreams.ops.MapOp;
-import io.github.bckfnn.reactstreams.ops.NopOp;
-import io.github.bckfnn.reactstreams.ops.PrintStreamOp;
-import io.github.bckfnn.reactstreams.ops.SkipOp;
-import io.github.bckfnn.reactstreams.ops.TakeOp;
-import io.github.bckfnn.reactstreams.ops.ToListOp;
-import io.github.bckfnn.reactstreams.ops.WhenDoneErrorOp;
-import io.github.bckfnn.reactstreams.ops.WhenDoneFuncOp;
-import io.github.bckfnn.reactstreams.ops.WhenDonePublisherFuncOp;
-import io.github.bckfnn.reactstreams.ops.WhenDonePublisherOp;
-import io.github.bckfnn.reactstreams.ops.WhenDoneValueOp;
-import io.github.bckfnn.reactstreams.ops.ZipOp;
+import io.github.bckfnn.reactstreams.ops.Filters;
+import io.github.bckfnn.reactstreams.ops.Flows;
+import io.github.bckfnn.reactstreams.ops.Streams;
+import io.github.bckfnn.reactstreams.ops.Transforms;
 
 import java.io.PrintStream;
 import java.util.Collection;
@@ -128,7 +104,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return the new stream.
      */
     public static <O> Stream<O> from(O value) {
-        return new FromValueOp<O>(value);
+        return new Streams.Value<O>(value);
     }
     
     /**
@@ -139,7 +115,7 @@ public interface Stream<O> extends Publisher<O> {
      */
     @SafeVarargs
     public static <T> Stream<T> from(T... values) {
-        return new FromArrayOp<>(values);
+        return new Streams.Array<>(values);
     }
 
     /**
@@ -149,7 +125,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return the new stream.
      */
     public static <T> Stream<T> from(Collection<T> collection) {
-        return new FromIteratorOp<T>(collection.iterator());
+        return new Streams.Iter<T>(collection.iterator());
     }
 
     /**
@@ -159,7 +135,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return the new stream.
      */
     public static <T> Stream<T> error(Throwable error) {
-        return new FromErrorOp<>(error);
+        return new Streams.Error<>(error);
     }
 
     /**
@@ -170,7 +146,7 @@ public interface Stream<O> extends Publisher<O> {
      */
     @SafeVarargs
     public static <T> Stream<T> concat(Publisher<T>... list) {
-        return new ConcatOp<T>(list);
+        return new Transforms.Concat<T>(list);
     }
 
     /**
@@ -178,7 +154,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return the new stream.
      */
     public static Stream<Integer> counter() {
-        return new CounterOp(0);
+        return new Streams.Counter(0);
     }
 
     /**
@@ -187,7 +163,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return the new stream.
      */
     public static Stream<Integer> counter(int start) {
-        return new CounterOp(start);
+        return new Streams.Counter(start);
     }
 
     /**
@@ -200,7 +176,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return the new stream.
      */
     public static <T1, T2> Stream<Tuple<T1, T2>> zip(Publisher<T1> p1, Publisher<T2> p2) {
-        return new ZipOp<T1, T2>(p1, p2);
+        return new Transforms.Zip<T1, T2>(p1, p2);
     }
     
     /**
@@ -212,7 +188,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new pipe
      */
     public static <T, O> Pipe<T, O> asPipe(Func1<Stream<T>, Stream<O>> func) {
-        BaseProcessor<T, T> head = new NopOp<T>();
+        BaseProcessor<T, T> head = new Filters.Nop<T>();
         try {
             Stream<O> tail = func.apply(head);
             Pipe<T, O> pipe = new Pipe<T, O>() {
@@ -285,7 +261,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@code Stream<R>}.
      */
     default public <R> Stream<R> map(final Func1<O, R> mapFunc) {
-        return chain(new MapOp<O, R>() {
+        return chain(new Transforms.Map<O, R>() {
             @Override
             public R map(O value) throws Throwable {
                 return mapFunc.apply(value);
@@ -300,7 +276,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@code Stream<R>}.
      */
     default public <R> Stream<R> mapMany(final Func1<O, Stream<R>> mapFunc) {
-        return chain(new MapManyOp<O, R>() {
+        return chain(new Transforms.MapMany<O, R>() {
             @Override
             public Stream<R> map(O value) throws Throwable {
                 return mapFunc.apply(value);
@@ -315,7 +291,7 @@ public interface Stream<O> extends Publisher<O> {
     * @return a new {@code Stream<Tuple<O, R>>} where each tuple contains the input value and mapped value.
     */
     default public <R> Stream<Tuple<O, R>> mapManyWith(final Func1<O, Stream<R>> mapFunc) {
-        return chain(new MapManyWithOp<O, R>() {
+        return chain(new Transforms.MapManyWith<O, R>() {
             @Override
             public Stream<R> map(O value) throws Throwable {
                 return mapFunc.apply(value);
@@ -334,7 +310,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@code Stream<O>} with a single element.
      */
     default public Stream<O> last() {
-        return chain(new LastOp<O>());
+        return chain(new Filters.Last<O>());
     }
 
     /**
@@ -344,7 +320,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@code Stream<O>}
      */
     default public Stream<O> skip(int cnt) {
-        return chain(new SkipOp<O>(cnt));
+        return chain(new Filters.Skip<O>(cnt));
     }
 
     /**
@@ -355,7 +331,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@code Stream<O>}
      */
     default public Stream<O> take(int cnt) {
-        return chain(new TakeOp<O>(cnt));
+        return chain(new Filters.Take<O>(cnt));
     }
 
     /**
@@ -364,7 +340,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@code Stream<O>}
      */
     default public Stream<O> nop() {
-        return chain(new NopOp<O>());
+        return chain(new Filters.Nop<O>());
     }
     
     /**
@@ -373,7 +349,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@code Stream<O>}
      */
     default public Stream<O> ignore() {
-        return chain(new NopOp<O>() {
+        return chain(new Filters.Nop<O>() {
             @Override
             public void doNext(O value) {
                 handled();
@@ -398,7 +374,7 @@ public interface Stream<O> extends Publisher<O> {
      *@return a new {@link Stream}
      */
     default public Stream<O> done() {
-        return chain(new DoneOp<O>());
+        return chain(new Filters.Done<O>());
     }
 
     /**
@@ -409,7 +385,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@link Stream}
      */ 
     default public Stream<O> filter(Func1<O, Boolean> func) {
-        return chain(new FilterOp<O>() {
+        return chain(new Filters.Filter<O>() {
             @Override
             public boolean check(O value) throws Throwable {
                 return func.apply(value);
@@ -426,7 +402,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@link Stream}
      */ 
     default public <R> Stream<R> whenDoneValue(R value) {
-        return chain(new WhenDoneValueOp<O, R>(value));
+        return chain(new Flows.WhenDoneValue<O, R>(value));
     }
 
     /**
@@ -437,7 +413,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@link Stream}
      */ 
     default public Stream<O> whenDoneError(Throwable error) {
-        return chain(new WhenDoneErrorOp<O>(error));
+        return chain(new Flows.WhenDoneError<O>(error));
     }
 
 
@@ -451,7 +427,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@link Stream}
      */ 
     default public <R> Stream<R> whenDone(Func0<R> func) {
-        return chain(new WhenDoneFuncOp<O, R>(func));
+        return chain(new Flows.WhenDoneFunc<O, R>(func));
     }
     
     /**
@@ -463,7 +439,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@link Stream}.
      */
     default public <R> Stream<R> whenDoneFunc(Func0<Stream<R>> func) {
-        return chain(new WhenDonePublisherFuncOp<O, R>(func));
+        return chain(new Flows.WhenDonePublisherFunc<O, R>(func));
     }
 
     /**
@@ -475,7 +451,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@link Stream}
      */ 
     default public <R> Stream<R> whenDone(Publisher<R> publisher) {
-        return chain(new WhenDonePublisherOp<O, R>(publisher));
+        return chain(new Flows.WhenDonePublisher<O, R>(publisher));
     }
 
     /**
@@ -497,7 +473,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@link Stream}
      */
     default public Stream<O> continueWithError(Throwable error) {
-        return chain(new ContinueWithErrorOp<O>(error));
+        return chain(new Flows.ContinueWithError<O>(error));
     }
 
     /**
@@ -509,7 +485,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@link Stream}
      */ 
     default public Stream<O> continueWith(Proc0 func) {
-        return chain(new ContinueWithProcOp<O>(func));
+        return chain(new Flows.ContinueWithProc<O>(func));
     }
 
     /**
@@ -531,7 +507,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@link Stream}
      */ 
     default public Stream<O> delegate(Subscriber<O> subscriber) {
-        return chain(new DelegateOp<O>(subscriber));
+        return chain(new Flows.Delegate<O>(subscriber));
     }
 
     /**
@@ -541,7 +517,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@link Stream}
      */
     default  public Stream<O> each(Proc2<O, BaseProcessor<O, O>> func) {
-        return chain(new NopOp<O>() {
+        return chain(new Filters.Nop<O>() {
             @Override
             public void doNext(O value) {
                 try {
@@ -560,7 +536,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@link Stream}
      */
     default public Stream<O> onEach(Proc1<O> func) {
-        return chain(new NopOp<O>() {
+        return chain(new Filters.Nop<O>() {
             @Override
             public void doNext(O value) {
                 try {
@@ -583,7 +559,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@link Stream}
      */ 
     default public Stream<O> onComplete(Proc0 func) {
-        return chain(new NopOp<O>() {
+        return chain(new Filters.Nop<O>() {
             @Override
             public void onComplete() {
                 try {
@@ -608,7 +584,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@link Stream}
      */
     default public <R> Stream<R> onFinally(Func0<Stream<R>> func) {
-        return chain(new FinallyOp<O, R>() {
+        return chain(new Flows.Finally<O, R>() {
             @Override
             public Stream<R> fin() throws Throwable {
                 return func.apply();
@@ -660,16 +636,16 @@ public interface Stream<O> extends Publisher<O> {
     }
 
     /**
-     * Add a <code>printStream</code> operation to the output from this publisher. 
-     * The printStream operation output debug information about all events that 
+     * Add a <code>print</code> operation to the output from this publisher. 
+     * The print operation output debug information about all events that 
      * pass through this step to the specified <code>PrintStream</code>.
      * The output is prefixed with the <code>name</code>.
      * @param prefix the prefix in the output.
      * @param printStream the print stream that is written to.
      * @return a new {@link Stream}
      */ 
-    default public Stream<O> printStream(String prefix, PrintStream printStream) {
-        return chain(new PrintStreamOp<O>(prefix, printStream));
+    default public Stream<O> print(String prefix, PrintStream printStream) {
+        return chain(new Filters.Print<O>(prefix, printStream));
     }
 
     /**
@@ -679,7 +655,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@link Stream}
      */ 
     default public Stream<List<O>> toList() {
-        return chain(new ToListOp<O>());
+        return chain(new Transforms.ToList<O>());
     }
 
     /**
@@ -692,7 +668,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@link Stream}
      */
     default public Stream<O> accumulate(O initial, final Func2<O, O, O> func) {
-        return chain(new AccumulatorOp<O>(initial) {
+        return chain(new Filters.Accumulator<O>(initial) {
             @Override
             public O calc(O value, O nextValue) throws Throwable {
                 return func.apply(value, nextValue);

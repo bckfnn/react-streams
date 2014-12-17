@@ -17,10 +17,8 @@ import io.github.bckfnn.reactstreams.Func1;
 import io.github.bckfnn.reactstreams.Pipe;
 import io.github.bckfnn.reactstreams.Stream;
 import io.github.bckfnn.reactstreams.Tuple;
-import io.github.bckfnn.reactstreams.ops.AccumulatorOp;
-import io.github.bckfnn.reactstreams.ops.FilterOp;
-import io.github.bckfnn.reactstreams.ops.MapManyOp;
-import io.github.bckfnn.reactstreams.ops.MapOp;
+import io.github.bckfnn.reactstreams.ops.Filters;
+import io.github.bckfnn.reactstreams.ops.Transforms;
 
 import java.util.Arrays;
 import java.util.Deque;
@@ -290,13 +288,13 @@ public class SimpleTest {
         Keep<Integer> keep = new Keep<>();
         Stream
         .from("12", "34", "56")
-        .chain(new MapOp<String, String>() {
+        .chain(new Transforms.Map<String, String>() {
             @Override
             public String map(String value) {
                 return "-" + value;
             }
         })
-        .chain(new MapOp<String, Integer>() {
+        .chain(new Transforms.Map<String, Integer>() {
             @Override
             public Integer map(String value) {
                 return Integer.valueOf(value);
@@ -331,7 +329,7 @@ public class SimpleTest {
         Keep<Integer> keep = new Keep<>();
         Stream
         .from("12", "34", "56")
-        .chain(new MapOp<String, String>() {
+        .chain(new Transforms.Map<String, String>() {
             @Override
             public String map(String value) {
                 if (value.equals("34")) {
@@ -340,7 +338,7 @@ public class SimpleTest {
                 return "-" + value;
             }
         })
-        .chain(new MapOp<String, Integer>() {
+        .chain(new Transforms.Map<String, Integer>() {
             @Override
             public Integer map(String value) {
                 return Integer.valueOf(value);
@@ -404,7 +402,7 @@ public class SimpleTest {
         Keep<String> keep = new Keep<>();
         Stream
         .from("12", "34", "56")
-        .chain(new MapManyOp<String, String>() {
+        .chain(new Transforms.MapMany<String, String>() {
             @Override
             public Stream<String> map(String value) {
                 return Stream.from("x" + value, "y" + value, "z" + value);
@@ -535,7 +533,7 @@ public class SimpleTest {
         Keep<String> keep = new Keep<>();
         Stream
         .from("12", "34", "56")
-        .chain(new FilterOp<String>() {
+        .chain(new Filters.Filter<String>() {
             @Override
             public boolean check(String value) {
                 return value.equals("34");
@@ -701,7 +699,7 @@ public class SimpleTest {
         Keep<Integer> keep = new Keep<>();
         Stream
         .from(1, 2, 3)
-        .chain(new AccumulatorOp<Integer>(0) {
+        .chain(new Filters.Accumulator<Integer>(0) {
             @Override
             public Integer calc(Integer value, Integer nextValue) {
                 return value + nextValue;
