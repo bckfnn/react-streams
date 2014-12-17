@@ -16,9 +16,18 @@ package io.github.bckfnn.reactstreams.ops;
 import io.github.bckfnn.reactstreams.BaseProcessor;
 import io.github.bckfnn.reactstreams.Proc0;
 
+/**
+ * ContinueWithProc operation.
+ * 
+ * @param <T> value type.
+ */
 public class ContinueWithProcOp<T> extends BaseProcessor<T, T> {
     private Proc0 func;
 
+    /**
+     * Constructor.
+     * @param func function that will be called on complete.
+     */
     public ContinueWithProcOp(Proc0 func) {
         this.func= func;
     }

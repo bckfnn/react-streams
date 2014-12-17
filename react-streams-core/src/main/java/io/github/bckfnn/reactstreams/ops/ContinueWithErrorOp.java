@@ -15,9 +15,18 @@ package io.github.bckfnn.reactstreams.ops;
 
 import io.github.bckfnn.reactstreams.BaseProcessor;
 
+/**
+ * ContinueWithError operation.
+ * 
+ * @param <T> value type.
+ */
 public class ContinueWithErrorOp<T> extends BaseProcessor<T, T> {
     private Throwable error;
 
+    /**
+     * Constructor.
+     * @param error the error that will be emitted.
+     */
     public ContinueWithErrorOp(Throwable error) {
         this.error = error;
     }
