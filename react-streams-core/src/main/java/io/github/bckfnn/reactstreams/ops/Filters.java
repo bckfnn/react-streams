@@ -5,6 +5,8 @@ import java.io.PrintStream;
 import org.reactivestreams.Subscription;
 
 import io.github.bckfnn.reactstreams.BaseProcessor;
+import io.github.bckfnn.reactstreams.Func1;
+import io.github.bckfnn.reactstreams.Func2;
 
 /**
  * Filtering operations.
@@ -65,23 +67,25 @@ public class Filters {
     }
 
     /**
-     * <code>Filter</code> file call {@link Filter#check(Object)} check on each item and emit only the 
+     * <code>Filter</code> will call the func check on each item and emit only the 
      * items where the method returns true. 
      * @param <T> type of the event.
      */
-    public static abstract class Filter<T> extends BaseProcessor<T, T> {
+    public static class Filter<T> extends BaseProcessor<T, T> {
+        private Func1<T, Boolean> func;
+        
         /**
-         * Emit only items where this method returns true.
-         * @param value the item value.
-         * @return true if the item should it included in the output.
-         * @throws Throwable when an error occurs.
+         * Constructor.
+         * @param func a function that map an input value to a stream of output values.
          */
-        public abstract boolean check(T value) throws Throwable;
-
+        public Filter(Func1<T, Boolean> func) {
+            this.func = func;
+        }
+ 
         @Override
         public void doNext(T value) {
             try {
-                if (check(value)) {
+                if (func.apply(value)) {
                     sendNext(value);
                 } else {
                     sendRequest();
@@ -213,26 +217,20 @@ public class Filters {
      *
      * @param <T> value type.
      */
-    public static abstract class Accumulator<T> extends BaseProcessor<T, T> {
+    public static class Accumulator<T> extends BaseProcessor<T, T> {
         private T acc;
         private boolean initialValueSent = false;
+        private Func2<T, T, T> func;
 
         /**
          * Constructor.
          * @param initial the initial value.
+         * @param func the function that is called for each valie in the stream.
          */
-        public Accumulator(T initial) {
+        public Accumulator(T initial, Func2<T, T, T> func) {
             this.acc = initial;
+            this.func = func;
         }
-
-        /**
-         * called for each value.
-         * @param value the current value.
-         * @param nextValue the next value encounter.
-         * @return the new accumulated value.
-         * @throws Throwable if an error occurs.
-         */
-        public abstract T calc(T value, T nextValue) throws Throwable;
 
         @Override
         public void doNext(T value) {
@@ -247,7 +245,7 @@ public class Filters {
                 sendNext(acc);
             }
             try {
-                acc = calc(acc, value);
+                acc = func.apply(acc, value);
                 sendNext(acc);
                 handled();
             } catch (Throwable exc) {

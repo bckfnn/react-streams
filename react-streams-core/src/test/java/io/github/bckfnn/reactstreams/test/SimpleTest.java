@@ -17,8 +17,6 @@ import io.github.bckfnn.reactstreams.Func1;
 import io.github.bckfnn.reactstreams.Pipe;
 import io.github.bckfnn.reactstreams.Stream;
 import io.github.bckfnn.reactstreams.Tuple;
-import io.github.bckfnn.reactstreams.ops.Filters;
-import io.github.bckfnn.reactstreams.ops.Transforms;
 
 import java.util.Arrays;
 import java.util.Deque;
@@ -279,38 +277,11 @@ public class SimpleTest {
         keep.assertEquals("def");
     }
 
-
     /**
      * Test a map operation.
      */
     @Test
     public void testMap1() {
-        Keep<Integer> keep = new Keep<>();
-        Stream
-        .from("12", "34", "56")
-        .chain(new Transforms.Map<String, String>() {
-            @Override
-            public String map(String value) {
-                return "-" + value;
-            }
-        })
-        .chain(new Transforms.Map<String, Integer>() {
-            @Override
-            public Integer map(String value) {
-                return Integer.valueOf(value);
-            }
-        })
-        .chain(keep)
-        .start(1);
-
-        keep.assertEquals(-12, -34, -56);
-    }
-
-    /**
-     * Test a map operation.
-     */
-    @Test
-    public void testMap2() {
         Keep<Integer> keep = new Keep<>();
         Stream
         .from("12", "34", "56")
@@ -325,36 +296,7 @@ public class SimpleTest {
      * Test a map operation.
      */
     @Test
-    public void testMap3() {
-        Keep<Integer> keep = new Keep<>();
-        Stream
-        .from("12", "34", "56")
-        .chain(new Transforms.Map<String, String>() {
-            @Override
-            public String map(String value) {
-                if (value.equals("34")) {
-                    throw new RuntimeException("stop!");
-                }
-                return "-" + value;
-            }
-        })
-        .chain(new Transforms.Map<String, Integer>() {
-            @Override
-            public Integer map(String value) {
-                return Integer.valueOf(value);
-            }
-        })
-        .chain(keep)
-        .start(1);
-
-        keep.assertException(new RuntimeException("stop!"), -12);
-    }
-
-    /**
-     * Test a map operation.
-     */
-    @Test
-    public void testMap4() {
+    public void testMap2() {
         Keep<Integer> keep = new Keep<>();
         Stream
         .from("12", "34", "56")
@@ -394,31 +336,12 @@ public class SimpleTest {
         .start(1);
     }
 
+
     /**
      * Test a mapMany operation.
      */
     @Test
     public void testMapMany1() {
-        Keep<String> keep = new Keep<>();
-        Stream
-        .from("12", "34", "56")
-        .chain(new Transforms.MapMany<String, String>() {
-            @Override
-            public Stream<String> map(String value) {
-                return Stream.from("x" + value, "y" + value, "z" + value);
-            }
-        })
-        .chain(keep)
-        .start(1);
-
-        keep.assertEquals("x12", "y12", "z12", "x34", "y34", "z34", "x56", "y56", "z56");
-    }
-
-    /**
-     * Test a mapMany operation.
-     */
-    @Test
-    public void testMapMany2() {
         Keep<String> keep = new Keep<>();
         Stream
         .from("12", "34", "56")
@@ -438,7 +361,7 @@ public class SimpleTest {
      * Test a mapMany operation.
      */
     @Test
-    public void testMapMany3() {
+    public void testMapMany2() {
         Keep<String> keep = new Keep<>();
         Stream
         .from("12", "34", "56")
@@ -453,7 +376,7 @@ public class SimpleTest {
      * Test a mapMany operation.
      */
     @Test
-    public void testMapMany4() {
+    public void testMapMany3() {
         Keep<String> keep = new Keep<>();
         Stream
         .from("12", "34", "56")
@@ -468,7 +391,7 @@ public class SimpleTest {
      * Test a mapMany operation.
      */
     @Test
-    public void testMapMany5() {
+    public void testMapMany4() {
         Keep<String> keep = new Keep<>();
         Stream
         .from("12", "34", "56")
@@ -484,7 +407,7 @@ public class SimpleTest {
      * @throws InterruptedException exception.
      */
     @Test
-    public void testMapMany6() throws InterruptedException {
+    public void testMapMany5() throws InterruptedException {
         Keep<String> keep = new Keep<>();
         ScheduledExecutorService s = Executors.newSingleThreadScheduledExecutor();
         s.execute(() -> {
@@ -505,12 +428,12 @@ public class SimpleTest {
         s.awaitTermination(10, TimeUnit.SECONDS);
         keep.assertEquals("a1", "b1", "c1", "a2", "b2", "c2", "a3", "b3", "c3");
     }
-    
+
     /**
      * Test a mapManyWith operation.
      */
     @SuppressWarnings("unchecked")
-	@Test
+    @Test
     public void testMapManyWith1() {
         Keep<Tuple<String, String>> keep = new Keep<>();
         Stream
@@ -520,36 +443,17 @@ public class SimpleTest {
         .start(1);
 
         keep.assertEquals(
-        		new Tuple<>("12", "x12"), new Tuple<>("12", "y12"), new Tuple<>("12", "z12"),
-        		new Tuple<>("34", "x34"), new Tuple<>("34", "y34"), new Tuple<>("34", "z34"),
-        		new Tuple<>("56", "x56"), new Tuple<>("56", "y56"), new Tuple<>("56", "z56"));
+                new Tuple<>("12", "x12"), new Tuple<>("12", "y12"), new Tuple<>("12", "z12"),
+                new Tuple<>("34", "x34"), new Tuple<>("34", "y34"), new Tuple<>("34", "z34"),
+                new Tuple<>("56", "x56"), new Tuple<>("56", "y56"), new Tuple<>("56", "z56"));
     }
-    
+
+ 
     /**
      * Test a filter operation.
      */
     @Test
     public void testFilter1() {
-        Keep<String> keep = new Keep<>();
-        Stream
-        .from("12", "34", "56")
-        .chain(new Filters.Filter<String>() {
-            @Override
-            public boolean check(String value) {
-                return value.equals("34");
-            }
-        })
-        .chain(keep)
-        .start(1);
-
-        keep.assertEquals("34");
-    }
-
-    /**
-     * Test a filter operation.
-     */
-    @Test
-    public void testFilter2() {
         Keep<String> keep = new Keep<>();
         Stream
         .from("12", "34", "56")
@@ -565,7 +469,7 @@ public class SimpleTest {
      * Test a filter operation.
      */
     @Test
-    public void testFilter3() {
+    public void testFilter2() {
         Keep<String> keep = new Keep<>();
         Stream
         .from("12", "34", "56")
@@ -581,7 +485,7 @@ public class SimpleTest {
      * Test a filter operation.
      */
     @Test
-    public void testFilter4() {
+    public void testFilter3() {
         Keep<String> keep = new Keep<>();
         Stream
         .from("12", "34", "56")
@@ -699,25 +603,6 @@ public class SimpleTest {
         Keep<Integer> keep = new Keep<>();
         Stream
         .from(1, 2, 3)
-        .chain(new Filters.Accumulator<Integer>(0) {
-            @Override
-            public Integer calc(Integer value, Integer nextValue) {
-                return value + nextValue;
-            }
-        })
-        .chain(keep)
-        .start(1);
-        keep.assertEquals(0, 1, 3, 6);
-    }
-
-    /**
-     * Test a accumulator operation.
-     */
-    @Test
-    public void testAccumulator2() {
-        Keep<Integer> keep = new Keep<>();
-        Stream
-        .from(1, 2, 3)
         .accumulate(0, (value, next) -> value + next)
         .chain(keep)
         .start(1);
@@ -729,7 +614,7 @@ public class SimpleTest {
      * Test a accumulator operation.
      */
     @Test
-    public void testAccumulator3() {
+    public void testAccumulator2() {
         Keep<Integer> keep = new Keep<>();
         Stream
         .from(1, 2, 3)
@@ -922,7 +807,7 @@ public class SimpleTest {
         keep.assertEquals(4, 5, 6);
     }
      */
-    
+
     /**
      * Test pipe.
      */
@@ -935,7 +820,7 @@ public class SimpleTest {
         start(1);
         keep.assertEquals("x2", "x4");
     }
-    
+
     private Pipe<Integer, String> makePipe() {
         return Stream.asPipe(pipe -> pipe.filter(v -> v % 2 == 0).map(v -> "x" + v));
     }

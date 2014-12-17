@@ -2,6 +2,7 @@ package io.github.bckfnn.reactstreams.ops;
 
 import io.github.bckfnn.reactstreams.BaseProcessor;
 import io.github.bckfnn.reactstreams.BaseSubscription;
+import io.github.bckfnn.reactstreams.Func1;
 import io.github.bckfnn.reactstreams.Stream;
 import io.github.bckfnn.reactstreams.Tuple;
 
@@ -23,20 +24,21 @@ public class Transforms {
      * @param <T> type of input values.
      * @param <R> type of output values.
      */
-    public static abstract class Map<T, R> extends BaseProcessor<T, R> {
-
+    public static class Map<T, R> extends BaseProcessor<T, R> {
+        private Func1<T, R> func;
+        
         /**
-         * Map the input <code>value</code> to an output value. 
-         * @param value the input value
-         * @return the output value.
-         * @throws Throwable when an error occur.
+         * Constructor.
+         * @param func a function that map an input value to an output value.
          */
-        public abstract R map(T value) throws Throwable;
-
+        public Map(Func1<T, R> func) {
+            this.func = func;
+        }
+        
         @Override
         public void doNext(T value) {
             try {
-                sendNext(map(value));
+                sendNext(func.apply(value));
                 handled();
             } catch (Throwable error) {
                 sendError(error);
@@ -55,24 +57,25 @@ public class Transforms {
      * @param <T> type of input values.
      * @param <R> type of output values.
      */
-    public static abstract class MapMany<T, R> extends BaseProcessor<T, R> {
+    public static class MapMany<T, R> extends BaseProcessor<T, R> {
         private List<Publisher<R>> children = new ArrayList<Publisher<R>>();
         private boolean completed = false;
         private int count = 0;
         private Subscription childSubscription;
+        private Func1<T, Stream<R>> func;
 
         /**
-         * Map the input <code>value</code> to a stream or output values.
-         * @param value the input value.
-         * @return a stream of output values.
-         * @throws Throwable when errors occur.
+         * Constructor.
+         * @param func a function that map an input value to a stream of output values.
          */
-        public abstract Stream<R> map(T value) throws Throwable;
-
+        public MapMany(Func1<T, Stream<R>> func) {
+            this.func = func;
+        }
+        
         @Override
         public void doNext(T value) {
             try {
-                final Publisher<R> child = map(value);
+                final Publisher<R> child = func.apply(value);
                 children.add(child);
                 count++;
                 drain();
@@ -150,24 +153,25 @@ public class Transforms {
      * @param <T> type of input values.
      * @param <R> type of output values.
      */
-    public static abstract class MapManyWith<T, R> extends BaseProcessor<T, Tuple<T, R>> {
+    public static class MapManyWith<T, R> extends BaseProcessor<T, Tuple<T, R>> {
         private List<Tuple<T, Publisher<R>>> children = new ArrayList<>();
         private boolean completed = false;
         private int count = 0;
         private Subscription childSubscription;
-
+        private Func1<T, Stream<R>> func;
+        
         /**
-         * Map the input <code>value</code> to a stream or output values.
-         * @param value the input value.
-         * @return a stream of output values.
-         * @throws Throwable when errors occur.
+         * Constructor.
+         * @param func a function that map an input value to a stream of output values.
          */
-        public abstract Stream<R> map(T value) throws Throwable;
-
+        public MapManyWith(Func1<T, Stream<R>> func) {
+            this.func = func;
+        }
+        
         @Override
         public void doNext(T value) {
             try {
-                final Publisher<R> child = map(value);
+                final Publisher<R> child = func.apply(value);
                 children.add(new Tuple<>(value, child));
                 count++;
                 drain();

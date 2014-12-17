@@ -343,14 +343,16 @@ public class Flows {
      * @param <T> value type.
      * @param <R> output value type. 
      */
-    public static abstract class Finally<T, R> extends BaseProcessor<T, R> {
-
+    public static class Finally<T, R> extends BaseProcessor<T, R> {
+        private Func0<Stream<R>> func;
+        
         /**
-         * finally function.
-         * @return stream to continue with.
-         * @throws Throwable
+         * Constructor.
+         * @param func the function to call when this stream is complete or emit an error.
          */
-        public abstract Stream<R> fin() throws Throwable;
+        public Finally(Func0<Stream<R>> func) {
+            this.func = func;
+        }
 
         @Override
         public void doNext(T value) {
@@ -379,7 +381,7 @@ public class Flows {
         }
 
         private void runFinally() throws Throwable {
-            fin().subscribe(new Subscriber<R>() {
+            func.apply().subscribe(new Subscriber<R>() {
                 @Override
                 public void onSubscribe(Subscription s) {
                     s.request(1);

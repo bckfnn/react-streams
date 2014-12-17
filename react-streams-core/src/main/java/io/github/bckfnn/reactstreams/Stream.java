@@ -261,12 +261,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@code Stream<R>}.
      */
     default public <R> Stream<R> map(final Func1<O, R> mapFunc) {
-        return chain(new Transforms.Map<O, R>() {
-            @Override
-            public R map(O value) throws Throwable {
-                return mapFunc.apply(value);
-            }
-        });
+        return chain(new Transforms.Map<O, R>(mapFunc));
     }
 
     /**
@@ -276,12 +271,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@code Stream<R>}.
      */
     default public <R> Stream<R> mapMany(final Func1<O, Stream<R>> mapFunc) {
-        return chain(new Transforms.MapMany<O, R>() {
-            @Override
-            public Stream<R> map(O value) throws Throwable {
-                return mapFunc.apply(value);
-            }
-        });
+        return chain(new Transforms.MapMany<O, R>(mapFunc));
     }
 
     /**
@@ -291,12 +281,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@code Stream<Tuple<O, R>>} where each tuple contains the input value and mapped value.
      */
     default public <R> Stream<Tuple<O, R>> mapManyWith(final Func1<O, Stream<R>> mapFunc) {
-        return chain(new Transforms.MapManyWith<O, R>() {
-            @Override
-            public Stream<R> map(O value) throws Throwable {
-                return mapFunc.apply(value);
-            }
-        });
+        return chain(new Transforms.MapManyWith<O, R>(mapFunc));
     }
 
 
@@ -385,12 +370,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@link Stream}
      */ 
     default public Stream<O> filter(Func1<O, Boolean> func) {
-        return chain(new Filters.Filter<O>() {
-            @Override
-            public boolean check(O value) throws Throwable {
-                return func.apply(value);
-            }
-        });
+        return chain(new Filters.Filter<O>(func));
     }
 
     /**
@@ -584,12 +564,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@link Stream}
      */
     default public <R> Stream<R> onFinally(Func0<Stream<R>> func) {
-        return chain(new Flows.Finally<O, R>() {
-            @Override
-            public Stream<R> fin() throws Throwable {
-                return func.apply();
-            }
-        });
+        return chain(new Flows.Finally<O, R>(func));
     }
 
     /**
@@ -668,12 +643,7 @@ public interface Stream<O> extends Publisher<O> {
      * @return a new {@link Stream}
      */
     default public Stream<O> accumulate(O initial, final Func2<O, O, O> func) {
-        return chain(new Filters.Accumulator<O>(initial) {
-            @Override
-            public O calc(O value, O nextValue) throws Throwable {
-                return func.apply(value, nextValue);
-            }
-        });
+        return chain(new Filters.Accumulator<O>(initial, func));
     }
 
     /**
