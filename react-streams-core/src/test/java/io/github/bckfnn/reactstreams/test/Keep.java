@@ -25,6 +25,10 @@ import java.util.List;
 
 import org.junit.Assert;
 
+/**
+ * A helper subscriber that tracks the output and events from a publisher.
+ * @param <T> type of value to keep.
+ */
 public class Keep<T> extends BaseProcessor<T, T> {
     enum State {
         NEXT, COMPLETED, ERROR,
@@ -35,6 +39,9 @@ public class Keep<T> extends BaseProcessor<T, T> {
     List<T> list;
     Throwable error;
 
+    /**
+     * Contructor.
+     */
     public Keep() {
         list = new ArrayList<T>();
     }
@@ -65,11 +72,19 @@ public class Keep<T> extends BaseProcessor<T, T> {
         this.error = error;
     }
 
+    /**
+     * Assert that the publisher called onComplete();
+     * @return self.
+     */
     public Keep<T> assertSuccess() {
         Assert.assertTrue(state == State.COMPLETED);
         return this;
     }
 
+    /**
+     * Assert that the publisher emitted the values and then emitted the exc exception.
+     * @return self.
+     */
     @SuppressWarnings("unchecked")
     public Keep<T> assertException(Exception exc, T... values) {
         Assert.assertTrue(state == State.ERROR);
@@ -81,6 +96,10 @@ public class Keep<T> extends BaseProcessor<T, T> {
         return this;
     }
 
+    /**
+     * Assert that the publisher emitted the values and then emitted onComplete.
+     * @return self.
+     */
 	@SuppressWarnings("unchecked")
     public Keep<T> assertEquals(T... values) {
         assertSuccess();

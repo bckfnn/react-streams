@@ -23,16 +23,29 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+/**
+ * Concat operation.
+ * 
+ * @param <T> value type.
+ */
 public class ConcatOp<T> implements Stream<T> {
     private BaseSubscription<T> outputSubscription;
     private List<Publisher<T>> list;
     private int i = 0;
     private Subscription currentInputSubscription;
 
+    /**
+     * Constructor.
+     * @param list an array of publishers.
+     */
     public ConcatOp(Publisher<T>[] list) {
         this(Arrays.asList(list));
     }
 
+    /**
+     * Constructor.
+     * @param list a list of publishers.
+     */
     public ConcatOp(List<Publisher<T>> list) {
         this.list = list;
     }

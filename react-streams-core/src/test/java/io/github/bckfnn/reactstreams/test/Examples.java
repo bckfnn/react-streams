@@ -4,8 +4,14 @@ import io.github.bckfnn.reactstreams.Stream;
 
 import org.junit.Test;
 
+/**
+ * Code from examples doc.
+ */
 public class Examples {
 
+    /**
+     * Filter example.
+     */
     @Test
     public void testFilter() {
         Stream.from(1, 2, 3, 4, 5, 6, 7)
@@ -14,6 +20,9 @@ public class Examples {
         .start(1);
     }
 
+    /**
+     * Last example.
+     */
     @Test
     public void testLast() {
         Stream.from(1, 2, 3, 4)
@@ -22,6 +31,9 @@ public class Examples {
         .start(1);
     }
     
+    /**
+     * Build example.
+     */
     @Test
     public void testBuild() {
         /*

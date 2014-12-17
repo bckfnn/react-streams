@@ -35,9 +35,14 @@ import org.junit.Test;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-
+/**
+ * Testing of streams.
+ */
 public class SimpleTest {
 
+    /**
+     * Test tuples.
+     */
     @Test
     public void testTuple() {
         Tuple<Integer, Integer> t1 = new Tuple<>(1, 2);
@@ -68,6 +73,9 @@ public class SimpleTest {
         Assert.assertTrue(new Tuple<>(null, null).hashCode() == new Tuple<>(null, null).hashCode());
     }
 
+    /**
+     * Test a simple List.
+     */
     @Test
     public void testIterable() {
         Keep<String> keep = new Keep<>();
@@ -79,6 +87,9 @@ public class SimpleTest {
         keep.assertEquals("12", "34", "56");
     }
 
+    /**
+     * Test an empty List.
+     */
     @Test
     public void testIterableEmpty() {
         Keep<String> keep = new Keep<>();
@@ -89,6 +100,9 @@ public class SimpleTest {
         keep.assertEquals();
     }
 
+    /**
+     * Test an array.
+     */
     @Test
     public void testArray() {
         Keep<String> keep = new Keep<>();
@@ -99,6 +113,9 @@ public class SimpleTest {
         keep.assertEquals("12", "34", "56");
     }
 
+    /**
+     * Test a single value.
+     */
     @Test
     public void testOne() {
         Keep<String> keep = new Keep<>();
@@ -110,17 +127,9 @@ public class SimpleTest {
         keep.assertEquals("12");
     }
 
-
-    @Test
-    public void testSingle() {
-        Keep<String> keep = new Keep<>();
-        Stream
-        .from("abc")
-        .chain(keep)
-        .start(1);
-        keep.assertEquals("abc");
-    }
-
+    /**
+     * Test an error stream.
+     */
     @Test
     public void testError() {
         Keep<String> keep = new Keep<>();
@@ -131,6 +140,9 @@ public class SimpleTest {
         keep.assertException(new RuntimeException("test"));
     }
 
+    /**
+     * Test a done operation.
+     */
     @Test
     public void testDone1() {
         Keep<Integer> keep = new Keep<>();
@@ -143,6 +155,9 @@ public class SimpleTest {
 
     }
 
+    /**
+     * Test a counter operation.
+     */
     @Test
     public void testCounter() {
         Keep<Integer> keep = new Keep<>();
@@ -154,6 +169,9 @@ public class SimpleTest {
         keep.assertEquals(0, 1, 2, 3, 4);
     }
 
+    /**
+     * Test a counter operation.
+     */
     @Test
     public void testCounter2() {
         Keep<Integer> keep = new Keep<>();
@@ -165,6 +183,9 @@ public class SimpleTest {
         keep.assertEquals(3, 4, 5, 6, 7);
     }
 
+    /**
+     * Test a counter operation.
+     */
     @Test
     public void testCounter3() {
         Keep<Integer> keep = new Keep<>();
@@ -175,6 +196,9 @@ public class SimpleTest {
         .start(1);
     }
 
+    /**
+     * Test a counter operation.
+     */
     @Test
     public void testCounter4() {
         Keep<Integer> keep = new Keep<>();
@@ -185,6 +209,9 @@ public class SimpleTest {
         .start(100);
     }
 
+    /**
+     * Test a zip operation.
+     */
     @SuppressWarnings("unchecked")
     @Test
     public void testZip1() {
@@ -196,6 +223,9 @@ public class SimpleTest {
         keep.assertEquals(new Tuple<>(0, "a"), new Tuple<>(1, "b"), new Tuple<>(2, "c"));
     }
 
+    /**
+     * Test a zip operation.
+     */
     @SuppressWarnings("unchecked")
     @Test
     public void testZip2() {
@@ -208,6 +238,9 @@ public class SimpleTest {
         keep.assertEquals(new Tuple<>("a", 0), new Tuple<>("b", 1), new Tuple<>("c", 2));
     }
 
+    /**
+     * Test a zip operation.
+     */
     @Test
     public void testZip3() {
         Keep<Tuple<Integer, Integer>> keep = new Keep<>();
@@ -218,6 +251,9 @@ public class SimpleTest {
         .start(1);
     }
 
+    /**
+     * Test a zip operation.
+     */
     @SuppressWarnings("unchecked")
     @Test
     public void testZip4() {
@@ -230,6 +266,9 @@ public class SimpleTest {
         keep.assertException(new Exception("xx"), new Tuple<>("a", 0), new Tuple<>("b", 1));
     }
 
+    /**
+     * Test a nop operation.
+     */
     @Test
     public void testNop() {
         Keep<String> keep = new Keep<>();
@@ -243,6 +282,9 @@ public class SimpleTest {
     }
 
 
+    /**
+     * Test a map operation.
+     */
     @Test
     public void testMap1() {
         Keep<Integer> keep = new Keep<>();
@@ -266,6 +308,9 @@ public class SimpleTest {
         keep.assertEquals(-12, -34, -56);
     }
 
+    /**
+     * Test a map operation.
+     */
     @Test
     public void testMap2() {
         Keep<Integer> keep = new Keep<>();
@@ -278,6 +323,9 @@ public class SimpleTest {
         keep.assertEquals(-12, -34, -56); 
     }
 
+    /**
+     * Test a map operation.
+     */
     @Test
     public void testMap3() {
         Keep<Integer> keep = new Keep<>();
@@ -304,6 +352,9 @@ public class SimpleTest {
         keep.assertException(new RuntimeException("stop!"), -12);
     }
 
+    /**
+     * Test a map operation.
+     */
     @Test
     public void testMap4() {
         Keep<Integer> keep = new Keep<>();
@@ -330,6 +381,9 @@ public class SimpleTest {
         keep.assertException(new RuntimeException("stop!"), -12);
     }
 
+    /**
+     * Test a map operation.
+     */
     @Test
     public void testMap5() {
         Keep<Integer> keep = new Keep<>();
@@ -342,6 +396,9 @@ public class SimpleTest {
         .start(1);
     }
 
+    /**
+     * Test a mapMany operation.
+     */
     @Test
     public void testMapMany1() {
         Keep<String> keep = new Keep<>();
@@ -359,6 +416,9 @@ public class SimpleTest {
         keep.assertEquals("x12", "y12", "z12", "x34", "y34", "z34", "x56", "y56", "z56");
     }
 
+    /**
+     * Test a mapMany operation.
+     */
     @Test
     public void testMapMany2() {
         Keep<String> keep = new Keep<>();
@@ -376,6 +436,9 @@ public class SimpleTest {
         keep.assertEquals("x12", "y12", "z12", "x34", "y34", "z34", "x56", "y56", "z56");
     }
 
+    /**
+     * Test a mapMany operation.
+     */
     @Test
     public void testMapMany3() {
         Keep<String> keep = new Keep<>();
@@ -388,6 +451,9 @@ public class SimpleTest {
         keep.assertEquals("x12", "y12", "z12", "x34", "y34", "z34", "x56", "y56", "z56");
     }
 
+    /**
+     * Test a mapMany operation.
+     */
     @Test
     public void testMapMany4() {
         Keep<String> keep = new Keep<>();
@@ -400,6 +466,9 @@ public class SimpleTest {
         keep.assertException(new Exception("x"));
     }
 
+    /**
+     * Test a mapMany operation.
+     */
     @Test
     public void testMapMany5() {
         Keep<String> keep = new Keep<>();
@@ -412,6 +481,9 @@ public class SimpleTest {
         keep.assertException(new Exception("x"));
     }
 
+    /**
+     * Test a mapMany operation.
+     */
     @Test
     public void testMapMany6() throws InterruptedException {
         Keep<String> keep = new Keep<>();
@@ -435,6 +507,9 @@ public class SimpleTest {
         keep.assertEquals("a1", "b1", "c1", "a2", "b2", "c2", "a3", "b3", "c3");
     }
     
+    /**
+     * Test a mapManyWith operation.
+     */
     @SuppressWarnings("unchecked")
 	@Test
     public void testMapManyWith1() {
@@ -451,6 +526,9 @@ public class SimpleTest {
         		new Tuple<>("56", "x56"), new Tuple<>("56", "y56"), new Tuple<>("56", "z56"));
     }
     
+    /**
+     * Test a filter operation.
+     */
     @Test
     public void testFilter1() {
         Keep<String> keep = new Keep<>();
@@ -468,6 +546,9 @@ public class SimpleTest {
         keep.assertEquals("34");
     }
 
+    /**
+     * Test a filter operation.
+     */
     @Test
     public void testFilter2() {
         Keep<String> keep = new Keep<>();
@@ -481,6 +562,9 @@ public class SimpleTest {
     }
 
 
+    /**
+     * Test a filter operation.
+     */
     @Test
     public void testFilter3() {
         Keep<String> keep = new Keep<>();
@@ -494,6 +578,9 @@ public class SimpleTest {
         keep.assertException(new Exception("xx"), "34");
     }
 
+    /**
+     * Test a filter operation.
+     */
     @Test
     public void testFilter4() {
         Keep<String> keep = new Keep<>();
@@ -515,6 +602,9 @@ public class SimpleTest {
         keep.assertException(new Exception("xx"), "34");
     }
 
+    /**
+     * Test a last operation.
+     */
     @Test
     public void testLast() {
         Keep<String> keep = new Keep<>();
@@ -527,6 +617,9 @@ public class SimpleTest {
         keep.assertEquals("56");
     }
 
+    /**
+     * Test a last operation.
+     */
     @Test
     public void testLast2() {
         Keep<String> keep = new Keep<>();
@@ -539,6 +632,9 @@ public class SimpleTest {
         keep.assertEquals();
     }
 
+    /**
+     * Test a skip operation.
+     */
     @Test
     public void testSkip() {
         Keep<Integer> keep = new Keep<>();
@@ -551,6 +647,9 @@ public class SimpleTest {
         keep.assertEquals(2, 3);
     }
 
+    /**
+     * Test a skip operation.
+     */
     @Test
     public void testSkip2() {
         Keep<Integer> keep = new Keep<>();
@@ -563,6 +662,9 @@ public class SimpleTest {
         keep.assertEquals();
     }
 
+    /**
+     * Test a take operation.
+     */
     @Test
     public void testTake() {
         Keep<Integer> keep = new Keep<>();
@@ -575,6 +677,9 @@ public class SimpleTest {
         keep.assertEquals(1, 2);
     }
 
+    /**
+     * Test a take operation.
+     */
     @Test
     public void testTake2() {
         Keep<Integer> keep = new Keep<>();
@@ -587,6 +692,9 @@ public class SimpleTest {
         keep.assertEquals(1, 2, 3);
     }
 
+    /**
+     * Test a accumulator operation.
+     */
     @Test
     public void testAccumulator1() {
         Keep<Integer> keep = new Keep<>();
@@ -603,6 +711,9 @@ public class SimpleTest {
         keep.assertEquals(0, 1, 3, 6);
     }
 
+    /**
+     * Test a accumulator operation.
+     */
     @Test
     public void testAccumulator2() {
         Keep<Integer> keep = new Keep<>();
@@ -615,6 +726,9 @@ public class SimpleTest {
         keep.assertEquals(0, 1, 3, 6);
     }
 
+    /**
+     * Test a accumulator operation.
+     */
     @Test
     public void testAccumulator3() {
         Keep<Integer> keep = new Keep<>();
@@ -627,6 +741,9 @@ public class SimpleTest {
         keep.assertEquals(1, 3, 6);
     }
 
+    /**
+     * Test a accumulator operation.
+     */
     @Test
     public void testAccumulator4() {
         Keep<Integer> keep = new Keep<>();
@@ -643,6 +760,9 @@ public class SimpleTest {
         keep.assertException(new Exception("xx"), 0, 1, 3);
     }
 
+    /**
+     * Test a concat operation.
+     */
     @Test
     public void testConcat() {
         Keep<Integer> keep = new Keep<>();
@@ -656,6 +776,9 @@ public class SimpleTest {
     }
 
 
+    /**
+     * Test a whenDoneValue operation.
+     */
     @Test
     public void testWhenDoneValue1() {
         Keep<Integer> keep = new Keep<>();
@@ -669,6 +792,9 @@ public class SimpleTest {
         keep.assertEquals(4);
     }
 
+    /**
+     * Test a whenDoneError operation.
+     */
     @Test
     public void testWhenDoneError1() {
         Keep<Integer> keep = new Keep<>();
@@ -682,8 +808,11 @@ public class SimpleTest {
         keep.assertException(new Exception("xx"));
     }
 
+    /**
+     * Test a onComplete operation.
+     */
     //@Test
-    public void testWhenDoneProc1() {
+    public void testOnComplete() {
         Keep<Integer> keep = new Keep<>();
 
         Stream
@@ -696,6 +825,9 @@ public class SimpleTest {
         keep.assertEquals(44);
     }
 
+    /**
+     * Test a whenDone operation.
+     */
     @Test
     public void testWhenDonePublisher1() {
         Keep<Integer> keep = new Keep<>();
@@ -709,6 +841,9 @@ public class SimpleTest {
         keep.assertEquals(5, 6, 7);
     }
 
+    /**
+     * Test a whenDone operation.
+     */
     @Test
     public void testWhenDonePublisher2() {
         Keep<Integer> keep = new Keep<>();
@@ -721,6 +856,9 @@ public class SimpleTest {
         .start(1);
     }
 
+    /**
+     * Test a continueWithError operation.
+     */
     @Test
     public void testContinueWithError1() {
         Keep<Integer> keep = new Keep<>();
@@ -786,7 +924,9 @@ public class SimpleTest {
     }
      */
     
-    
+    /**
+     * Test pipe.
+     */
     //@Test
     public void testPipe() {
         Keep<String> keep = new Keep<>();
@@ -806,6 +946,9 @@ public class SimpleTest {
                 */
     }
 
+    /**
+     * Test delegate
+     */
     @Test
     public void testDelegate1() {
         Keep<Integer> keep = new Keep<>();
@@ -825,6 +968,9 @@ public class SimpleTest {
         keep2.assertEquals(1, 2, 3);
     }
 
+    /**
+     * Test toList operation.
+     */
     @SuppressWarnings("unchecked")
     @Test
     public void testToList1() {
@@ -839,8 +985,11 @@ public class SimpleTest {
         keep.assertEquals(Arrays.asList(1, 2, 3));
     }
 
+    /**
+     * Test each operation.
+     */
     @Test
-    public void testOnEach1() {
+    public void testEach1() {
         Keep<Integer> keep = new Keep<>();
 
         Stream

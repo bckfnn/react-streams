@@ -15,14 +15,30 @@ package io.github.bckfnn.reactstreams.ops;
 
 import io.github.bckfnn.reactstreams.BaseProcessor;
 
+/**
+ * Accumulator operation.
+ *
+ * @param <T> value type.
+ */
 public abstract class AccumulatorOp<T> extends BaseProcessor<T, T> {
     private T acc;
     private boolean initialValueSent = false;
 
+    /**
+     * Constructor.
+     * @param initial the initial value.
+     */
     public AccumulatorOp(T initial) {
         this.acc = initial;
     }
 
+    /**
+     * called for each value.
+     * @param value the current value.
+     * @param nextValue the next value encounter.
+     * @return the new accumulated value.
+     * @throws Throwable if an error occurs.
+     */
     public abstract T calc(T value, T nextValue) throws Throwable;
 
     @Override

@@ -54,6 +54,9 @@ public class TckTest {
         System.out.println(res);
     }
     
+    /**
+     * Test max.
+     */
     @Test
     public void testMax() {
         Stream<Integer> op = Stream.counter(1).take(3);

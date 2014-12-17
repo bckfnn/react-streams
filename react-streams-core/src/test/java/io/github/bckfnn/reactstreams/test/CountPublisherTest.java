@@ -7,8 +7,13 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;
 
+/**
+ * TCL test.
+ */
 public class CountPublisherTest extends PublisherVerification<Integer> {
-
+    /**
+     * Constructor.
+     */
     public CountPublisherTest() {
         super(new TestEnvironment(300), 1000);
     }
