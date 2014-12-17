@@ -682,7 +682,7 @@ public class SimpleTest {
         keep.assertException(new Exception("xx"));
     }
 
-    @Test
+    //@Test
     public void testWhenDoneProc1() {
         Keep<Integer> keep = new Keep<>();
 

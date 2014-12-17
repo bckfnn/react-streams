@@ -58,6 +58,12 @@ import org.reactivestreams.Subscription;
  */
 public interface Stream<O> extends Publisher<O> {
     
+    /**
+     * Create a new stream based on the responses from the <code>request</code> and <code>cancel</code> functions.
+     * @param request A function called for each invocation of {@link Subscription#request(long)}.
+     * @param cancel A function called for the invocation of {@link Subscription#cancel()}
+     * @return a new {@link Stream}
+     */
     public static <O> Stream<O> as(Proc2<BaseSubscription<O>, Long> request, Proc1<BaseSubscription<O>> cancel) {
         return new Stream<O>() {
             @Override
@@ -84,8 +90,12 @@ public interface Stream<O> extends Publisher<O> {
             }
         };
     }
-        
-    
+
+    /**
+     * Return a new Stream that emit elements from the <code>request</code> function.
+     * @param request A function, that is only called once and which can emit elements to the stream
+     * @return a new {@link Stream}
+     */
     public static <O> Stream<O> asOne(Proc1<BaseSubscription<O>> request) {
         return new Stream<O>() {
             @Override
@@ -405,6 +415,13 @@ public interface Stream<O> extends Publisher<O> {
         return chain(new WhenDoneFuncOp<O, R>(func));
     }
     
+    /**
+     * Add a <code>whenDoneFunction</code> operation to the output from this publisher.
+     * The whenDoneFunc will ignore all the input elements and when the publisher is complete it will emit 
+     * the elements from the returned Stream.
+     * @param func a function that return a another Stream.
+     * @return a new {@link Stream}.
+     */
     default public <R> Stream<R> whenDoneFunc(Func0<Stream<R>> func) {
         return chain(new WhenDonePublisherFuncOp<O, R>(func));
     }
