@@ -14,6 +14,7 @@
 package io.github.bckfnn.reactstreams.arangodb.test;
 
 import io.github.bckfnn.reactstreams.Stream;
+import io.github.bckfnn.reactstreams.arangodb.AsyncHttpClient;
 import io.github.bckfnn.reactstreams.arangodb.Client;
 
 import java.util.ArrayList;
@@ -40,14 +41,14 @@ public class ArangoTest extends TestVerticle {
 
     //@Test
     public void initTest() {
-        final Client client = new Client(null);
+        final Client client = new Client(new AsyncHttpClient());
         init(client)
         .printStream("after open", System.out)
         .whenDone(client.close())
         .printStream("after close", System.out)
         .whenDone(() -> "abc")
         .printStream("after lambda", System.out)
-        .whenDone(() -> VertxAssert.testComplete())
+        .onComplete(VertxAssert::testComplete)
         .start(1);
     }
 
@@ -59,7 +60,7 @@ public class ArangoTest extends TestVerticle {
         .whenDone(client.databasesList())
         .printStream("after list ", System.out)
         .printStream("after list process", System.out)
-        .whenDone(() -> VertxAssert.testComplete())
+        .onComplete(VertxAssert::testComplete)
         .start(1);
     }
 
@@ -74,7 +75,7 @@ public class ArangoTest extends TestVerticle {
             return client.getDatabase("test").documentCreate("test", true, true, v);            
         })
         .printStream("after save", System.out)
-        .whenDone(() -> VertxAssert.testComplete())
+        .onComplete(VertxAssert::testComplete)
         .start(1);
     }
 
@@ -96,7 +97,7 @@ public class ArangoTest extends TestVerticle {
             return client.getDatabase("test").documentCreate("test", true, true, v);
         })
         .printStream("after save", System.out)
-        .whenDone(() -> VertxAssert.testComplete())
+        .onComplete(VertxAssert::testComplete)
         .start(1);
     }
 
@@ -116,7 +117,7 @@ public class ArangoTest extends TestVerticle {
         })
         .map(r -> r.doc)
         .printStream("after load", System.out)
-        .whenDone(() -> VertxAssert.testComplete())
+        .onComplete(VertxAssert::testComplete)
         .start(1);
     }
 
@@ -125,7 +126,8 @@ public class ArangoTest extends TestVerticle {
     public void update() {
         final Client client = new Client(null);
         init(client)
-        .whenDoneFunc(() -> {
+        .whenDoneValue(null)
+        .mapMany($ -> {
             JsonObject v = new JsonObject();
             v.putString("name", "the name");
             v.putNumber("value", 1233);
@@ -142,7 +144,7 @@ public class ArangoTest extends TestVerticle {
             return client.getDatabase("test").documentUpdate(r._key, r._rev, true, true, "pol", r.doc);
         })
         .printStream("after save", System.out)
-        .whenDone(() -> VertxAssert.testComplete())
+        .onComplete(VertxAssert::testComplete)
         .start(1);
     }
 }

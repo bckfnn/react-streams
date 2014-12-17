@@ -688,6 +688,7 @@ public class SimpleTest {
 
         Stream
         .from(1, 2, 3)
+        .ignore()
         .onComplete(() -> { keep.doNext(44); })
         .chain(keep)
         .start(1);

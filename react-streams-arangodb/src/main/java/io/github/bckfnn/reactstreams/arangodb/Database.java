@@ -45,7 +45,7 @@ public class Database {
     public Stream<Result.DatabaseCreateResult> databaseCreate(List<Result.UserOptions> users) {
         Result.DatabaseCreateOptions options = new Result.DatabaseCreateOptions();
         options.name = databaseName;
-        options.users = null;
+        options.users = users;
         Url url = new Url("/_api/database");
         return process(post(url, options, Result.DatabaseCreateResult.class));
     }

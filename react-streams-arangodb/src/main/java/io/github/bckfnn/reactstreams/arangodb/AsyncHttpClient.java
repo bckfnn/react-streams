@@ -16,13 +16,16 @@ package io.github.bckfnn.reactstreams.arangodb;
 import io.github.bckfnn.reactstreams.Stream;
 
 import java.io.IOException;
-import java.net.URI;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.concurrent.FutureCallback;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.slf4j.Logger;
@@ -46,10 +49,21 @@ public class AsyncHttpClient implements HttpDriver {
     public <T extends Result> Stream<T> process(Operation<T> req) {
         LOG.debug("req -> " + req.getUri());
         return Stream.asOne(subscription -> {
-            httpClient.execute(new HttpHost(host, port), new HttpGet(new URI(req.getUri())), new FutureCallback<HttpResponse>() {
+            HttpRequest request = null;
+            if (req.getMethod().equals("POST")) {
+                HttpPost post = new HttpPost(req.getUri());
+                post.setEntity(new ByteArrayEntity(mapper.writeValueAsBytes(req.getBody()), ContentType.APPLICATION_JSON));
+                request = post;
+            } else if (req.getMethod().equals("GET")) {
+                request = new HttpGet(req.getUri());
+            }
+
+            httpClient.execute(new HttpHost(host, port), request, new FutureCallback<HttpResponse>() {
                 public void completed(HttpResponse result) {
                     LOG.debug("res <- " + result.getStatusLine().getStatusCode());
                     HttpEntity ent = result.getEntity();
+                    System.out.println(result.getStatusLine().getStatusCode() + " " + ent.isRepeatable());
+
                     try {
                         T val = mapper.readValue(ent.getContent(), req.getResponseClass());
                         subscription.sendNext(val);
@@ -74,7 +88,8 @@ public class AsyncHttpClient implements HttpDriver {
     public Stream<Boolean> init(String host, int port) {
         this.host = host;
         this.port = port;
-        return Stream.from();
+        httpClient.start();
+        return Stream.from(true);
     }
 
     @Override

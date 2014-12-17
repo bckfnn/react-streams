@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Result {
     public int code;
@@ -32,6 +34,16 @@ public class Result {
 
     }
     
+    public String toString() {
+        ObjectMapper map = new ObjectMapper();
+        try {
+            return map.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "error";
+        }
+    }
+
     public static class VersionResult extends Result {
         public String server;
         public String version;
