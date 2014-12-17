@@ -37,7 +37,6 @@ import io.github.bckfnn.reactstreams.ops.TakeOp;
 import io.github.bckfnn.reactstreams.ops.ToListOp;
 import io.github.bckfnn.reactstreams.ops.WhenDoneErrorOp;
 import io.github.bckfnn.reactstreams.ops.WhenDoneFuncOp;
-import io.github.bckfnn.reactstreams.ops.WhenDoneProcOp;
 import io.github.bckfnn.reactstreams.ops.WhenDonePublisherFuncOp;
 import io.github.bckfnn.reactstreams.ops.WhenDonePublisherOp;
 import io.github.bckfnn.reactstreams.ops.WhenDoneValueOp;
@@ -392,16 +391,6 @@ public interface Stream<O> extends Publisher<O> {
         return chain(new WhenDoneErrorOp<O>(error));
     }
 
-    /**
-     * Add a <code>whenDone</code> operation to the output from this publisher. 
-     * The whenDone operation will ignore all the input elements and when the publisher 
-     * is complete it will call the function.
-     * @param func the function to call.
-     * @return a new {@link Stream}
-     */ 
-    default public Stream<O> whenDone(Proc0 func) {
-        return chain(new WhenDoneProcOp<O>(func));
-    }
 
 
     /**
@@ -494,7 +483,7 @@ public interface Stream<O> extends Publisher<O> {
      * The input elements are not passed through.
      * @return a new {@link Stream}
      */
-    default  public Stream<O> onEach(Proc2<O, BaseProcessor<O, O>> func) {
+    default  public Stream<O> each(Proc2<O, BaseProcessor<O, O>> func) {
         return chain(new NopOp<O>() {
             @Override
             public void doNext(O value) {
@@ -513,7 +502,7 @@ public interface Stream<O> extends Publisher<O> {
      * The input elements are passed through.
      * @return a new {@link Stream}
      */
-    default public Stream<O> each(Proc1<O> func) {
+    default public Stream<O> onEach(Proc1<O> func) {
         return chain(new NopOp<O>() {
             @Override
             public void doNext(O value) {
@@ -529,6 +518,29 @@ public interface Stream<O> extends Publisher<O> {
         });
     }
 
+    /**
+     * Add a <code>onComplete</code> operation to the output from this publisher. 
+     * The onComplete operation will ignore all the input elements and when the publisher 
+     * is complete it will call the function.
+     * @param func the function to call.
+     * @return a new {@link Stream}
+     */ 
+    default public Stream<O> onComplete(Proc0 func) {
+        return chain(new NopOp<O>() {
+            @Override
+            public void onComplete() {
+                try {
+                    func.apply();
+                    super.onComplete();
+                } catch (Throwable e) {
+                    sendError(e);
+                    sendCancel();
+                }
+            }
+         });
+    }
+
+    
     /**
      * Add an <code>onFinally</code> operation to the output from this publisher.
      * After this publisher ends, with either onComplete() or onError(), the elements that 

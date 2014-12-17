@@ -18,7 +18,7 @@ import io.github.bckfnn.reactstreams.Stream;
 
 import org.reactivestreams.Subscriber;
 
-public class FromArrayOp<T> implements Stream<T> {
+public class FromArrayOp<T> implements Stream<T> { 
     private T[] array;
     int idx = 0;
 

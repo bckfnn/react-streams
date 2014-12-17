@@ -420,7 +420,7 @@ public class SimpleTest {
             Stream.from(1, 2, 3).mapMany(i -> {
                 return Stream.
                         from("a" + i, "b" + i, "c" + i).
-                        onEach((v, op) -> {
+                        each((v, op) -> {
                             s.execute(() -> {
                                 op.sendNext(v);
                                 op.handled();
@@ -688,7 +688,7 @@ public class SimpleTest {
 
         Stream
         .from(1, 2, 3)
-        .whenDone(() -> { keep.doNext(44); })
+        .onComplete(() -> { keep.doNext(44); })
         .chain(keep)
         .start(1);
 
@@ -844,7 +844,7 @@ public class SimpleTest {
 
         Stream
         .from(1, 2, 3)
-        .onEach((v, proc) -> { 
+        .each((v, proc) -> { 
             proc.sendNext(v);
             proc.handled();
         })
