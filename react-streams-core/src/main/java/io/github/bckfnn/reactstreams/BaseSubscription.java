@@ -25,91 +25,91 @@ import org.reactivestreams.Subscription;
  * @param <T> type of output elements.
  */
 public class BaseSubscription<T> implements Subscription {
-	private Subscriber<? super T> subscriber;
-	private boolean cancelled = false;
-	private long pendingDemand;
-	private boolean active = false;
-	
-	/**
-	 * Constructor.
-	 * @param subscriber2 the output subscriber.
-	 */
-	public BaseSubscription(Subscriber<? super T> subscriber2) {
-		this.subscriber = subscriber2;
-	}
+    private Subscriber<? super T> subscriber;
+    private boolean cancelled = false;
+    private long pendingDemand;
+    private boolean active = false;
 
-	@Override
-	public void cancel() {
-		cancelled = true;
-		subscriber = null;
-		//subscriber.onComplete();
-	}
-	
-	@Override
-	public void request(long elements) {
-	    if (elements <= 0) {
-	        throw new IllegalArgumentException("spec 3.9");
-	    }
-	    pendingDemand += elements;
-	}
-	
-	/**
-	 * @return is the subscription have been activated.
-	 */
-	public boolean isActive() {
-	    return active;
-	}
-	
-	/**
-	 * Activate the subscription.
-	 */
-	public void activate() {
-	    active = true;
-	}
+    /**
+     * Constructor.
+     * @param subscriber2 the output subscriber.
+     */
+    public BaseSubscription(Subscriber<? super T> subscriber2) {
+        this.subscriber = subscriber2;
+    }
 
-	/**
-	 * @return true if the subscription is cancelled (no longer active). 
-	 */
-	protected boolean isCancelled() {
-		return cancelled;
-	}
+    @Override
+    public void cancel() {
+        cancelled = true;
+        subscriber = null;
+        //subscriber.onComplete();
+    }
 
-	/**
-	 * @return the amount of unfulfilled demand, the difference between request() and sendNext() calls.
-	 */
-	public long getPendingDemand() {
-		return pendingDemand;
-	}
+    @Override
+    public void request(long elements) {
+        if (elements <= 0) {
+            throw new IllegalArgumentException("spec 3.9");
+        }
+        pendingDemand += elements;
+    }
 
-	/**
-	 * @param value send a value to the out subscriber.
-	 * Also decrement the pending demand.
-	 */
-	public void sendNext(T value) {
-		subscriber.onNext(value);
-		pendingDemand--;
-	}
-	
-	/**
-	 * Send a <code>complete</code> event to the output subscriber.
-	 * Also marks the subscription as cancelled.
-	 */
-	public void sendComplete() {
-		subscriber.onComplete();
-		cancelled = true;
-	}
+    /**
+     * @return is the subscription have been activated.
+     */
+    public boolean isActive() {
+        return active;
+    }
 
-	/**
-	 * Send a <code>error</code> event to the output subscriber.
-	 * Also marks the subscription as cancelled.
-	 * @param t the error.
-	 */
-	public void sendError(Throwable t) {
-		subscriber.onError(t);
-		cancelled = true;
-	}
-	
-	public String toString() {
-		return "Subscription to " + subscriber.getClass().getSimpleName();
-	}
+    /**
+     * Activate the subscription.
+     */
+    public void activate() {
+        active = true;
+    }
+
+    /**
+     * @return true if the subscription is cancelled (no longer active). 
+     */
+    protected boolean isCancelled() {
+        return cancelled;
+    }
+
+    /**
+     * @return the amount of unfulfilled demand, the difference between request() and sendNext() calls.
+     */
+    public long getPendingDemand() {
+        return pendingDemand;
+    }
+
+    /**
+     * @param value send a value to the out subscriber.
+     * Also decrement the pending demand.
+     */
+    public void sendNext(T value) {
+        subscriber.onNext(value);
+        pendingDemand--;
+    }
+
+    /**
+     * Send a <code>complete</code> event to the output subscriber.
+     * Also marks the subscription as cancelled.
+     */
+    public void sendComplete() {
+        subscriber.onComplete();
+        cancelled = true;
+    }
+
+    /**
+     * Send a <code>error</code> event to the output subscriber.
+     * Also marks the subscription as cancelled.
+     * @param t the error.
+     */
+    public void sendError(Throwable t) {
+        subscriber.onError(t);
+        cancelled = true;
+    }
+
+    public String toString() {
+        return "Subscription to " + subscriber.getClass().getSimpleName();
+    }
 }

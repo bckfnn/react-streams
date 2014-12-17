@@ -25,38 +25,38 @@ public abstract class ActiveSubscription<T> extends BaseSubscription<T> {
      * True when request(n) have been entered once.
      */
     public boolean recursion = false;
-    
-	/**
-	 * Constructor.
-	 * @param subscriber the subscriber that will recieve the elements.
-	 */
-	public ActiveSubscription(Subscriber<? super T> subscriber) {
-		super(subscriber);
-	}
 
-	/**
-	 * @return true when there are more elements available.
-	 */
-	public abstract boolean hasMore();
+    /**
+     * Constructor.
+     * @param subscriber the subscriber that will recieve the elements.
+     */
+    public ActiveSubscription(Subscriber<? super T> subscriber) {
+        super(subscriber);
+    }
 
-	/**
-	 * @return the next element.
-	 */
-	public abstract T getOne();
+    /**
+     * @return true when there are more elements available.
+     */
+    public abstract boolean hasMore();
 
-	@Override
-	public void request(long elements) {
-		super.request(elements);
-		if (recursion) {
-			return;
-		}
-		recursion = true;
-		while (getPendingDemand() > 0 && !isCancelled() && hasMore()) {
-			sendNext(getOne());
-		}
-		if (!hasMore() && !isCancelled()) {
-			sendComplete();
-		}
+    /**
+     * @return the next element.
+     */
+    public abstract T getOne();
+
+    @Override
+    public void request(long elements) {
+        super.request(elements);
+        if (recursion) {
+            return;
+        }
+        recursion = true;
+        while (getPendingDemand() > 0 && !isCancelled() && hasMore()) {
+            sendNext(getOne());
+        }
+        if (!hasMore() && !isCancelled()) {
+            sendComplete();
+        }
         recursion = false;
-	}
+    }
 }

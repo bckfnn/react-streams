@@ -36,7 +36,7 @@ public class Filters {
             handled();
         }
     }
-    
+
     /**
      * <b>Last</b> will consume all the input and when onComplete() is recieved will 
      * send out an onNext() with the last element, followed by an onComplete(). 
@@ -92,12 +92,12 @@ public class Filters {
                 sendCancel();
             }
         }
-        
+
         public String toString() {
             return "FilterOp";
         }
     }
-    
+
     /**
      * <code>Take</code> emit the initial <code>n</code> elements and then cancel the input stream. 
      * @param <T> type of the stream.
@@ -105,7 +105,7 @@ public class Filters {
     public static class Take<T> extends BaseProcessor<T, T> {
         final private int num;
         private int count = 0;
-        
+
         /**
          * Constructor.
          * @param num number of items include in the output.
@@ -125,7 +125,7 @@ public class Filters {
             }
         }
     }
-    
+
 
     /**
      * <code>Nop</code> emit the input events unmodified. 
@@ -138,7 +138,7 @@ public class Filters {
             handled();
         }
     }
-    
+
     /**
      * Done will only generate a complete event.
      * @param <T> type of the event.
@@ -150,7 +150,7 @@ public class Filters {
             sendCancel();
         }
     }
-    
+
     /**
      * Print will print debug information to the PrintStream
      * @param <T> type of the event.
@@ -158,7 +158,7 @@ public class Filters {
     public static class Print<T> extends BaseProcessor<T, T> {
         private String prefix;
         private PrintStream printStream;
-        
+
         /**
          * Constructor.
          * @param prefix print messages are prefixed with this string.
@@ -180,7 +180,7 @@ public class Filters {
             sendNext(value);
             handled();
         }
-        
+
         @Override
         public void onError(Throwable error) {
             printStream.println(prefix + " onError:" + error);

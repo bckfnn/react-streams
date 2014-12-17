@@ -39,7 +39,7 @@ public class Flows {
             sendError(error);
         }
     }
-    
+
     /**
      * ContinueWithProc operation.
      * 
@@ -71,7 +71,7 @@ public class Flows {
             }
         }
     }
-    
+
     /**
      * WhenDoneError operation.
      * 
@@ -98,7 +98,7 @@ public class Flows {
             sendError(error);
         }
     }
-    
+
     /**
      * WhenDoneFunc operation.
      * 
@@ -131,7 +131,7 @@ public class Flows {
             sendComplete();
         }
     }
-    
+
     /**
      * WhenDoneProc operation.
      * 
@@ -139,7 +139,7 @@ public class Flows {
      */
     public static class WhenDoneProc<T> extends BaseProcessor<T, T> {
         private Proc0 func;
-        
+
         /**
          * Constructor.
          * @param func the function to call.
@@ -163,8 +163,8 @@ public class Flows {
             }
         }
     }
-    
-    
+
+
     /**
      * WhenDonePublisherFunc operation.
      * 
@@ -196,7 +196,7 @@ public class Flows {
                 super.sendCancel();
             }
         }
-        
+
         @Override
         public void sendRequest(long n) {
             if (continueSubscription != null) {
@@ -205,7 +205,7 @@ public class Flows {
                 super.sendRequest(n);
             }
         }
-        
+
         @Override
         public void onComplete() {
             try {
@@ -237,7 +237,7 @@ public class Flows {
             }
         }
     }
-    
+
     /**
      * WhenDonePublisherFunc operation.
      * 
@@ -269,7 +269,7 @@ public class Flows {
                 super.sendCancel();
             }
         }
-        
+
         @Override
         public void sendRequest(long n) {
             if (continueSubscription != null) {
@@ -278,7 +278,7 @@ public class Flows {
                 super.sendRequest(n);
             }
         }
-        
+
         @Override
         public void onComplete() {
             publisher.subscribe(new Subscriber<R>() {
@@ -306,8 +306,8 @@ public class Flows {
             });
         }
     }
-    
-    
+
+
     /**
      * WhenDoneValue operation.
      * 
@@ -336,7 +336,7 @@ public class Flows {
             sendComplete();
         }
     }
-    
+
     /**
      * Finally operation.
      * 
@@ -351,7 +351,7 @@ public class Flows {
          * @throws Throwable
          */
         public abstract Stream<R> fin() throws Throwable;
-        
+
         @Override
         public void doNext(T value) {
             sendRequest();
@@ -377,14 +377,14 @@ public class Flows {
                 sendError(e);
             }
         }
-        
+
         private void runFinally() throws Throwable {
             fin().subscribe(new Subscriber<R>() {
                 @Override
                 public void onSubscribe(Subscription s) {
                     s.request(1);
                 }
-                
+
                 @Override
                 public void onNext(R value) {
                     sendNext(value);
@@ -411,7 +411,7 @@ public class Flows {
     public static class Delegate<O> extends BaseProcessor<O, O> {
         private Subscriber<O> target;
         int delegateQueue = 0;
-        
+
         /**
          * Constructor.
          * @param target the target subscriber.
@@ -419,8 +419,8 @@ public class Flows {
         public Delegate(Subscriber<O> target) {
             this.target = target;
         }
-        
-        
+
+
         @Override
         public void subscribe(Subscriber<? super O> subscriber) {
             super.subscribe(subscriber);

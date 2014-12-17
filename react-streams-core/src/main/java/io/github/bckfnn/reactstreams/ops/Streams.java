@@ -10,10 +10,10 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 /**
- * Sreating streams operations.
+ * Creating streams operations.
  */
 public class Streams {
-    
+
     /**
      * <code>Array</code> emit the elements in the array as a Stream.
      * @param <T> type of the Stream
@@ -51,7 +51,7 @@ public class Streams {
             return "ArraySource[" + idx + "]";
         }
     }
-    
+
     /**
      * Emits the exception as an onError event.
      * 
@@ -60,7 +60,7 @@ public class Streams {
     public static class Error<T> implements Stream<T> {
         private Throwable exc;
         boolean finished;
-        
+
         /**
          * Constructor.
          * @param exc the exception.
@@ -79,8 +79,8 @@ public class Streams {
             });
         }
     }
-    
-    
+
+
     /**
      * <strong>FromIteratorOp</strong> will generate an onNext() event for each element in the
      * Iterable, followed by an onComplete() event.
@@ -113,7 +113,7 @@ public class Streams {
             });         
         }
     }
-    
+
     /**
      * Value will generate a single onNext() event for the specified element, 
      * followed by an onComplete().
@@ -146,13 +146,13 @@ public class Streams {
             });
         }
     }
-    
+
     /**
      * <code>Counter</code> emit a sequence of integers, until the Stream is cancelled.
      */
     public static class Counter implements Stream<Integer> {
         private int start;
-        
+
         /**
          * Constructor.
          * @param start the start value.
@@ -165,7 +165,7 @@ public class Streams {
         public void subscribe(Subscriber<? super Integer> subscriber) {
             ActiveSubscription<Integer> s = new ActiveSubscription<Integer>(subscriber) {
                 int count = start;
-                
+
                 @Override
                 public boolean hasMore() {
                     return true;

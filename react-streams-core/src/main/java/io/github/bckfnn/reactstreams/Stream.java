@@ -33,7 +33,7 @@ import org.reactivestreams.Subscription;
  * @param <O> the type of output elements.
  */
 public interface Stream<O> extends Publisher<O> {
-    
+
     /**
      * Create a new stream based on the responses from the <code>request</code> and <code>cancel</code> functions.
      * @param request A function called for each invocation of {@link Subscription#request(long)}.
@@ -106,7 +106,7 @@ public interface Stream<O> extends Publisher<O> {
     public static <O> Stream<O> from(O value) {
         return new Streams.Value<O>(value);
     }
-    
+
     /**
      * Create and return a new {@code Stream<O>} that emit a series of values.
      * @param values the values.
@@ -178,7 +178,7 @@ public interface Stream<O> extends Publisher<O> {
     public static <T1, T2> Stream<Tuple<T1, T2>> zip(Publisher<T1> p1, Publisher<T2> p2) {
         return new Transforms.Zip<T1, T2>(p1, p2);
     }
-    
+
     /**
      * Creates a new Pipe around the Stream returned from the function.
      * A pipe keep track of the head of the sequence.
@@ -220,10 +220,10 @@ public interface Stream<O> extends Publisher<O> {
             return pipe;
         } catch (Throwable e) {
             throw new RuntimeException(e);
-           // return error(e);
+            // return error(e);
         }
-     }
-    
+    }
+
     /**
      * Chain the publisher in this stream to the specified subscriber.
      * Return the subscriber.
@@ -249,7 +249,7 @@ public interface Stream<O> extends Publisher<O> {
         this.subscribe(processor);
         return (Stream<X>) processor;
     }
-    
+
     /*
      * map operations.
      */
@@ -283,13 +283,13 @@ public interface Stream<O> extends Publisher<O> {
             }
         });
     }
-    
+
     /**
-    * Add a mapManyWith operation to the output from this publisher.
-    * @param mapFunc a function that transform each value.
-    * @param <R> type of the output from the transform.
-    * @return a new {@code Stream<Tuple<O, R>>} where each tuple contains the input value and mapped value.
-    */
+     * Add a mapManyWith operation to the output from this publisher.
+     * @param mapFunc a function that transform each value.
+     * @param <R> type of the output from the transform.
+     * @return a new {@code Stream<Tuple<O, R>>} where each tuple contains the input value and mapped value.
+     */
     default public <R> Stream<Tuple<O, R>> mapManyWith(final Func1<O, Stream<R>> mapFunc) {
         return chain(new Transforms.MapManyWith<O, R>() {
             @Override
@@ -298,12 +298,12 @@ public interface Stream<O> extends Publisher<O> {
             }
         });
     }
-   
+
 
     /*
      * Filter operations.
      */
-    
+
     /**
      * Add a <code>last</code> operation to the output from this publisher. 
      * The last operation will ignore all output except the very last element. 
@@ -342,7 +342,7 @@ public interface Stream<O> extends Publisher<O> {
     default public Stream<O> nop() {
         return chain(new Filters.Nop<O>());
     }
-    
+
     /**
      * Add a <code>ignore</code> operation to the output from this publisher. 
      * The ignore operation ignore all values and send only {@link Subscriber#onComplete()} and {@link Subscriber#onError(Throwable)}.
@@ -366,7 +366,7 @@ public interface Stream<O> extends Publisher<O> {
         return null;
     }
 
-    
+
     /**
      * Add a <code>done</code> operation to the output from this publisher. 
      * The done operation will at the first <code>request(n)</code> call cancel this publisher 
@@ -429,7 +429,7 @@ public interface Stream<O> extends Publisher<O> {
     default public <R> Stream<R> whenDone(Func0<R> func) {
         return chain(new Flows.WhenDoneFunc<O, R>(func));
     }
-    
+
     /**
      * Add a <code>whenDoneFunction</code> operation to the output from this publisher.
      * The whenDoneFunc will ignore all the input elements and when the publisher is complete it will emit 
@@ -570,10 +570,10 @@ public interface Stream<O> extends Publisher<O> {
                     sendCancel();
                 }
             }
-         });
+        });
     }
 
-    
+
     /**
      * Add an <code>onFinally</code> operation to the output from this publisher.
      * After this publisher ends, with either onComplete() or onError(), the elements that 

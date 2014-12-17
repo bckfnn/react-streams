@@ -15,7 +15,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 /**
- * Map operations.
+ * Transform operations.
  */
 public class Transforms {
     /**
@@ -238,14 +238,14 @@ public class Transforms {
             return "MapMany[]";
         }
     }
-    
+
     /**
      * ToList operations. 
      * @param <T> type of input values.
      */
     public static class ToList<T> extends BaseProcessor<T, List<T>> {
         private List<T> list = new ArrayList<>();
-        
+
         @Override
         public void doNext(T value) {
             list.add(value);
@@ -259,7 +259,7 @@ public class Transforms {
             sendComplete();
         }
     }
-    
+
     /**
      * <code>Zip</code> combines two Stream by emitting a Tuple with an item from each stream.
      *
@@ -275,7 +275,7 @@ public class Transforms {
         boolean v1stop = false;
         List<T2> v2 = new LinkedList<T2>();
         boolean v2stop = false;
-        
+
         /**
          * Constructor.
          * @param o1 the first Stream.
@@ -285,10 +285,10 @@ public class Transforms {
             this.o1 = o1;
             this.o2 = o2;
         }
-        
+
         @Override
         public void subscribe(final Subscriber<? super Tuple<T1, T2>> subscriber) {
-            
+
             Subscriber<T1> s1 = new Subscriber<T1>() {
                 @Override
                 public void onSubscribe(Subscription s) {
@@ -323,8 +323,8 @@ public class Transforms {
                 }
             };
             o1.subscribe(s1);
-            
-            
+
+
             Subscriber<T2> s2 = new Subscriber<T2>() {
                 @Override
                 public void onSubscribe(Subscription s) {
@@ -359,7 +359,7 @@ public class Transforms {
                 }
             };
             o2.subscribe(s2);
-            
+
             subscriber.onSubscribe(new Subscription() {
                 @Override
                 public void request(long n) {
@@ -380,7 +380,7 @@ public class Transforms {
         }
 
     }
-    
+
     /**
      * Concat operation.
      * 
@@ -407,7 +407,7 @@ public class Transforms {
         public Concat(List<Publisher<T>> list) {
             this.list = list;
         }
-        
+
         @Override
         public void subscribe(Subscriber<? super T> s) {
             list.get(i++).subscribe(new Sub());
