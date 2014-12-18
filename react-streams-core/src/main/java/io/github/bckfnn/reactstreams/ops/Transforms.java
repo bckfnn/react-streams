@@ -35,16 +35,16 @@ public class Transforms {
     /**
      * The map operation.
      * @param <T> type of input values.
-     * @param <R> type of output values.
+     * @param <N> type of output values.
      */
-    public static class Map<T, R> extends BaseProcessor<T, R> {
-        private Func1<T, R> func;
+    public static class Map<T, N> extends BaseProcessor<T, N> {
+        private Func1<T, N> func;
         
         /**
          * Constructor.
          * @param func a function that map an input value to an output value.
          */
-        public Map(Func1<T, R> func) {
+        public Map(Func1<T, N> func) {
             this.func = func;
         }
         
@@ -68,27 +68,27 @@ public class Transforms {
      * The mapMany operation.
      *
      * @param <T> type of input values.
-     * @param <R> type of output values.
+     * @param <N> type of output values.
      */
-    public static class MapMany<T, R> extends BaseProcessor<T, R> {
-        private List<Publisher<R>> children = new ArrayList<Publisher<R>>();
+    public static class MapMany<T, N> extends BaseProcessor<T, N> {
+        private List<Publisher<N>> children = new ArrayList<Publisher<N>>();
         private boolean completed = false;
         private int count = 0;
         private Subscription childSubscription;
-        private Func1<T, Stream<R>> func;
+        private Func1<T, Stream<N>> func;
 
         /**
          * Constructor.
          * @param func a function that map an input value to a stream of output values.
          */
-        public MapMany(Func1<T, Stream<R>> func) {
+        public MapMany(Func1<T, Stream<N>> func) {
             this.func = func;
         }
         
         @Override
         public void doNext(T value) {
             try {
-                final Publisher<R> child = func.apply(value);
+                final Publisher<N> child = func.apply(value);
                 children.add(child);
                 count++;
                 drain();
@@ -120,8 +120,8 @@ public class Transforms {
             if (children.size() == 0) {
                 return;
             }
-            final Publisher<R> child = children.remove(0);
-            child.subscribe(new Subscriber<R>() {
+            final Publisher<N> child = children.remove(0);
+            child.subscribe(new Subscriber<N>() {
 
                 @Override
                 public void onSubscribe(Subscription s) {
@@ -130,7 +130,7 @@ public class Transforms {
                 }
 
                 @Override
-                public void onNext(R value) {
+                public void onNext(N value) {
                     sendNext(value);
                 }
 
@@ -164,27 +164,27 @@ public class Transforms {
      * The mapManyWith operation.
      *
      * @param <T> type of input values.
-     * @param <R> type of output values.
+     * @param <N> type of output values.
      */
-    public static class MapManyWith<T, R> extends BaseProcessor<T, Tuple<T, R>> {
-        private List<Tuple<T, Publisher<R>>> children = new ArrayList<>();
+    public static class MapManyWith<T, N> extends BaseProcessor<T, Tuple<T, N>> {
+        private List<Tuple<T, Publisher<N>>> children = new ArrayList<>();
         private boolean completed = false;
         private int count = 0;
         private Subscription childSubscription;
-        private Func1<T, Stream<R>> func;
+        private Func1<T, Stream<N>> func;
         
         /**
          * Constructor.
          * @param func a function that map an input value to a stream of output values.
          */
-        public MapManyWith(Func1<T, Stream<R>> func) {
+        public MapManyWith(Func1<T, Stream<N>> func) {
             this.func = func;
         }
         
         @Override
         public void doNext(T value) {
             try {
-                final Publisher<R> child = func.apply(value);
+                final Publisher<N> child = func.apply(value);
                 children.add(new Tuple<>(value, child));
                 count++;
                 drain();
@@ -216,8 +216,8 @@ public class Transforms {
             if (children.size() == 0) {
                 return;
             }
-            final Tuple<T, Publisher<R>> child = children.remove(0);
-            child.right().subscribe(new Subscriber<R>() {
+            final Tuple<T, Publisher<N>> child = children.remove(0);
+            child.right().subscribe(new Subscriber<N>() {
 
                 @Override
                 public void onSubscribe(Subscription s) {
@@ -226,7 +226,7 @@ public class Transforms {
                 }
 
                 @Override
-                public void onNext(R value) {
+                public void onNext(N value) {
                     sendNext(new Tuple<>(child.left(), value));
                 }
 

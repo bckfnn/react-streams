@@ -15,16 +15,16 @@ package io.github.bckfnn.reactstreams;
 
 /**
  * A functional interface that takes two arguments and returns nothing.
- * @param <T> the input type of the first argument
- * @param <U> the input type of the second argument
+ * @param <A1> the input type of the first argument
+ * @param <A2> the input type of the second argument
  */
-public interface Proc2<T, U> {
+public interface Proc2<A1, A2> {
     /**
      * Call the function.
      *
-     * @param t the function argument
-     * @param u the second function argument
+     * @param arg1 the function argument
+     * @param arg2 the second function argument
      * @exception Throwable when an exception occur.
      */
-    void apply(T t, U u) throws Throwable;
+    void apply(A1 arg1, A2 arg2) throws Throwable;
 }

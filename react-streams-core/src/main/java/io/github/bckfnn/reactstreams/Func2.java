@@ -15,18 +15,18 @@ package io.github.bckfnn.reactstreams;
 
 /**
  * A functional interface that takes two input value of type T and U and return a R value.
- * @param <T> the type of the first input value.
- * @param <U> the type of the second input value
+ * @param <A1> the type of the first input value.
+ * @param <A2> the type of the second input value
  * @param <R> the return type
  */
-public interface Func2<T, U, R> {
+public interface Func2<A1, A2, R> {
     /**
      * Applies this function to the given argument.
      *
-     * @param t the first function argument
-     * @param u the second function argument
+     * @param arg1 the first function argument
+     * @param arg2 the second function argument
      * @return the function result
      * @exception Throwable when an error occurs.
      */
-    R apply(T t, U u) throws Throwable;
+    R apply(A1 arg1, A2 arg2) throws Throwable;
 }

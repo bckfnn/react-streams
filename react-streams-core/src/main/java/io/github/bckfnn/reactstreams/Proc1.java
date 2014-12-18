@@ -15,14 +15,14 @@ package io.github.bckfnn.reactstreams;
 
 /**
  * A functional interface that takes zero argument and returns nothing.
- * @param <T> the input type
+ * @param <A> the input type
  */
-public interface Proc1<T> {
+public interface Proc1<A> {
     /**
      * Call the function.
      *
-     * @param t the function argument
+     * @param arg the function argument
      * @exception Throwable when an exception occur.
      */
-    void apply(T t) throws Throwable;
+    void apply(A arg) throws Throwable;
 }

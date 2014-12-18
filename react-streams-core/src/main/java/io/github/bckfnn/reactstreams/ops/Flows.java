@@ -116,16 +116,16 @@ public class Flows {
      * WhenDoneFunc operation.
      * 
      * @param <T> value type.
-     * @param <R> output type.
+     * @param <N> output type.
      */
-    public static class WhenDoneFunc<T, R> extends BaseProcessor<T, R> {
-        private Func0<R> func;
+    public static class WhenDoneFunc<T, N> extends BaseProcessor<T, N> {
+        private Func0<N> func;
 
         /**
          * Constructor.
          * @param func the function to call.
          */
-        public WhenDoneFunc(Func0<R> func) {
+        public WhenDoneFunc(Func0<N> func) {
             this.func = func;
         }
 
@@ -182,17 +182,17 @@ public class Flows {
      * WhenDonePublisherFunc operation.
      * 
      * @param <T> value type.
-     * @param <R> output value type. 
+     * @param <N> output value type. 
      */
-    public static class WhenDonePublisherFunc<T, R> extends BaseProcessor<T, R> {
-        private Func0<Stream<R>> publisher;
+    public static class WhenDonePublisherFunc<T, N> extends BaseProcessor<T, N> {
+        private Func0<Stream<N>> publisher;
         private Subscription continueSubscription;
 
         /**
          * Constructor.
          * @param publisher the publisher to continue with the this Stream of complete.
          */
-        public WhenDonePublisherFunc(Func0<Stream<R>> publisher) {
+        public WhenDonePublisherFunc(Func0<Stream<N>> publisher) {
             this.publisher = publisher;
         }
 
@@ -222,7 +222,7 @@ public class Flows {
         @Override
         public void onComplete() {
             try {
-                publisher.apply().subscribe(new Subscriber<R>() {
+                publisher.apply().subscribe(new Subscriber<N>() {
                     @Override
                     public void onSubscribe(Subscription s) {
                         continueSubscription = s;
@@ -230,7 +230,7 @@ public class Flows {
                     }
 
                     @Override
-                    public void onNext(R value) {
+                    public void onNext(N value) {
                         sendNext(value);
                         continueSubscription.request(1);
                     }
@@ -255,17 +255,17 @@ public class Flows {
      * WhenDonePublisherFunc operation.
      * 
      * @param <T> value type.
-     * @param <R> output value type. 
+     * @param <N> output value type. 
      */
-    public static class WhenDonePublisher<T, R> extends BaseProcessor<T, R> {
-        private Publisher<R> publisher;
+    public static class WhenDonePublisher<T, N> extends BaseProcessor<T, N> {
+        private Publisher<N> publisher;
         private Subscription continueSubscription;
 
         /**
          * Constructor.
          * @param publisher the publisher to continue with the this Stream of complete.
          */
-        public WhenDonePublisher(Publisher<R> publisher) {
+        public WhenDonePublisher(Publisher<N> publisher) {
             this.publisher = publisher;
         }
 
@@ -294,7 +294,7 @@ public class Flows {
 
         @Override
         public void onComplete() {
-            publisher.subscribe(new Subscriber<R>() {
+            publisher.subscribe(new Subscriber<N>() {
                 @Override
                 public void onSubscribe(Subscription s) {
                     continueSubscription = s;
@@ -302,7 +302,7 @@ public class Flows {
                 }
 
                 @Override
-                public void onNext(R value) {
+                public void onNext(N value) {
                     sendNext(value);
                     continueSubscription.request(1);
                 }
@@ -325,16 +325,16 @@ public class Flows {
      * WhenDoneValue operation.
      * 
      * @param <T> value type.
-     * @param <R> output value type. 
+     * @param <N> output value type. 
      */
-    public static class WhenDoneValue<T, R> extends BaseProcessor<T, R> {
-        private R value;
+    public static class WhenDoneValue<T, N> extends BaseProcessor<T, N> {
+        private N value;
 
         /**
          * Constructor.
          * @param value the value that is emitted when this Stream is complete.
          */
-        public WhenDoneValue(R value) {
+        public WhenDoneValue(N value) {
             this.value = value;
         }
 
@@ -354,16 +354,16 @@ public class Flows {
      * Finally operation.
      * 
      * @param <T> value type.
-     * @param <R> output value type. 
+     * @param <N> output value type. 
      */
-    public static class Finally<T, R> extends BaseProcessor<T, R> {
-        private Func0<Stream<R>> func;
+    public static class Finally<T, N> extends BaseProcessor<T, N> {
+        private Func0<Stream<N>> func;
         
         /**
          * Constructor.
          * @param func the function to call when this stream is complete or emit an error.
          */
-        public Finally(Func0<Stream<R>> func) {
+        public Finally(Func0<Stream<N>> func) {
             this.func = func;
         }
 
@@ -394,14 +394,14 @@ public class Flows {
         }
 
         private void runFinally() throws Throwable {
-            func.apply().subscribe(new Subscriber<R>() {
+            func.apply().subscribe(new Subscriber<N>() {
                 @Override
                 public void onSubscribe(Subscription s) {
                     s.request(1);
                 }
 
                 @Override
-                public void onNext(R value) {
+                public void onNext(N value) {
                     sendNext(value);
                 }
 
@@ -421,23 +421,23 @@ public class Flows {
     /**
      * Delegate operation.
      * 
-     * @param <O> value type.
+     * @param <T> value type.
      */
-    public static class Delegate<O> extends BaseProcessor<O, O> {
-        private Subscriber<O> target;
+    public static class Delegate<T> extends BaseProcessor<T, T> {
+        private Subscriber<T> target;
         int delegateQueue = 0;
 
         /**
          * Constructor.
          * @param target the target subscriber.
          */
-        public Delegate(Subscriber<O> target) {
+        public Delegate(Subscriber<T> target) {
             this.target = target;
         }
 
 
         @Override
-        public void subscribe(Subscriber<? super O> subscriber) {
+        public void subscribe(Subscriber<? super T> subscriber) {
             super.subscribe(subscriber);
 
             target.onSubscribe(new Subscription() {
@@ -456,7 +456,7 @@ public class Flows {
         }
 
         @Override
-        public void doNext(O value) {
+        public void doNext(T value) {
             sendNext(value);
             target.onNext(value);
         }
