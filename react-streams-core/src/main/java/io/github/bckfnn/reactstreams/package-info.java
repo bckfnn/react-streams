@@ -13,6 +13,7 @@
  */
 /**
  * Core react-stream classes.
+ * 
  * Type identifiers used are 
  * <ul>
  * <li> {@code <T>} for the output type of a {@link io.github.bckfnn.reactstreams.Stream}.</li>

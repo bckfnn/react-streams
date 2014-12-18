@@ -48,7 +48,7 @@ public class BaseSubscription<T> implements Subscription {
     @Override
     public void request(long elements) {
         if (elements <= 0) {
-            throw new IllegalArgumentException("spec 3.9");
+            sendError(new IllegalArgumentException("spec 3.9"));
         }
         pendingDemand += elements;
     }

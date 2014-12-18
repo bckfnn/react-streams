@@ -125,7 +125,7 @@ public abstract class BaseProcessor<I, O> implements Pipe<I, O> {
             @Override
             public void request(long n) {
                 super.request(n);
-                if (isActive()) {
+                if (isActive() &&  !isCancelled()) {
                     sendRequest(n);
                 }
             }

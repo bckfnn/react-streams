@@ -5,9 +5,9 @@ import io.github.bckfnn.reactstreams.Stream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
+import org.testng.annotations.Test;
 
 /**
  * Test parts of the TCK

@@ -2,7 +2,9 @@ package io.github.bckfnn.reactstreams.test;
 
 import io.github.bckfnn.reactstreams.Stream;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
+
+
 
 /**
  * Code from examples doc.
