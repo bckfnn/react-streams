@@ -16,8 +16,8 @@
  * Type identifiers used are 
  * <ul>
  * <li> {@code <T>} for the output type of a {@link io.github.bckfnn.reactstreams.Stream}.</li>
- * <li> {@code <I>} for the input type in processing pipes.</li>
- * <li> {@code <N>} for the type of a transformed {@link io.github.bckfnn.reactstreams.Stream} returned from a operation.
+ * <li> {@code <I>} for the input types in processing pipes.</li>
+ * <li> {@code <O>} for the output types in processing pipes and operations.</li>
  * <li> {@code <R>} for return types in functional interfaces.
  * <li> {@code <A>} for argument types in functional interfaces.</li>
  * <li> {@code <S>} throw away types to handle generic returns, {@link io.github.bckfnn.reactstreams.Stream#chain(org.reactivestreams.Subscriber)}.</li>

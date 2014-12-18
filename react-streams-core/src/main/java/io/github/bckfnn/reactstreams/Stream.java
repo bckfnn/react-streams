@@ -256,31 +256,31 @@ public interface Stream<T> extends Publisher<T> {
     /**
      * Add a map operation to the output from this publisher.
      * @param mapFunc a function that transform each value.
-     * @param <N> type of the output from the transform.
-     * @return a new {@code Stream<N>}.
+     * @param <O> type of the output from the transform.
+     * @return a new {@code Stream<O>}.
      */
-    default public <N> Stream<N> map(final Func1<T, N> mapFunc) {
-        return chain(new Transforms.Map<T, N>(mapFunc));
+    default public <O> Stream<O> map(final Func1<T, O> mapFunc) {
+        return chain(new Transforms.Map<T, O>(mapFunc));
     }
 
     /**
      * Add a mapMany operation to the output from this publisher.
      * @param mapFunc a function that transform each value.
-     * @param <N> type of the output from the transform.
-     * @return a new {@code Stream<N>}.
+     * @param <O> type of the output from the transform.
+     * @return a new {@code Stream<O>}.
      */
-    default public <N> Stream<N> mapMany(final Func1<T, Stream<N>> mapFunc) {
-        return chain(new Transforms.MapMany<T, N>(mapFunc));
+    default public <O> Stream<O> mapMany(final Func1<T, Stream<O>> mapFunc) {
+        return chain(new Transforms.MapMany<T, O>(mapFunc));
     }
 
     /**
      * Add a mapManyWith operation to the output from this publisher.
      * @param mapFunc a function that transform each value.
-     * @param <N> type of the output from the transform.
-     * @return a new {@code Stream<Tuple<O, N>>} where each tuple contains the input value and mapped value.
+     * @param <O> type of the output from the transform.
+     * @return a new {@code Stream<Tuple<O, O>>} where each tuple contains the input value and mapped value.
      */
-    default public <N> Stream<Tuple<T, N>> mapManyWith(final Func1<T, Stream<N>> mapFunc) {
-        return chain(new Transforms.MapManyWith<T, N>(mapFunc));
+    default public <O> Stream<Tuple<T, O>> mapManyWith(final Func1<T, Stream<O>> mapFunc) {
+        return chain(new Transforms.MapManyWith<T, O>(mapFunc));
     }
 
 
@@ -367,11 +367,11 @@ public interface Stream<T> extends Publisher<T> {
      * The whenDoneValue operation will ignore all the input elements and when the publisher 
      * is complete it will emit the single <code>value</code> element
      * @param value the value.
-     * @param <N> the type of the output value.
+     * @param <O> the type of the output value.
      * @return a new {@link Stream}
      */ 
-    default public <N> Stream<N> whenDoneValue(N value) {
-        return chain(new Flows.WhenDoneValue<T, N>(value));
+    default public <O> Stream<O> whenDoneValue(O value) {
+        return chain(new Flows.WhenDoneValue<T, O>(value));
     }
 
     /**
@@ -392,11 +392,11 @@ public interface Stream<T> extends Publisher<T> {
      * The whenDone operation will ignore all the input elements and when the publisher 
      * is complete it will emit the single element from the specified <code>func</code>.
      * @param func the function that return the next value.
-     * @param <N> the type of the output values.
+     * @param <O> the type of the output values.
      * @return a new {@link Stream}
      */ 
-    default public <N> Stream<N> whenDone(Func0<N> func) {
-        return chain(new Flows.WhenDoneFunc<T, N>(func));
+    default public <O> Stream<O> whenDone(Func0<O> func) {
+        return chain(new Flows.WhenDoneFunc<T, O>(func));
     }
 
     /**
@@ -404,11 +404,11 @@ public interface Stream<T> extends Publisher<T> {
      * The whenDoneFunc will ignore all the input elements and when the publisher is complete it will emit 
      * the elements from the returned Stream.
      * @param func a function that return a another Stream.
-     * @param <N> type of the stream.
+     * @param <O> type of the stream.
      * @return a new {@link Stream}.
      */
-    default public <N> Stream<N> whenDoneFunc(Func0<Stream<N>> func) {
-        return chain(new Flows.WhenDonePublisherFunc<T, N>(func));
+    default public <O> Stream<O> whenDoneFunc(Func0<Stream<O>> func) {
+        return chain(new Flows.WhenDonePublisherFunc<T, O>(func));
     }
 
     /**
@@ -416,11 +416,11 @@ public interface Stream<T> extends Publisher<T> {
      * The whenDone operation will ignore all the input elements and when the publisher 
      * is complete it will emit the elements from the specified <code>publisher</code> element.
      * @param publisher the publisher.
-     * @param <N> the type of the output values.
+     * @param <O> the type of the output values.
      * @return a new {@link Stream}
      */ 
-    default public <N> Stream<N> whenDone(Publisher<N> publisher) {
-        return chain(new Flows.WhenDonePublisher<T, N>(publisher));
+    default public <O> Stream<O> whenDone(Publisher<O> publisher) {
+        return chain(new Flows.WhenDonePublisher<T, O>(publisher));
     }
 
     /**
@@ -571,23 +571,23 @@ public interface Stream<T> extends Publisher<T> {
      * is returned from the <code>func</code> will be emitted.
      * @param func the function to call for each input element. 
      * The input elements are not passed through.
-     * @param <N> the type of the output values.
+     * @param <O> the type of the output values.
      * @return a new {@link Stream}
      */
-    default public <N> Stream<N> onFinally(Func0<Stream<N>> func) {
-        return chain(new Flows.Finally<T, N>(func));
+    default public <O> Stream<O> onFinally(Func0<Stream<O>> func) {
+        return chain(new Flows.Finally<T, O>(func));
     }
 
     /**
      * Add an <code>onFinally</code> operation to the output from this publisher. 
      * After this publisher ends, with either onComplete() or onError(), the <code>func</code>
      * is called and the original end event is passed on.
-     * @param <N> the type of the output values.
+     * @param <O> the type of the output values.
      * @param func the function that is called when this publisher ends.
      * @return a new {@link Stream}
      */
-    default public <N> Stream<N> onFinally(Proc0 func) {
-        return chain(new BaseProcessor<T, N>() {
+    default public <O> Stream<O> onFinally(Proc0 func) {
+        return chain(new BaseProcessor<T, O>() {
 
             @Override
             public void doNext(T value) {

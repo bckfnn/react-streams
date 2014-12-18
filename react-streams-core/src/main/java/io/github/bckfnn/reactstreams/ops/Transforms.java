@@ -34,22 +34,22 @@ import org.reactivestreams.Subscription;
 public class Transforms {
     /**
      * The map operation.
-     * @param <T> type of input values.
-     * @param <N> type of output values.
+     * @param <I> type of input values.
+     * @param <O> type of output values.
      */
-    public static class Map<T, N> extends BaseProcessor<T, N> {
-        private Func1<T, N> func;
+    public static class Map<I, O> extends BaseProcessor<I, O> {
+        private Func1<I, O> func;
         
         /**
          * Constructor.
          * @param func a function that map an input value to an output value.
          */
-        public Map(Func1<T, N> func) {
+        public Map(Func1<I, O> func) {
             this.func = func;
         }
         
         @Override
-        public void doNext(T value) {
+        public void doNext(I value) {
             try {
                 sendNext(func.apply(value));
                 handled();
@@ -67,28 +67,28 @@ public class Transforms {
     /**
      * The mapMany operation.
      *
-     * @param <T> type of input values.
-     * @param <N> type of output values.
+     * @param <I> type of input values.
+     * @param <O> type of output values.
      */
-    public static class MapMany<T, N> extends BaseProcessor<T, N> {
-        private List<Publisher<N>> children = new ArrayList<Publisher<N>>();
+    public static class MapMany<I, O> extends BaseProcessor<I, O> {
+        private List<Publisher<O>> children = new ArrayList<Publisher<O>>();
         private boolean completed = false;
         private int count = 0;
         private Subscription childSubscription;
-        private Func1<T, Stream<N>> func;
+        private Func1<I, Stream<O>> func;
 
         /**
          * Constructor.
          * @param func a function that map an input value to a stream of output values.
          */
-        public MapMany(Func1<T, Stream<N>> func) {
+        public MapMany(Func1<I, Stream<O>> func) {
             this.func = func;
         }
         
         @Override
-        public void doNext(T value) {
+        public void doNext(I value) {
             try {
-                final Publisher<N> child = func.apply(value);
+                final Publisher<O> child = func.apply(value);
                 children.add(child);
                 count++;
                 drain();
@@ -120,8 +120,8 @@ public class Transforms {
             if (children.size() == 0) {
                 return;
             }
-            final Publisher<N> child = children.remove(0);
-            child.subscribe(new Subscriber<N>() {
+            final Publisher<O> child = children.remove(0);
+            child.subscribe(new Subscriber<O>() {
 
                 @Override
                 public void onSubscribe(Subscription s) {
@@ -130,7 +130,7 @@ public class Transforms {
                 }
 
                 @Override
-                public void onNext(N value) {
+                public void onNext(O value) {
                     sendNext(value);
                 }
 
@@ -163,28 +163,28 @@ public class Transforms {
     /**
      * The mapManyWith operation.
      *
-     * @param <T> type of input values.
-     * @param <N> type of output values.
+     * @param <I> type of input values.
+     * @param <O> type of output values.
      */
-    public static class MapManyWith<T, N> extends BaseProcessor<T, Tuple<T, N>> {
-        private List<Tuple<T, Publisher<N>>> children = new ArrayList<>();
+    public static class MapManyWith<I, O> extends BaseProcessor<I, Tuple<I, O>> {
+        private List<Tuple<I, Publisher<O>>> children = new ArrayList<>();
         private boolean completed = false;
         private int count = 0;
         private Subscription childSubscription;
-        private Func1<T, Stream<N>> func;
+        private Func1<I, Stream<O>> func;
         
         /**
          * Constructor.
          * @param func a function that map an input value to a stream of output values.
          */
-        public MapManyWith(Func1<T, Stream<N>> func) {
+        public MapManyWith(Func1<I, Stream<O>> func) {
             this.func = func;
         }
         
         @Override
-        public void doNext(T value) {
+        public void doNext(I value) {
             try {
-                final Publisher<N> child = func.apply(value);
+                final Publisher<O> child = func.apply(value);
                 children.add(new Tuple<>(value, child));
                 count++;
                 drain();
@@ -216,8 +216,8 @@ public class Transforms {
             if (children.size() == 0) {
                 return;
             }
-            final Tuple<T, Publisher<N>> child = children.remove(0);
-            child.right().subscribe(new Subscriber<N>() {
+            final Tuple<I, Publisher<O>> child = children.remove(0);
+            child.right().subscribe(new Subscriber<O>() {
 
                 @Override
                 public void onSubscribe(Subscription s) {
@@ -226,7 +226,7 @@ public class Transforms {
                 }
 
                 @Override
-                public void onNext(N value) {
+                public void onNext(O value) {
                     sendNext(new Tuple<>(child.left(), value));
                 }
 

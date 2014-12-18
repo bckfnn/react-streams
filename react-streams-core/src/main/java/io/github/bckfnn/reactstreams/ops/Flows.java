@@ -115,22 +115,22 @@ public class Flows {
     /**
      * WhenDoneFunc operation.
      * 
-     * @param <T> value type.
-     * @param <N> output type.
+     * @param <I> value type.
+     * @param <O> output type.
      */
-    public static class WhenDoneFunc<T, N> extends BaseProcessor<T, N> {
-        private Func0<N> func;
+    public static class WhenDoneFunc<I, O> extends BaseProcessor<I, O> {
+        private Func0<O> func;
 
         /**
          * Constructor.
          * @param func the function to call.
          */
-        public WhenDoneFunc(Func0<N> func) {
+        public WhenDoneFunc(Func0<O> func) {
             this.func = func;
         }
 
         @Override
-        public void doNext(T value) {
+        public void doNext(I value) {
             sendRequest();
         }
 
@@ -181,23 +181,23 @@ public class Flows {
     /**
      * WhenDonePublisherFunc operation.
      * 
-     * @param <T> value type.
-     * @param <N> output value type. 
+     * @param <I> value type.
+     * @param <O> output value type. 
      */
-    public static class WhenDonePublisherFunc<T, N> extends BaseProcessor<T, N> {
-        private Func0<Stream<N>> publisher;
+    public static class WhenDonePublisherFunc<I, O> extends BaseProcessor<I, O> {
+        private Func0<Stream<O>> publisher;
         private Subscription continueSubscription;
 
         /**
          * Constructor.
          * @param publisher the publisher to continue with the this Stream of complete.
          */
-        public WhenDonePublisherFunc(Func0<Stream<N>> publisher) {
+        public WhenDonePublisherFunc(Func0<Stream<O>> publisher) {
             this.publisher = publisher;
         }
 
         @Override
-        public void doNext(T value) {
+        public void doNext(I value) {
             sendRequest();
         }
 
@@ -222,7 +222,7 @@ public class Flows {
         @Override
         public void onComplete() {
             try {
-                publisher.apply().subscribe(new Subscriber<N>() {
+                publisher.apply().subscribe(new Subscriber<O>() {
                     @Override
                     public void onSubscribe(Subscription s) {
                         continueSubscription = s;
@@ -230,7 +230,7 @@ public class Flows {
                     }
 
                     @Override
-                    public void onNext(N value) {
+                    public void onNext(O value) {
                         sendNext(value);
                         continueSubscription.request(1);
                     }
@@ -254,23 +254,23 @@ public class Flows {
     /**
      * WhenDonePublisherFunc operation.
      * 
-     * @param <T> value type.
-     * @param <N> output value type. 
+     * @param <I> value type.
+     * @param <O> output value type. 
      */
-    public static class WhenDonePublisher<T, N> extends BaseProcessor<T, N> {
-        private Publisher<N> publisher;
+    public static class WhenDonePublisher<I, O> extends BaseProcessor<I, O> {
+        private Publisher<O> publisher;
         private Subscription continueSubscription;
 
         /**
          * Constructor.
          * @param publisher the publisher to continue with the this Stream of complete.
          */
-        public WhenDonePublisher(Publisher<N> publisher) {
+        public WhenDonePublisher(Publisher<O> publisher) {
             this.publisher = publisher;
         }
 
         @Override
-        public void doNext(T value) {
+        public void doNext(I value) {
             sendRequest();
         }
 
@@ -294,7 +294,7 @@ public class Flows {
 
         @Override
         public void onComplete() {
-            publisher.subscribe(new Subscriber<N>() {
+            publisher.subscribe(new Subscriber<O>() {
                 @Override
                 public void onSubscribe(Subscription s) {
                     continueSubscription = s;
@@ -302,7 +302,7 @@ public class Flows {
                 }
 
                 @Override
-                public void onNext(N value) {
+                public void onNext(O value) {
                     sendNext(value);
                     continueSubscription.request(1);
                 }
@@ -324,22 +324,22 @@ public class Flows {
     /**
      * WhenDoneValue operation.
      * 
-     * @param <T> value type.
-     * @param <N> output value type. 
+     * @param <I> value type.
+     * @param <O> output value type. 
      */
-    public static class WhenDoneValue<T, N> extends BaseProcessor<T, N> {
-        private N value;
+    public static class WhenDoneValue<I, O> extends BaseProcessor<I, O> {
+        private O value;
 
         /**
          * Constructor.
          * @param value the value that is emitted when this Stream is complete.
          */
-        public WhenDoneValue(N value) {
+        public WhenDoneValue(O value) {
             this.value = value;
         }
 
         @Override
-        public void doNext(T value) {
+        public void doNext(I value) {
             sendRequest();
         }
 
@@ -353,22 +353,22 @@ public class Flows {
     /**
      * Finally operation.
      * 
-     * @param <T> value type.
-     * @param <N> output value type. 
+     * @param <I> value type.
+     * @param <O> output value type. 
      */
-    public static class Finally<T, N> extends BaseProcessor<T, N> {
-        private Func0<Stream<N>> func;
+    public static class Finally<I, O> extends BaseProcessor<I, O> {
+        private Func0<Stream<O>> func;
         
         /**
          * Constructor.
          * @param func the function to call when this stream is complete or emit an error.
          */
-        public Finally(Func0<Stream<N>> func) {
+        public Finally(Func0<Stream<O>> func) {
             this.func = func;
         }
 
         @Override
-        public void doNext(T value) {
+        public void doNext(I value) {
             sendRequest();
             handled();
         }
@@ -394,14 +394,14 @@ public class Flows {
         }
 
         private void runFinally() throws Throwable {
-            func.apply().subscribe(new Subscriber<N>() {
+            func.apply().subscribe(new Subscriber<O>() {
                 @Override
                 public void onSubscribe(Subscription s) {
                     s.request(1);
                 }
 
                 @Override
-                public void onNext(N value) {
+                public void onNext(O value) {
                     sendNext(value);
                 }
 

@@ -16,19 +16,19 @@ package io.github.bckfnn.reactstreams;
 /**
  * A simple two value tuple.
  *
- * @param <I1> type of the first value.
- * @param <I2> type of the second value.
+ * @param <T1> type of the first value.
+ * @param <T2> type of the second value.
  */
-public class Tuple<I1, I2> {
-    private I1 value1;
-    private I2 value2;
+public class Tuple<T1, T2> {
+    private T1 value1;
+    private T2 value2;
 
     /**
      * Construct a tuple with two values.
      * @param value1 the first value.
      * @param value2 the second value.
      */
-    public Tuple(I1 value1, I2 value2) {
+    public Tuple(T1 value1, T2 value2) {
         this.value1 = value1;
         this.value2 = value2;
     }
@@ -36,28 +36,28 @@ public class Tuple<I1, I2> {
     /**
      * @return the first value.
      */
-    public I1 getValue1() {
+    public T1 getValue1() {
         return value1;
     }
 
     /**
      * @return the second value.
      */
-    public I2 getValue2() {
+    public T2 getValue2() {
         return value2;
     }
 
     /**
      * @return the first value.
      */
-    public I1 left() {
+    public T1 left() {
         return getValue1();
     }
 
     /**
      * @return the second value.
      */
-    public I2 right() {
+    public T2 right() {
         return getValue2();
     }
 
