@@ -553,6 +553,28 @@ public interface Stream<O> extends Publisher<O> {
         });
     }
 
+    
+    /**
+     * Add a <code>onError</code> operation to the output from this publisher. 
+     * The onError operation will pass through all the input elements and if the publisher 
+     * is emit an onError event, it will call the function.
+     * @param func the function to call.
+     * @return a new {@link Stream}
+     */ 
+    default public Stream<O> onError(Proc1<Throwable> func) {
+        return chain(new Filters.Nop<O>() {
+            @Override
+            public void onError(Throwable exc) {
+                try {
+                    func.apply(exc);
+                    super.onError(exc);
+                } catch (Throwable e) {
+                    sendError(e);
+                    sendCancel();
+                }
+            }
+        });
+    }
 
     /**
      * Add an <code>onFinally</code> operation to the output from this publisher.
