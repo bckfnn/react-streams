@@ -35,7 +35,7 @@ public class ArangoTest extends TestVerticle {
     private Stream<?> init(Client client) {
         return client
                 .init("127.0.0.1", 8529)
-                .printStream("after connect", System.out)
+                .print("after connect", System.out)
                 .whenDone(client.getDatabase("test").databaseCreate());
     }
 
@@ -43,11 +43,11 @@ public class ArangoTest extends TestVerticle {
     public void initTest() {
         final Client client = new Client(new AsyncHttpClient());
         init(client)
-        .printStream("after open", System.out)
+        .print("after open", System.out)
         .whenDone(client.close())
-        .printStream("after close", System.out)
+        .print("after close", System.out)
         .whenDone(() -> "abc")
-        .printStream("after lambda", System.out)
+        .print("after lambda", System.out)
         .onComplete(VertxAssert::testComplete)
         .start(1);
     }
@@ -56,10 +56,10 @@ public class ArangoTest extends TestVerticle {
     public void initListdatabases() {
         final Client client = new Client(null);
         init(client)
-        .printStream("after init", System.out)
+        .print("after init", System.out)
         .whenDone(client.databasesList())
-        .printStream("after list ", System.out)
-        .printStream("after list process", System.out)
+        .print("after list ", System.out)
+        .print("after list process", System.out)
         .onComplete(VertxAssert::testComplete)
         .start(1);
     }
@@ -74,7 +74,7 @@ public class ArangoTest extends TestVerticle {
             v.putNumber("value", 1233);
             return client.getDatabase("test").documentCreate("test", true, true, v);            
         })
-        .printStream("after save", System.out)
+        .print("after save", System.out)
         .onComplete(VertxAssert::testComplete)
         .start(1);
     }
@@ -96,7 +96,7 @@ public class ArangoTest extends TestVerticle {
             v.putNumber("value", i);
             return client.getDatabase("test").documentCreate("test", true, true, v);
         })
-        .printStream("after save", System.out)
+        .print("after save", System.out)
         .onComplete(VertxAssert::testComplete)
         .start(1);
     }
@@ -116,7 +116,7 @@ public class ArangoTest extends TestVerticle {
             return client.getDatabase("test").documentLoad(key);
         })
         .map(r -> r.doc)
-        .printStream("after load", System.out)
+        .print("after load", System.out)
         .onComplete(VertxAssert::testComplete)
         .start(1);
     }
@@ -137,13 +137,13 @@ public class ArangoTest extends TestVerticle {
         .mapMany(key -> {
             return client.getDatabase("test").documentLoad(key);
         })
-        .printStream("after load", System.out)
+        .print("after load", System.out)
         .mapMany(r -> {
             int n = (Integer) r.doc.get("value");
             r.doc.put("value",  n + 1);
             return client.getDatabase("test").documentUpdate(r._key, r._rev, true, true, "pol", r.doc);
         })
-        .printStream("after save", System.out)
+        .print("after save", System.out)
         .onComplete(VertxAssert::testComplete)
         .start(1);
     }
