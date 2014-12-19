@@ -109,10 +109,6 @@ public class Filters {
                 sendCancel();
             }
         }
-
-        public String toString() {
-            return "FilterOp";
-        }
     }
 
     /**

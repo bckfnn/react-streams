@@ -128,6 +128,15 @@ public interface Stream<T> extends Publisher<T> {
     }
 
     /**
+     * Create and return a new {@code Stream<T>} that emit a <code>onComplete</code> event.
+     * @param <T> type of the stream.
+     * @return the new stream.
+     */
+    public static <T> Stream<T> complete() {
+        return new Streams.Complete<T>();
+    }
+
+    /**
      * Create and return a new {@code Stream<T>} that emit the supplied exception.
      * @param error the error.
      * @param <T> type of stream.
@@ -509,8 +518,8 @@ public interface Stream<T> extends Publisher<T> {
             @Override
             public void doNext(T value) {
                 try {
-                    func.apply(value);
                     sendNext(value);
+                    func.apply(value);
                     handled();
                 } catch (Throwable e) {
                     sendError(e);
@@ -662,31 +671,7 @@ public interface Stream<T> extends Publisher<T> {
      * chain of publisher and start the data flowing. 
      * @param elements the number of elements.
      */
-    default public void start(int elements) {
-        subscribe(new Subscriber<T>() {
-            Subscription inputSubscription;
-            @Override
-            public void onSubscribe(Subscription s) {
-                inputSubscription = s;
-                inputSubscription.request(elements);
-            }
-
-            @Override
-            public void onNext(T value) {
-                inputSubscription.request(1);
-            }
-
-            @Override
-            public void onError(Throwable t) {
-            }
-
-            @Override
-            public void onComplete() {
-            }
-
-            public String toString() {
-                return "StartOp[" + elements + "]";
-            }
-        });
+    default public void start(long elements) {
+        subscribe(new Streams.Start<T>(elements));
     }
 }

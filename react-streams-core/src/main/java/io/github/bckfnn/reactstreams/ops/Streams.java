@@ -13,14 +13,15 @@
  */
 package io.github.bckfnn.reactstreams.ops;
 
-import java.util.Iterator;
-
 import io.github.bckfnn.reactstreams.ActiveSubscription;
 import io.github.bckfnn.reactstreams.BaseSubscription;
 import io.github.bckfnn.reactstreams.Stream;
 
+import java.util.Iterator;
+
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 /**
  * Creating streams operations.
@@ -33,7 +34,6 @@ public class Streams {
      */
     public static class Array<T> implements Stream<T> { 
         private T[] array;
-        private int idx = 0;
 
         /**
          * Constructor.
@@ -58,10 +58,6 @@ public class Streams {
                     return array[idx++];
                 }
             });
-        }
-
-        public String toString() {
-            return "ArraySource[" + idx + "]";
         }
     }
 
@@ -190,8 +186,61 @@ public class Streams {
                 }
             };
             subscriber.onSubscribe(s);
-            //s.activate();
         }
     }
 
+    /**
+     * <code>Complete</code> emit onComplete event.
+     * @param <T> type of the event.
+     */
+    public static class Complete<T> implements Stream<T> {
+        @Override
+        public void subscribe(Subscriber<? super T> subscriber) {
+            BaseSubscription<T> s = new BaseSubscription<T>(subscriber) {
+                @Override
+                public void request(long elements) {
+                    super.request(elements);
+                    sendComplete();
+                }
+            };
+            subscriber.onSubscribe(s);
+        }
+    }
+    
+    /**
+     * A start subscriber start initiates the stream with a <code>request()</code> event.
+     *
+     * @param <T> type of events.
+     */
+    public static class Start<T> implements Subscriber<T> {
+        private Subscription inputSubscription;
+        private long elements;
+        
+        /**
+         * Constructor.
+         * @param elements the initially requested element count.
+         */
+        public Start(long elements) {
+            this.elements = elements;
+        }
+        
+        @Override
+        public void onSubscribe(Subscription s) {
+            inputSubscription = s;
+            inputSubscription.request(elements);
+        }
+
+        @Override
+        public void onNext(T value) {
+            inputSubscription.request(1);
+        }
+
+        @Override
+        public void onError(Throwable t) {
+        }
+
+        @Override
+        public void onComplete() {
+        }
+    }
 }

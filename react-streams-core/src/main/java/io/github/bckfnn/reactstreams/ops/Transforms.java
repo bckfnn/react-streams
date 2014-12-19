@@ -58,10 +58,6 @@ public class Transforms {
                 sendCancel();
             }
         }
-
-        public String toString() {
-            return "Map[]";
-        }
     }
 
     /**

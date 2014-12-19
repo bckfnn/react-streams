@@ -204,6 +204,18 @@ public class SimpleTest {
         .chain(keep)
         .start(100);
     }
+    
+    /**
+     * Test a complete operation.
+     */
+    @Test
+    public void testComplete() {
+        Keep<Integer> keep = new Keep<>();
+        Stream.<Integer>complete()
+        .chain(keep)
+        .start(1);
+        keep.assertEquals();
+    }
 
     /**
      * Test a zip operation.
@@ -695,18 +707,49 @@ public class SimpleTest {
     /**
      * Test a onComplete operation.
      */
-    //@Test
+    @Test
     public void testOnComplete() {
         Keep<Integer> keep = new Keep<>();
 
         Stream
         .from(1, 2, 3)
-        .ignore()
         .onComplete(() -> { keep.doNext(44); })
         .chain(keep)
         .start(1);
 
-        keep.assertEquals(44);
+        keep.assertEquals(1, 2, 3, 44);
+    }
+    
+    /**
+     * Test an onEach operation.
+     */
+    @Test
+    public void testOnEach1() {
+        Keep<Integer> keep = new Keep<>();
+
+        Stream
+        .from(1, 2, 3)
+        .onEach(v -> { keep.doNext(44); })
+        .chain(keep)
+        .start(1);
+
+        keep.assertEquals(1, 44, 2, 44, 3, 44);
+    }
+
+    /**
+     * Test an onEach operation.
+     */
+    @Test
+    public void testOnEach2() {
+        Keep<Integer> keep = new Keep<>();
+
+        Stream
+        .from(1, 2, 3)
+        .onEach(v -> { throw new Exception("abc"); })
+        .chain(keep)
+        .start(1);
+
+        keep.assertException(new Exception("abc"), 1);
     }
 
     /**
@@ -809,7 +852,52 @@ public class SimpleTest {
      */
 
     /**
-     * Test pipe.
+     * Test print.
+     */
+    @Test
+    public void testPrint1() {
+        Keep<Integer> keep = new Keep<>();
+        Stream
+        .from(1, 2, 3, 4, 5)
+        .print("print", System.out)
+        .chain(keep)
+        .start(1);
+        keep.assertEquals(1, 2, 3, 4, 5);
+    }
+
+    /**
+     * Test print with cancel.
+     */
+    @Test
+    public void testPrint2() {
+        Keep<Integer> keep = new Keep<>();
+        Stream
+        .from(1, 2, 3, 4, 5)
+        .print("print", System.out)
+        .take(2)
+        .chain(keep)
+        .start(1);
+        keep.assertEquals(1, 2);
+    }
+
+    /**
+     * Test print with error.
+     */
+    @Test
+    public void testPrint3() {
+        Keep<Integer> keep = new Keep<>();
+        Stream
+        .from(1, 2, 3)
+        .continueWithError(new Exception("abc"))
+        .print("print", System.out)
+        .chain(keep)
+        .start(1);
+        keep.assertException(new Exception("abc"), 1, 2, 3);
+    }
+
+    
+    /**
+     * Test pipe
      */
     @Test
     public void testPipe() {
