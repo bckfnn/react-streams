@@ -149,11 +149,6 @@ public class Transforms {
                 }
             });
         }
-
-        @Override
-        public String toString() {
-            return "MapMany[]";
-        }
     }
 
     /**

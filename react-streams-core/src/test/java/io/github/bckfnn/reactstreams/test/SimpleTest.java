@@ -514,14 +514,14 @@ public class SimpleTest {
             Stream.from(1, 2, 3).mapMany(i -> {
                 return Stream.
                         from("a" + i, "b" + i, "c" + i).
-                        each((v, op) -> {
+                        each((proc, v) -> {
                             s.execute(() -> {
-                                op.sendNext(v);
-                                op.handled();
+                                proc.sendNext(v);
+                                proc.handled();
                             });
                         });
             }).
-            continueWith(() -> { s.shutdown(); }).
+            continueWith(() -> { s.shutdown(); return Stream.complete(); }).
             chain(keep).
             start(1);
         });
@@ -775,37 +775,7 @@ public class SimpleTest {
     }
 
 
-    /**
-     * Test a whenDoneValue operation.
-     */
-    @Test
-    public void testWhenDoneValue1() {
-        Keep<Integer> keep = new Keep<>();
 
-        Stream
-        .from(1, 2, 3)
-        .whenDoneFrom(4)
-        .chain(keep)
-        .start(1);
-
-        keep.assertEquals(4);
-    }
-
-    /**
-     * Test a whenDoneError operation.
-     */
-    @Test
-    public void testWhenDoneError1() {
-        Keep<Integer> keep = new Keep<>();
-
-        Stream
-        .from(1, 2, 3)
-        .whenDoneError(new Exception("xx"))
-        .chain(keep)
-        .start(1);
-
-        keep.assertException(new Exception("xx"));
-    }
 
     /**
      * Test a onComplete operation.
@@ -822,6 +792,73 @@ public class SimpleTest {
 
         keep.assertEquals(1, 2, 3, 44);
     }
+    
+    /**
+     * Test a onComplete operation that throws.
+     */
+    @Test
+    public void testOnComplete2() {
+        Keep<Integer> keep = new Keep<>();
+
+        Stream
+        .from(1, 2, 3)
+        .onComplete(() -> { throw new Exception("onComplete2"); })
+        .chain(keep)
+        .start(1);
+
+        keep.assertException(new Exception("onComplete2"), 1, 2, 3);
+    }
+    
+    /**
+     * Test a onError operation that is not triggered.
+     */
+    @Test
+    public void testOnError() {
+        Keep<Integer> keep = new Keep<>();
+
+        Stream
+        .from(1, 2, 3)
+        .onError(t -> { keep.sendError(t); })
+        .chain(keep)
+        .start(1);
+
+        keep.assertEquals(1, 2, 3);
+    }
+    
+    /**
+     * Test a onError operation that is triggered.
+     */
+    @Test
+    public void testOnError2() {
+        Keep<Integer> keep = new Keep<>();
+
+        Stream
+        .from(1, 2, 3)
+        .continueWithError(new Exception("onError2"))
+        .onError(t -> { keep.sendError(t); })
+        .chain(keep)
+        .start(1);
+
+        keep.assertException(new Exception("onError2"), 1, 2, 3);
+    }
+
+    /**
+     * Test a onError operation that throws.
+     */
+    @Test
+    public void testOnError3() {
+        Keep<Integer> keep = new Keep<>();
+
+        Stream
+        .from(1, 2, 3)
+        .continueWithError(new Exception("onError3"))
+        .onError(t -> { throw new Exception("onError3a"); })
+        .chain(keep)
+        .start(1);
+
+        keep.assertException(new Exception("onError3a"), 1, 2, 3);
+    }
+    
     
     /**
      * Test an onEach operation.
@@ -855,6 +892,37 @@ public class SimpleTest {
         keep.assertException(new Exception("abc"), 1);
     }
 
+    /**
+     * Test an onFinally operation.
+     */
+    @Test
+    public void testOnFinally() {
+        Keep<Integer> keep = new Keep<>();
+
+        Stream
+        .from(1, 2, 3)
+        .onFinally(() -> { keep.onNext(44); })
+        .chain(keep)
+        .start(1);
+        keep.assertEquals(1, 2, 3, 44);
+    }
+
+    /**
+     * Test an onFinally operation that emit error.
+     */
+    @Test
+    public void testOnFinally2() {
+        Keep<Integer> keep = new Keep<>();
+
+        Stream
+        .from(1, 2, 3)
+        .continueWithError(new Exception("onFinally2"))
+        .onFinally(() -> { keep.onNext(44); })
+        .chain(keep)
+        .start(1);
+        keep.assertException(new Exception("onFinally2"), 1, 2, 3, 44);
+    }
+    
     /**
      * Test a whenDone operation.
      */
@@ -968,6 +1036,38 @@ public class SimpleTest {
         .chain(keep)
         .start(1);
     }
+    
+    /**
+     * Test a whenDoneValue operation.
+     */
+    @Test
+    public void testWhenDoneValue1() {
+        Keep<Integer> keep = new Keep<>();
+
+        Stream
+        .from(1, 2, 3)
+        .whenDoneFrom(4)
+        .chain(keep)
+        .start(1);
+
+        keep.assertEquals(4);
+    }
+
+    /**
+     * Test a whenDoneError operation.
+     */
+    @Test
+    public void testWhenDoneError1() {
+        Keep<Integer> keep = new Keep<>();
+
+        Stream
+        .from(1, 2, 3)
+        .whenDoneError(new Exception("xx"))
+        .chain(keep)
+        .start(1);
+
+        keep.assertException(new Exception("xx"));
+    }
 
     /**
      * Test a continueWithError operation.
@@ -983,6 +1083,53 @@ public class SimpleTest {
 
         keep.assertException(new Exception("xx"), 1, 2, 3);
     }
+    
+    /**
+     * Test a "continueWithValue" operation.
+     */
+    @Test
+    public void testContinueWith1() {
+        Keep<Integer> keep = new Keep<>();
+        Stream
+        .from(1, 2, 3)
+        .continueWithValue(4)
+        .chain(keep)
+        .start(1);
+
+        keep.assertEquals(1, 2, 3, 4);
+    }
+
+    /**
+     * Test a "continueWithValue" operation.
+     */
+    @Test
+    public void testContinueWith2() {
+        Keep<Integer> keep = new Keep<>();
+        Stream
+        .from(1, 2, 3)
+        .continueWith(Stream.from(4, 5))
+        .chain(keep)
+        .start(1);
+
+        keep.assertEquals(1, 2, 3, 4, 5);
+    }
+
+    
+    /**
+     * Test a "continueWithValue" operation.
+     */
+    @Test
+    public void testContinueWith3() {
+        Keep<Integer> keep = new Keep<>();
+        Stream
+        .from(1, 2, 3)
+        .continueWith(() -> Stream.from(4, 5))
+        .chain(keep)
+        .start(1);
+
+        keep.assertEquals(1, 2, 3, 4, 5);
+    }
+
     /*
     @Test
     public void testWhenDone2() {
@@ -1148,7 +1295,7 @@ public class SimpleTest {
 
         Stream
         .from(1, 2, 3)
-        .each((v, proc) -> { 
+        .each((proc, v) -> { 
             proc.sendNext(v);
             proc.handled();
         })
@@ -1159,6 +1306,24 @@ public class SimpleTest {
 
     }
 
+    /**
+     * Test "each" operation that throws.
+     */
+    @Test
+    public void testEach2() {
+        Keep<Integer> keep = new Keep<>();
+
+        Stream
+        .from(1, 2, 3)
+        .each((proc, v) -> { 
+            throw new Exception("each2");
+        })
+        .chain(keep)
+        .start(1);
+
+        keep.assertException(new Exception("each2"));
+
+    }
 
 
     /*    

@@ -424,7 +424,7 @@ public interface Stream<T> extends Publisher<T> {
      * @return a new {@link Stream}
      */ 
     default public Stream<T> continueWithValue(T value) {
-        return null;
+        return continueWith(() -> Stream.from(value));
     }
 
     /**
@@ -435,7 +435,7 @@ public interface Stream<T> extends Publisher<T> {
      * @return a new {@link Stream}
      */
     default public Stream<T> continueWithError(Throwable error) {
-        return chain(new Flows.ContinueWithError<T>(error));
+        return continueWith(() -> Stream.error(error));
     }
 
     /**
@@ -446,8 +446,8 @@ public interface Stream<T> extends Publisher<T> {
      * @param func the function to call when all elements is processed.
      * @return a new {@link Stream}
      */ 
-    default public Stream<T> continueWith(Proc0 func) {
-        return chain(new Flows.ContinueWithProc<T>(func));
+    default public Stream<T> continueWith(Func0<Stream<T>> func) {
+        return chain(new Flows.ContinueWith<T>(func));
     }
 
     /**
@@ -455,11 +455,11 @@ public interface Stream<T> extends Publisher<T> {
      * The continueWith operation will pass through all the input elements and when 
      * the publisher is complete it will pass trough all the elements from the 
      * <code>publisher</code>.
-     * @param publisher the publisher.
+     * @param stream the stream.
      * @return a new {@link Stream}
      */ 
-    default public Stream<T> continueWith(Publisher<T> publisher) {
-        return null;
+    default public Stream<T> continueWith(Stream<T> stream) {
+        return continueWith(() -> stream);
     }
 
     /**
@@ -478,12 +478,12 @@ public interface Stream<T> extends Publisher<T> {
      * The input elements are not passed through.
      * @return a new {@link Stream}
      */
-    default  public Stream<T> each(Proc2<T, BaseProcessor<T, T>> func) {
+    default  public Stream<T> each(Proc2<BaseProcessor<T, T>, T> func) {
         return chain(new Filters.Nop<T>() {
             @Override
             public void doNext(T value) {
                 try {
-                    func.apply(value, this);
+                    func.apply(this, value);
                 } catch (Throwable e) {
                     sendError(e);
                 }
@@ -559,59 +559,14 @@ public interface Stream<T> extends Publisher<T> {
     }
 
     /**
-     * Add an <code>onFinally</code> operation to the output from this publisher.
-     * After this publisher ends, with either onComplete() or onError(), the elements that 
-     * is returned from the <code>func</code> will be emitted.
-     * @param func the function to call for each input element. 
-     * The input elements are not passed through.
-     * @param <O> the type of the output values.
-     * @return a new {@link Stream}
-     */
-    default public <O> Stream<O> onFinally(Func0<Stream<O>> func) {
-        return chain(new Flows.Finally<T, O>(func));
-    }
-
-    /**
      * Add an <code>onFinally</code> operation to the output from this publisher. 
      * After this publisher ends, with either onComplete() or onError(), the <code>func</code>
      * is called and the original end event is passed on.
-     * @param <O> the type of the output values.
      * @param func the function that is called when this publisher ends.
      * @return a new {@link Stream}
      */
-    default public <O> Stream<O> onFinally(Proc0 func) {
-        return chain(new BaseProcessor<T, O>() {
-
-            @Override
-            public void doNext(T value) {
-                sendRequest(1);
-                handled();
-            }
-
-            @Override
-            public void onComplete() {
-                try {
-                    runFinally();
-                    super.onComplete();
-                } catch (Throwable e) {
-                    sendError(e);
-                }
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                try {
-                    runFinally();
-                    super.onError(t);
-                } catch (Throwable e) {
-                    sendError(e);
-                }
-            }
-
-            private void runFinally() throws Throwable {
-                func.apply();
-            }
-        });
+    default public Stream<T> onFinally(Proc0 func) {
+        return chain(new Flows.Finally<T>(func));
     }
 
     /**

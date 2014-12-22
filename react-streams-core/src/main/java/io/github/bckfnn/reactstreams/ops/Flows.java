@@ -25,47 +25,22 @@ import org.reactivestreams.Subscription;
  * Control flow operations.
  */
 public class Flows {
-    /**
-     * ContinueWithError operation.
-     * 
-     * @param <T> value type.
-     */
-    public static class ContinueWithError<T> extends BaseProcessor<T, T> {
-        private Throwable error;
-
-        /**
-         * Constructor.
-         * @param error the error that will be emitted.
-         */
-        public ContinueWithError(Throwable error) {
-            this.error = error;
-        }
-
-        @Override
-        public void doNext(T value) {
-            sendNext(value);
-            //handled();
-        }
-
-        @Override
-        public void onComplete() {
-            sendError(error);
-        }
-    }
-
+    
     /**
      * ContinueWithProc operation.
      * 
      * @param <T> value type.
      */
-    public static class ContinueWithProc<T> extends BaseProcessor<T, T> {
-        private Proc0 func;
-
+    public static class ContinueWith<T> extends BaseProcessor<T, T> {
+        private Func0<Stream<T>> func;
+        private Subscription continueSubscription;
+        private boolean cancelled = false;
+        
         /**
          * Constructor.
          * @param func function that will be called on complete.
          */
-        public ContinueWithProc(Proc0 func) {
+        public ContinueWith(Func0<Stream<T>> func) {
             this.func= func;
         }
 
@@ -76,14 +51,40 @@ public class Flows {
 
         @Override
         public void onComplete() {
+            if (cancelled) {
+                super.onComplete();
+                return;
+            }
             try {
-                func.apply();
-                sendComplete();
+                func.apply().subscribe(new Subscriber<T>() {
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        continueSubscription = s;
+                        s.request(1);
+                    }
+
+                    @Override
+                    public void onNext(T value) {
+                        sendNext(value);
+                        continueSubscription.request(1);
+                    }
+
+                    @Override
+                    public void onError(Throwable error) {
+                        sendError(error);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        sendComplete();
+                    }
+                });
             } catch (Throwable e) {
                 sendError(e);
             }
         }
     }
+    
 
     /**
      * WhenDone operation.
@@ -167,23 +168,22 @@ public class Flows {
     /**
      * Finally operation.
      * 
-     * @param <I> value type.
-     * @param <O> output value type. 
+     * @param <T> value type.
      */
-    public static class Finally<I, O> extends BaseProcessor<I, O> {
-        private Func0<Stream<O>> func;
+    public static class Finally<T> extends BaseProcessor<T, T> {
+        private Proc0 func;
 
         /**
          * Constructor.
          * @param func the function to call when this stream is complete or emit an error.
          */
-        public Finally(Func0<Stream<O>> func) {
+        public Finally(Proc0 func) {
             this.func = func;
         }
 
         @Override
-        public void doNext(I value) {
-            sendRequest();
+        public void doNext(T value) {
+            sendNext(value);
             handled();
         }
 
@@ -208,28 +208,9 @@ public class Flows {
         }
 
         private void runFinally() throws Throwable {
-            func.apply().subscribe(new Subscriber<O>() {
-                @Override
-                public void onSubscribe(Subscription s) {
-                    s.request(1);
-                }
-
-                @Override
-                public void onNext(O value) {
-                    sendNext(value);
-                }
-
-                @Override
-                public void onComplete() {
-                    sendComplete();
-                }
-
-                @Override
-                public void onError(Throwable exc) {
-                    sendError(exc);
-                }
-            });
+            func.apply();
         }
+
     }
 
     /**
