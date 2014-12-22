@@ -197,39 +197,13 @@ public interface Stream<T> extends Publisher<T> {
      */
     public static <I, T> Pipe<I, T> asPipe(Func1<Stream<I>, Stream<T>> func) {
         BaseProcessor<I, I> head = new Filters.Nop<I>();
+        Stream<T> tail = null;
         try {
-            Stream<T> tail = func.apply(head);
-            Pipe<I, T> pipe = new Pipe<I, T>() {
-                @Override
-                public void onSubscribe(Subscription s) {
-                    head.onSubscribe(s);
-                }
-
-                @Override
-                public void onNext(I t) {
-                    head.sendNext(t);
-                }
-
-                @Override
-                public void onError(Throwable t) {
-                    head.sendError(t);
-                }
-
-                @Override
-                public void onComplete() {
-                    head.sendComplete();
-                }
-
-                @Override
-                public void subscribe(Subscriber<? super T> s) {
-                    tail.subscribe(s);
-                }
-            };
-            return pipe;
+            tail = func.apply(head);
         } catch (Throwable e) {
-            throw new RuntimeException(e);
-            // return error(e);
+            tail = Stream.error(e);
         }
+        return new Flows.PipeX<I, T>(head, tail);
     }
 
     /**

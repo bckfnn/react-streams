@@ -1246,6 +1246,39 @@ public class SimpleTest {
     private Pipe<Integer, String> makePipe() {
         return Stream.asPipe(pipe -> pipe.filter(v -> v % 2 == 0).map(v -> "x" + v));
     }
+    
+    /**
+     * Test pipe with error event.
+     */
+    @Test
+    public void testPipe2() {
+        Keep<String> keep = new Keep<>();
+        Stream.from(1, 2, 3, 4, 5).
+        continueWithError(new Exception("pipe2")).
+        chain(makePipe()).
+        chain(keep).
+        start(1);
+        keep.assertException(new Exception("pipe2"), "x2", "x4");
+    }
+
+    /**
+     * Test pipe
+     */
+    @Test
+    public void testPipe3() {
+        Keep<String> keep = new Keep<>();
+        Stream.from(1, 2, 3, 4, 5).
+        continueWithError(new Exception("pipe2")).
+        chain(makePipe3()).
+        chain(keep).
+        start(1);
+        keep.assertException(new Exception("pipe3"));
+    }
+    
+    private Pipe<Integer, String> makePipe3() {
+        return Stream.asPipe(pipe -> { throw new Exception("pipe3"); });
+    }
+    
 
     /**
      * Test delegate

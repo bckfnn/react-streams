@@ -15,6 +15,7 @@ package io.github.bckfnn.reactstreams.ops;
 
 import io.github.bckfnn.reactstreams.BaseProcessor;
 import io.github.bckfnn.reactstreams.Func0;
+import io.github.bckfnn.reactstreams.Pipe;
 import io.github.bckfnn.reactstreams.Proc0;
 import io.github.bckfnn.reactstreams.Stream;
 
@@ -273,4 +274,49 @@ public class Flows {
         }
 
     }
+    
+    /**
+     * Pipe operation.
+     * @param <I> input value type
+     * @param <O> output value type;
+     */
+    public static class PipeX<I, O> implements Pipe<I, O> {
+        private BaseProcessor<I, I> head;
+        private Stream<O> tail;
+        
+        /**
+         * Constructor.
+         * @param head head of the pipe.
+         * @param tail tail of the pipe.
+         */
+        public PipeX(BaseProcessor<I, I> head, Stream<O> tail) {
+            this.head = head;
+            this.tail = tail;
+        }
+        
+        @Override
+        public void onSubscribe(Subscription s) {
+            head.onSubscribe(s);
+        }
+
+        @Override
+        public void onNext(I t) {
+            head.sendNext(t);
+        }
+
+        @Override
+        public void onError(Throwable t) {
+            head.sendError(t);
+        }
+
+        @Override
+        public void onComplete() {
+            head.sendComplete();
+        }
+
+        @Override
+        public void subscribe(Subscriber<? super O> s) {
+            tail.subscribe(s);
+        }
+    };
 }
