@@ -263,4 +263,17 @@ public class Filters {
             }
         }
     }
+    
+    /**
+     * Accumulator operation.
+     *
+     * @param <T> value type.
+     */
+    public static class Ignore<T> extends Nop<T> {
+        @Override
+        public void doNext(T value) {
+            handled();
+            sendRequest(1);
+        }
+    }
 }

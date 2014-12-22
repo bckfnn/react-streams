@@ -694,6 +694,21 @@ public class SimpleTest {
     }
 
     /**
+     * Test an "ignore" operation.
+     */
+    @Test
+    public void testIgnore() {
+        Keep<Integer> keep = new Keep<>();
+        Stream
+        .from(1, 2, 3)
+        .ignore()
+        .chain(keep)
+        .start(1);
+
+        keep.assertEquals();
+    }
+    
+    /**
      * Test a accumulator operation.
      */
     @Test

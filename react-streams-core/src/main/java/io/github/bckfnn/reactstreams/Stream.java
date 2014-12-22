@@ -342,12 +342,7 @@ public interface Stream<T> extends Publisher<T> {
      * @return a new {@code Stream<T>}
      */
     default public Stream<T> ignore() {
-        return chain(new Filters.Nop<T>() {
-            @Override
-            public void doNext(T value) {
-                handled();
-            }
-        });
+        return chain(new Filters.Ignore<T>());
     }
 
     /**
