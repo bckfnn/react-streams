@@ -78,11 +78,12 @@ public class SimpleTest {
         Stream.<Integer> as((s,  cnt) -> {
             s.sendNext(1);
         }, s -> {
-            System.out.println("cancel");
+
         })
         .take(5)
         .chain(keep)
         .start(1);
+
         keep.assertEquals(1, 1, 1, 1, 1);
     }
     
@@ -248,6 +249,7 @@ public class SimpleTest {
         .take(5)
         .chain(keep)
         .start(1);
+
         keep.assertEquals(0, 1, 2, 3, 4);
     }
 
@@ -782,7 +784,7 @@ public class SimpleTest {
 
         Stream
         .from(1, 2, 3)
-        .whenDoneValue(4)
+        .whenDoneFrom(4)
         .chain(keep)
         .start(1);
 
@@ -855,6 +857,89 @@ public class SimpleTest {
 
     /**
      * Test a whenDone operation.
+     */
+    @Test
+    public void testWhenDone1() {
+        Keep<Integer> keep = new Keep<>();
+
+        Stream
+        .from(1, 2, 3)
+        .whenDone(() -> Stream.from(5, 6, 7))
+        .chain(keep)
+        .start(1);
+
+        keep.assertEquals(5, 6, 7);
+    }
+
+    /**
+     * Test a "whenDone" operation where the function throws.
+     */
+    @Test
+    public void testWhenDone2() {
+        Keep<Integer> keep = new Keep<>();
+
+        Stream
+        .from(1, 2, 3)
+        .<Integer> whenDone(() -> { throw new Exception("whenDone2"); })
+        .chain(keep)
+        .start(1);
+
+        keep.assertException(new Exception("whenDone2"));
+    }
+    
+    /**
+     * Test a "whenDone" operation where the stream emit errors.
+     */
+    @Test
+    public void testWhenDone3() {
+        Keep<Integer> keep = new Keep<>();
+
+        Stream
+        .from(1, 2, 3)
+        .<Integer> whenDone(() -> Stream.error(new Exception("whenDone3")))
+        .chain(keep)
+        .start(1);
+
+        keep.assertException(new Exception("whenDone3"));
+    }
+
+    
+    /**
+     * Test a "whenDone" operation where the stream cancels
+     */
+    @Test
+    public void testWhenDone4() {
+        Keep<Integer> keep = new Keep<>();
+
+        Stream
+        .from(1, 2, 3)
+        .whenDone(() -> Stream.from(5, 6, 7))
+        .take(2)
+        .chain(keep)
+        .start(1);
+
+        keep.assertEquals(5, 6);
+    }
+    
+    /**
+     * Test a "whenDone" operation where original stream is canceled
+     */
+    @Test
+    public void testWhenDone5() {
+        Keep<Integer> keep = new Keep<>();
+
+        Stream
+        .from(1, 2, 3)
+        .whenDone(() -> Stream.from(5, 6, 7))
+        .done()
+        .take(2)
+        .chain(keep)
+        .start(1);
+
+        keep.assertEquals();
+    }
+    /**
+     * Test a whenDone operation
      */
     @Test
     public void testWhenDonePublisher1() {
@@ -978,6 +1063,7 @@ public class SimpleTest {
         .take(2)
         .chain(keep)
         .start(1);
+
         keep.assertEquals(1, 2);
     }
 

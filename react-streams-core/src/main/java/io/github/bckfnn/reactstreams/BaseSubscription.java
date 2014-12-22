@@ -42,7 +42,6 @@ public class BaseSubscription<T> implements Subscription {
     public void cancel() {
         cancelled = true;
         subscriber = null;
-        //subscriber.onComplete();
     }
 
     @Override
@@ -95,7 +94,11 @@ public class BaseSubscription<T> implements Subscription {
      * Also marks the subscription as cancelled.
      */
     public void sendComplete() {
+        if (cancelled) {
+            return;
+        }
         subscriber.onComplete();
+        subscriber = null;
         cancelled = true;
     }
 
@@ -105,7 +108,11 @@ public class BaseSubscription<T> implements Subscription {
      * @param t the error.
      */
     public void sendError(Throwable t) {
+        if (cancelled) {
+            return;
+        }
         subscriber.onError(t);
+        subscriber = null;
         cancelled = true;
     }
 

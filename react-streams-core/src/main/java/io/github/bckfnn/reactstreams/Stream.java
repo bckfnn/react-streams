@@ -50,7 +50,7 @@ public interface Stream<T> extends Publisher<T> {
                         try {
                             cancel.apply(this);
                         } catch (Throwable exc) {
-                            s.onError(exc);
+                            sendError(exc);
                         }
                     }
 
@@ -59,7 +59,7 @@ public interface Stream<T> extends Publisher<T> {
                         try {
                             request.apply(this, elements);
                         } catch (Throwable exc) {
-                            s.onError(exc);
+                            sendError(exc);
                         }
                     }
                 });
@@ -374,8 +374,8 @@ public interface Stream<T> extends Publisher<T> {
      * @param <O> the type of the output value.
      * @return a new {@link Stream}
      */ 
-    default public <O> Stream<O> whenDoneValue(O value) {
-        return chain(new Flows.WhenDoneValue<T, O>(value));
+    default public <O> Stream<O> whenDoneFrom(O value) {
+        return whenDone(() -> Stream.from(value));
     }
 
     /**
@@ -386,7 +386,7 @@ public interface Stream<T> extends Publisher<T> {
      * @return a new {@link Stream}
      */ 
     default public Stream<T> whenDoneError(Throwable error) {
-        return chain(new Flows.WhenDoneError<T>(error));
+        return whenDone(() -> Stream.error(error));
     }
 
 
@@ -399,21 +399,10 @@ public interface Stream<T> extends Publisher<T> {
      * @param <O> the type of the output values.
      * @return a new {@link Stream}
      */ 
-    default public <O> Stream<O> whenDone(Func0<O> func) {
-        return chain(new Flows.WhenDoneFunc<T, O>(func));
+    default public <O> Stream<O> whenDone(Func0<Stream<O>> func) {
+        return chain(new Flows.WhenDone<T, O>(func));
     }
 
-    /**
-     * Add a <code>whenDoneFunction</code> operation to the output from this publisher.
-     * The whenDoneFunc will ignore all the input elements and when the publisher is complete it will emit 
-     * the elements from the returned Stream.
-     * @param func a function that return a another Stream.
-     * @param <O> type of the stream.
-     * @return a new {@link Stream}.
-     */
-    default public <O> Stream<O> whenDoneFunc(Func0<Stream<O>> func) {
-        return chain(new Flows.WhenDonePublisherFunc<T, O>(func));
-    }
 
     /**
      * Add a <code>whenDone</code> operation to the output from this publisher. 
@@ -423,8 +412,8 @@ public interface Stream<T> extends Publisher<T> {
      * @param <O> the type of the output values.
      * @return a new {@link Stream}
      */ 
-    default public <O> Stream<O> whenDone(Publisher<O> publisher) {
-        return chain(new Flows.WhenDonePublisher<T, O>(publisher));
+    default public <O> Stream<O> whenDone(Stream<O> publisher) {
+        return whenDone(() -> publisher);
     }
 
     /**

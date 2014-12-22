@@ -133,8 +133,8 @@ public class Filters {
                 sendNext(value);
                 handled();
             } else {
-                sendComplete();
                 sendCancel();
+                sendComplete();
             }
         }
     }
@@ -159,8 +159,8 @@ public class Filters {
     public static class Done<T> extends BaseProcessor<T, T> {
         @Override
         public void doNext(T value) {
-            sendComplete();
             sendCancel();
+            sendComplete();
         }
     }
 

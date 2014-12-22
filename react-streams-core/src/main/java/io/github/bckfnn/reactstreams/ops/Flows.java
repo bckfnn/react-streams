@@ -13,14 +13,13 @@
  */
 package io.github.bckfnn.reactstreams.ops;
 
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-
 import io.github.bckfnn.reactstreams.BaseProcessor;
 import io.github.bckfnn.reactstreams.Func0;
 import io.github.bckfnn.reactstreams.Proc0;
 import io.github.bckfnn.reactstreams.Stream;
+
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 /**
  * Control flow operations.
@@ -45,6 +44,7 @@ public class Flows {
         @Override
         public void doNext(T value) {
             sendNext(value);
+            //handled();
         }
 
         @Override
@@ -86,114 +86,22 @@ public class Flows {
     }
 
     /**
-     * WhenDoneError operation.
-     * 
-     * @param <T> value type.
-     */
-    public static class WhenDoneError<T> extends BaseProcessor<T, T> {
-        private Throwable error;
-
-        /**
-         * Constructor.
-         * @param error the error to emit.
-         */
-        public WhenDoneError(Throwable error) {
-            this.error = error;
-        }
-
-        @Override
-        public void doNext(T value) {
-            sendRequest();
-        }
-
-        @Override
-        public void onComplete() {
-            sendError(error);
-        }
-    }
-
-    /**
-     * WhenDoneFunc operation.
-     * 
-     * @param <I> value type.
-     * @param <O> output type.
-     */
-    public static class WhenDoneFunc<I, O> extends BaseProcessor<I, O> {
-        private Func0<O> func;
-
-        /**
-         * Constructor.
-         * @param func the function to call.
-         */
-        public WhenDoneFunc(Func0<O> func) {
-            this.func = func;
-        }
-
-        @Override
-        public void doNext(I value) {
-            sendRequest();
-        }
-
-        @Override
-        public void onComplete() {
-            try {
-                sendNext(func.apply());
-            } catch (Throwable e) {
-                sendError(e);
-            }
-            sendComplete();
-        }
-    }
-
-    /**
-     * WhenDoneProc operation.
-     * 
-     * @param <T> value type.
-     */
-    public static class WhenDoneProc<T> extends BaseProcessor<T, T> {
-        private Proc0 func;
-
-        /**
-         * Constructor.
-         * @param func the function to call.
-         */
-        public WhenDoneProc(Proc0 func) {
-            this.func = func;
-        }
-
-        @Override
-        public void doNext(T value) {
-            sendRequest();
-        }
-
-        @Override
-        public void onComplete() {
-            try {
-                func.apply();
-                sendComplete();
-            } catch (Throwable error) {
-                sendError(error);
-            }
-        }
-    }
-
-
-    /**
-     * WhenDonePublisherFunc operation.
+     * WhenDone operation.
      * 
      * @param <I> value type.
      * @param <O> output value type. 
      */
-    public static class WhenDonePublisherFunc<I, O> extends BaseProcessor<I, O> {
-        private Func0<Stream<O>> publisher;
+    public static class WhenDone<I, O> extends BaseProcessor<I, O> {
+        private Func0<Stream<O>> func;
         private Subscription continueSubscription;
+        private boolean cancelled = false;
 
         /**
          * Constructor.
-         * @param publisher the publisher to continue with the this Stream of complete.
+         * @param func the value that is emitted when this Stream is complete.
          */
-        public WhenDonePublisherFunc(Func0<Stream<O>> publisher) {
-            this.publisher = publisher;
+        public WhenDone(Func0<Stream<O>> func) {
+            this.func = func;
         }
 
         @Override
@@ -203,6 +111,7 @@ public class Flows {
 
         @Override
         public void sendCancel() {
+            cancelled = true;
             if (continueSubscription != null) {
                 continueSubscription.cancel();
             } else {
@@ -221,8 +130,12 @@ public class Flows {
 
         @Override
         public void onComplete() {
+            if (cancelled) {
+                super.onComplete();
+                return;
+            }
             try {
-                publisher.apply().subscribe(new Subscriber<O>() {
+                func.apply().subscribe(new Subscriber<O>() {
                     @Override
                     public void onSubscribe(Subscription s) {
                         continueSubscription = s;
@@ -252,105 +165,6 @@ public class Flows {
     }
 
     /**
-     * WhenDonePublisherFunc operation.
-     * 
-     * @param <I> value type.
-     * @param <O> output value type. 
-     */
-    public static class WhenDonePublisher<I, O> extends BaseProcessor<I, O> {
-        private Publisher<O> publisher;
-        private Subscription continueSubscription;
-
-        /**
-         * Constructor.
-         * @param publisher the publisher to continue with the this Stream of complete.
-         */
-        public WhenDonePublisher(Publisher<O> publisher) {
-            this.publisher = publisher;
-        }
-
-        @Override
-        public void doNext(I value) {
-            sendRequest();
-        }
-
-        @Override
-        public void sendCancel() {
-            if (continueSubscription != null) {
-                continueSubscription.cancel();
-            } else {
-                super.sendCancel();
-            }
-        }
-
-        @Override
-        public void sendRequest(long n) {
-            if (continueSubscription != null) {
-                continueSubscription.request(n);
-            } else {
-                super.sendRequest(n);
-            }
-        }
-
-        @Override
-        public void onComplete() {
-            publisher.subscribe(new Subscriber<O>() {
-                @Override
-                public void onSubscribe(Subscription s) {
-                    continueSubscription = s;
-                    s.request(1);
-                }
-
-                @Override
-                public void onNext(O value) {
-                    sendNext(value);
-                    continueSubscription.request(1);
-                }
-
-                @Override
-                public void onError(Throwable error) {
-                    sendError(error);
-                }
-
-                @Override
-                public void onComplete() {
-                    sendComplete();
-                }
-            });
-        }
-    }
-
-
-    /**
-     * WhenDoneValue operation.
-     * 
-     * @param <I> value type.
-     * @param <O> output value type. 
-     */
-    public static class WhenDoneValue<I, O> extends BaseProcessor<I, O> {
-        private O value;
-
-        /**
-         * Constructor.
-         * @param value the value that is emitted when this Stream is complete.
-         */
-        public WhenDoneValue(O value) {
-            this.value = value;
-        }
-
-        @Override
-        public void doNext(I value) {
-            sendRequest();
-        }
-
-        @Override
-        public void onComplete() {
-            sendNext(value);
-            sendComplete();
-        }
-    }
-
-    /**
      * Finally operation.
      * 
      * @param <I> value type.
@@ -358,7 +172,7 @@ public class Flows {
      */
     public static class Finally<I, O> extends BaseProcessor<I, O> {
         private Func0<Stream<O>> func;
-        
+
         /**
          * Constructor.
          * @param func the function to call when this stream is complete or emit an error.
