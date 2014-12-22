@@ -46,7 +46,7 @@ public class ArangoTest extends TestVerticle {
         .print("after open", System.out)
         .whenDone(client.close())
         .print("after close", System.out)
-        .whenDone(() -> "abc")
+        .whenDone(Stream.from())
         .print("after lambda", System.out)
         .onComplete(VertxAssert::testComplete)
         .start(1);
@@ -105,7 +105,7 @@ public class ArangoTest extends TestVerticle {
     public void load() {
         final Client client = new Client(null);
         init(client)
-        .whenDoneFunc(() -> {
+        .whenDone(() -> {
             JsonObject v = new JsonObject();
             v.putString("name", "the name");
             v.putNumber("value", 1233);
@@ -126,7 +126,7 @@ public class ArangoTest extends TestVerticle {
     public void update() {
         final Client client = new Client(null);
         init(client)
-        .whenDoneValue(null)
+        .whenDoneFrom(null)
         .mapMany($ -> {
             JsonObject v = new JsonObject();
             v.putString("name", "the name");
