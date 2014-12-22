@@ -70,6 +70,92 @@ public class SimpleTest {
     }
 
     /**
+     * Test "as" builder
+     */
+    @Test
+    public void testAs() {
+        Keep<Integer> keep = new Keep<>();
+        Stream.<Integer> as((s,  cnt) -> {
+            s.sendNext(1);
+        }, s -> {
+            System.out.println("cancel");
+        })
+        .take(5)
+        .chain(keep)
+        .start(1);
+        keep.assertEquals(1, 1, 1, 1, 1);
+    }
+    
+    
+    /**
+     * Test "as" builder
+     */
+    @Test
+    public void testAs2() {
+        Keep<Integer> keep = new Keep<>();
+        Stream.<Integer> as((s,  cnt) -> {
+            throw new Exception("as2");
+        }, s -> {
+            System.out.println("cancel");
+        })
+        .take(5)
+        .chain(keep)
+        .start(1);
+        keep.assertException(new Exception("as2"));
+    }
+
+    /**
+     * Test "as" builder
+     */
+    @Test
+    public void testAs3() {
+        Keep<Integer> keep = new Keep<>();
+        Stream.<Integer> as((s,  cnt) -> {
+            s.sendNext(1);
+        }, s -> {
+            throw new Exception("as3");
+        })
+        .take(5)
+        .chain(keep)
+        .start(1);
+        keep.assertException(new Exception("as3"), 1, 1, 1, 1, 1);
+    }
+
+    
+    /**
+     * Test "asOne" builder
+     */
+    @Test
+    public void testAsOne() {
+        Keep<Integer> keep = new Keep<>();
+        Stream.<Integer> asOne(s -> {
+            s.sendNext(1);
+            s.sendComplete();
+        })
+        .take(5)
+        .chain(keep)
+        .start(1);
+        keep.assertEquals(1);
+    }
+
+    
+    /**
+     * Test "asOne" builder
+     */
+    @Test
+    public void testAsOne2() {
+        Keep<Integer> keep = new Keep<>();
+        Stream.<Integer> asOne(s -> {
+            s.sendNext(1);
+            throw new Exception("asOne2");
+        })
+        .take(5)
+        .chain(keep)
+        .start(1);
+        keep.assertException(new Exception("asOne2"), 1);
+    }
+    
+    /**
      * Test a simple List.
      */
     @Test
