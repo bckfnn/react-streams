@@ -13,9 +13,11 @@
  */
 package io.github.bckfnn.reactstreams.arangodb;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -210,6 +212,14 @@ public class Result {
         public String _key;
         public String _rev;
         public Map<String, Object> doc;
+        
+        @JsonAnySetter
+        public void anySetter(String key, Object value) {
+            if (doc == null) {
+                doc = new HashMap<>();
+            }
+            doc.put(key, value);
+        }
     }
     
     public static class DocumentCreate extends Result {
@@ -217,4 +227,57 @@ public class Result {
         public String _key;
         public String _rev;
     }
+
+    public static class Query {
+        public String query;
+        public boolean count;
+        public long batchSize;
+        public Map<String, Object> bindVars;
+        
+    }
+    
+    public static class CursorResult extends Result {
+        public boolean hasMore;
+        public long count;
+        public List<Document> result;
+        public Map<String, Object> extra;
+    }
+    
+    public static class GharialGraph {
+        public String name;
+        public List<Edge> edgeDefinitions;
+        public List<String> orphanCollections;
+    }
+
+    public static class GharialCreateOption extends GharialGraph {
+    }
+
+    public static class GharialCreateResult extends Result {
+        public GharialGraphResult graph;
+    }
+    
+    public static class GharialGraphResult {
+        public String _id;
+        public String _rev;
+        public String name;
+        public List<Edge> edgeDefinitions;
+        public List<String> orphanCollections;
+    }
+
+    public static class Edge {
+        public String collection;
+        public List<String> from;
+        public List<String> to;
+    }
+    
+    public static class GharialEdgeCreateResult extends Result {
+        public DocumentCreate edge;
+    }
+    
+    public static class EdgeBody {
+        public String _from;
+        public String _to;
+    }
 }
+
+

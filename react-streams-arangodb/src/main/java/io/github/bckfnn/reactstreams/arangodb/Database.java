@@ -16,6 +16,7 @@ package io.github.bckfnn.reactstreams.arangodb;
 import io.github.bckfnn.reactstreams.Stream;
 
 import java.util.List;
+import java.util.Map;
 
 public class Database {
     private Client client;
@@ -51,7 +52,7 @@ public class Database {
     }
     
     public Stream<Result.DatabaseDeleteResult> databaseDelete() {
-        Url url = new Url("/_db/_system/api/database/", databaseName);
+        Url url = new Url("/_db/_system/_api/database/", databaseName);
         return process(del(url, Result.DatabaseDeleteResult.class));
     }
 
@@ -197,6 +198,30 @@ public class Database {
         return process(del(url, Result.DocumentCreate.class));
     }
 
+    public Stream<Result.CursorResult> cursor(String query, Map<String, Object> bindVars) {
+        Url url = new Url(dbPath(), "/_api/cursor");
+        Result.Query q = new Result.Query();
+        q.query = query;
+        q.bindVars = bindVars;
+        return process(post(url, q, Result.CursorResult.class));
+    }
+    /*
+     * Gharial
+     */
+    public Stream<Result.GharialCreateResult> gharialCreate(Result.GharialCreateOption options) {
+        Url url = new Url(dbPath(), "/_api/gharial/");
+        return process(post(url, options, Result.GharialCreateResult.class));
+    }
+    
+    public Stream<Result.GharialEdgeCreateResult> gharialEdgeCreate(String graph, String collection, String from, String to) {
+        Url url = new Url(dbPath(), "/_api/gharial/" + graph + "/edge/" + collection);
+        Result.EdgeBody edge = new Result.EdgeBody();
+        edge._from = from;
+        edge._to = to;
+        
+        return process(post(url, edge, Result.GharialEdgeCreateResult.class));
+    }
+
     static class Url {
         StringBuilder sb = new StringBuilder();
         boolean seenParms = false;
@@ -221,12 +246,14 @@ public class Database {
             sb.append(name);
             sb.append('=');
             sb.append(value);
+            seenParms = true;
         }
 
         public void parm(String name, boolean value) {
             sb.append(seenParms ? '&' : '?');
             sb.append(name);
             sb.append(value ? "=true" : "=false");
+            seenParms = true;
         }
 
         public void parm(String name, boolean value, boolean dflt) {
@@ -236,6 +263,7 @@ public class Database {
             sb.append(seenParms ? '&' : '?');
             sb.append(name);
             sb.append(value ? "=true" : "=false");
+            seenParms = true;
         }
         
         public void parm(String name, long value, long dflt) {
@@ -245,6 +273,7 @@ public class Database {
             sb.append(seenParms ? '&' : '?');
             sb.append(name);
             sb.append(Long.toString(value));
+            seenParms = true;
         }
 
         public String toString() {
