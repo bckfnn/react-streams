@@ -109,6 +109,7 @@ public class Flows {
         @Override
         public void doNext(I value) {
             sendRequest();
+            handled();
         }
 
         @Override
@@ -147,7 +148,7 @@ public class Flows {
                     @Override
                     public void onNext(O value) {
                         sendNext(value);
-                        continueSubscription.request(1);
+                        //continueSubscription.request(1);
                     }
 
                     @Override

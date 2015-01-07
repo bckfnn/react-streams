@@ -476,8 +476,8 @@ public interface Stream<T> extends Publisher<T> {
             @Override
             public void doNext(T value) {
                 try {
-                    sendNext(value);
                     func.apply(value);
+                    sendNext(value);
                     handled();
                 } catch (Throwable e) {
                     sendError(e);
