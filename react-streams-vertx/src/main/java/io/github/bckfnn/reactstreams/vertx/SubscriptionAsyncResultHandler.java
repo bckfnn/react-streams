@@ -1,9 +1,8 @@
 package io.github.bckfnn.reactstreams.vertx;
 
 import io.github.bckfnn.reactstreams.BaseSubscription;
-
-import org.vertx.java.core.AsyncResult;
-import org.vertx.java.core.Handler;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
 
 public class SubscriptionAsyncResultHandler<T> implements Handler<AsyncResult<T>> {
 	private BaseSubscription<T> subscription;

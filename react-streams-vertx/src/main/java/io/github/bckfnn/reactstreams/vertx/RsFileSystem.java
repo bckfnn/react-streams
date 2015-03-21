@@ -1,12 +1,12 @@
 package io.github.bckfnn.reactstreams.vertx;
 
 import io.github.bckfnn.reactstreams.Stream;
-
-import org.vertx.java.core.AsyncResult;
-import org.vertx.java.core.Handler;
-import org.vertx.java.core.Vertx;
-import org.vertx.java.core.file.AsyncFile;
-import org.vertx.java.core.file.FileSystem;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
+import io.vertx.core.file.AsyncFile;
+import io.vertx.core.file.FileSystem;
+import io.vertx.core.file.OpenOptions;
 
 public class RsFileSystem {
 	//private Vertx vertx;
@@ -18,9 +18,9 @@ public class RsFileSystem {
 	}
 
 
-	public Stream<RsAsyncFile> open(String path) {
+	public Stream<RsAsyncFile> open(String path, OpenOptions options) {
 		return Stream.asOne(subscription -> {
-		    fileSystem.open(path, "755", false, true, true, new Handler<AsyncResult<AsyncFile>>() {
+		    fileSystem.open(path, options, new Handler<AsyncResult<AsyncFile>>() {
 		        @Override
 		        public void handle(AsyncResult<AsyncFile> event) {
 		            if (event.succeeded()) {
@@ -32,21 +32,5 @@ public class RsFileSystem {
 		        }
 		    });
 		});
-	}
-
-	public Stream<RsAsyncFile> openWrite(String path) {
-	    return Stream.asOne(subscription -> {
-	        fileSystem.open(path, new Handler<AsyncResult<AsyncFile>>() {
-	            @Override
-	            public void handle(AsyncResult<AsyncFile> event) {
-	                if (event.succeeded()) {
-	                    subscription.sendNext(new RsAsyncFile(event.result()));
-	                    subscription.sendComplete();
-	                } else {
-	                    subscription.sendError(event.cause());
-	                }								
-	            }
-	        });
-	    });
 	}
 }

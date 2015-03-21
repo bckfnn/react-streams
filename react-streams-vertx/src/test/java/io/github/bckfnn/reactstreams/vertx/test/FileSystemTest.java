@@ -1,13 +1,13 @@
 package io.github.bckfnn.reactstreams.vertx.test;
 
-import org.junit.Test;
-import org.vertx.testtools.TestVerticle;
-import org.vertx.testtools.VertxAssert;
+import io.vertx.test.core.VertxTestBase;
 
-public class FileSystemTest extends TestVerticle {
+import org.junit.Test;
+
+public class FileSystemTest extends VertxTestBase {
     @Test
     public void testRead() {
-        VertxAssert.testComplete();
+        //VertxAssert.testComplete();
         /*
         RsVertx v = new RsVertx(vertx);
         v.fileSystem().open("src/test/resources/testfile")

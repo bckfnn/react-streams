@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <vertx.version>2.1M5</vertx.version>
+        <vertx.version>3.0.0-SNAPSHOT</vertx.version>
         <vertx.testtools.version>2.0.3-final</vertx.testtools.version>
     </properties>
 
@@ -65,17 +65,9 @@
 
             <dependency>
                 <groupId>io.vertx</groupId>
-                <artifactId>vertx-platform</artifactId>
+                <artifactId>vertx-core</artifactId>
                 <version>${vertx.version}</version>
-                <scope>provided</scope>
-            </dependency>
-
-
-            <!-- testing -->
-            <dependency>
-                <groupId>io.vertx</groupId>
-                <artifactId>testtools</artifactId>
-                <version>${vertx.testtools.version}</version>
+                <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
 

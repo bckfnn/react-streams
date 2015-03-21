@@ -16,20 +16,19 @@ package io.github.bckfnn.reactstreams.arangodb.test;
 import io.github.bckfnn.reactstreams.Stream;
 import io.github.bckfnn.reactstreams.arangodb.AsyncHttpClient;
 import io.github.bckfnn.reactstreams.arangodb.Client;
+import io.vertx.core.json.JsonObject;
+import io.vertx.test.core.VertxTestBase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import org.junit.Test;
-import org.vertx.java.core.json.JsonObject;
-import org.vertx.testtools.TestVerticle;
-import org.vertx.testtools.VertxAssert;
 
-public class ArangoTest extends TestVerticle {
+public class ArangoTest extends VertxTestBase {
 
     @Test
     public void dummy() {
-        VertxAssert.testComplete();
     }
     
     private Stream<?> init(Client client) {
@@ -40,7 +39,9 @@ public class ArangoTest extends TestVerticle {
     }
 
     //@Test
-    public void initTest() {
+    public void initTest() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        
         final Client client = new Client(new AsyncHttpClient());
         init(client)
         .print("after open", System.out)
@@ -48,39 +49,48 @@ public class ArangoTest extends TestVerticle {
         .print("after close", System.out)
         .whenDone(Stream.from())
         .print("after lambda", System.out)
-        .onComplete(VertxAssert::testComplete)
+        .onComplete(latch::countDown)
         .start(1);
+        latch.await();
     }
 
     //@Test
-    public void initListdatabases() {
+    public void initListdatabases() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+
         final Client client = new Client(null);
         init(client)
         .print("after init", System.out)
         .whenDone(client.databasesList())
         .print("after list ", System.out)
         .print("after list process", System.out)
-        .onComplete(VertxAssert::testComplete)
+        .onComplete(latch::countDown)
         .start(1);
+        latch.await();
     }
 
     //@Test
-    public void save() {
+    public void save() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+
         final Client client = new Client(null);
         init(client)
         .whenDone(() -> {
             JsonObject v = new JsonObject();
-            v.putString("name", "the name");
-            v.putNumber("value", 1233);
+            v.put("name", "the name");
+            v.put("value", 1233);
             return client.getDatabase("test").documentCreate("test", true, true, v);            
         })
         .print("after save", System.out)
-        .onComplete(VertxAssert::testComplete)
+        .onComplete(latch::countDown)
         .start(1);
+        latch.await();
     }
 
     //@Test
-    public void saveMultiple() {
+    public void saveMultiple() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+
         final Client client = new Client(null);
 
         List<Integer> lst = new ArrayList<>();
@@ -92,23 +102,26 @@ public class ArangoTest extends TestVerticle {
         .whenDone(Stream.from(lst))
         .map((i) -> {
             JsonObject v = new JsonObject();
-            v.putString("name", "the name");
-            v.putNumber("value", i);
+            v.put("name", "the name");
+            v.put("value", i);
             return client.getDatabase("test").documentCreate("test", true, true, v);
         })
         .print("after save", System.out)
-        .onComplete(VertxAssert::testComplete)
+        .onComplete(latch::countDown)
         .start(1);
+        latch.await();
     }
 
     //@Test
-    public void load() {
+    public void load() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+
         final Client client = new Client(null);
         init(client)
         .whenDone(() -> {
             JsonObject v = new JsonObject();
-            v.putString("name", "the name");
-            v.putNumber("value", 1233);
+            v.put("name", "the name");
+            v.put("value", 1233);
             return client.getDatabase("test").documentCreate("test", true, true, v);            
         })
         .map(r -> r._key)
@@ -117,20 +130,23 @@ public class ArangoTest extends TestVerticle {
         })
         .map(r -> r.doc)
         .print("after load", System.out)
-        .onComplete(VertxAssert::testComplete)
+        .onComplete(latch::countDown)
         .start(1);
+        latch.await();
     }
 
 
     //@Test
-    public void update() {
+    public void update() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+
         final Client client = new Client(null);
         init(client)
         .whenDoneFrom(null)
         .mapMany($ -> {
             JsonObject v = new JsonObject();
-            v.putString("name", "the name");
-            v.putNumber("value", 1233);
+            v.put("name", "the name");
+            v.put("value", 1233);
             return client.getDatabase("test").documentCreate("test", true, true, v);            
         })
         .map(r -> r._key)
@@ -144,7 +160,8 @@ public class ArangoTest extends TestVerticle {
             return client.getDatabase("test").documentUpdate(r._key, r._rev, true, true, "pol", r.doc);
         })
         .print("after save", System.out)
-        .onComplete(VertxAssert::testComplete)
+        .onComplete(latch::countDown)
         .start(1);
+        latch.await();
     }
 }

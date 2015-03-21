@@ -1,12 +1,12 @@
 package io.github.bckfnn.reactstreams.vertx;
 
 import io.github.bckfnn.reactstreams.Stream;
-
-import org.vertx.java.core.Handler;
-import org.vertx.java.core.Vertx;
-import org.vertx.java.core.eventbus.EventBus;
-import org.vertx.java.core.eventbus.Message;
-import org.vertx.java.core.json.JsonObject;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
+import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.eventbus.Message;
+import io.vertx.core.json.JsonObject;
 
 public class RsEventBus {
 	//private Vertx vertx;
@@ -20,11 +20,15 @@ public class RsEventBus {
 
 	public Stream<JsonObject> send(String address, JsonObject msg) {
 		return Stream.asOne(subscription -> {
-		    eventBus.send(address, msg, new Handler<Message<JsonObject>>() {
+		    eventBus.send(address, msg, new Handler<AsyncResult<Message<JsonObject>>>() {
 		        @Override
-		        public void handle(Message<JsonObject> event) {
-		            subscription.sendNext(event.body());
-		            subscription.sendComplete();
+		        public void handle(AsyncResult<Message<JsonObject>> event) {
+		            if (event.succeeded()) {
+		                subscription.sendNext(event.result().body());
+		                subscription.sendComplete();
+		            } else {
+		                subscription.sendError(event.cause());
+		            }
 		        }
 		    });
 		});

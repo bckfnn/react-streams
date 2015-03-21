@@ -3,13 +3,13 @@ package io.github.bckfnn.reactstreams.vertx;
 import io.github.bckfnn.reactstreams.BaseProcessor;
 import io.github.bckfnn.reactstreams.BaseSubscription;
 import io.github.bckfnn.reactstreams.Stream;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
+import io.vertx.core.buffer.Buffer;
+import io.vertx.core.file.AsyncFile;
 
 import org.reactivestreams.Processor;
 import org.reactivestreams.Subscriber;
-import org.vertx.java.core.AsyncResult;
-import org.vertx.java.core.Handler;
-import org.vertx.java.core.buffer.Buffer;
-import org.vertx.java.core.file.AsyncFile;
 
 public class RsAsyncFile {
     private AsyncFile asyncFile;
@@ -29,7 +29,7 @@ public class RsAsyncFile {
 					public void cancel() {
 						super.cancel();
 						asyncFile.pause();
-						asyncFile.dataHandler(null);
+						asyncFile.handler(null);
 						asyncFile.exceptionHandler(null);
 						asyncFile.endHandler(null);
 					}
@@ -46,7 +46,7 @@ public class RsAsyncFile {
                         if (!started) {
                             started = true;
 
-                            asyncFile.dataHandler(new Handler<Buffer>() {
+                            asyncFile.handler(new Handler<Buffer>() {
                                 @Override
                                 public void handle(Buffer event) {
                                     sendNext(event);

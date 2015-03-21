@@ -24,11 +24,6 @@
         </dependency>
 
         <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-platform</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>io.github.bckfnn</groupId>
             <artifactId>react-streams-core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
@@ -40,15 +35,22 @@
             <version>4.0.2</version>
         </dependency>
 
-        <!-- testing -->
+        <!-- logging -->
         <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>testtools</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.10</version>
         </dependency>
-
+        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-core</artifactId>
+            <type>test-jar</type>
         </dependency>
     </dependencies>
 </project>

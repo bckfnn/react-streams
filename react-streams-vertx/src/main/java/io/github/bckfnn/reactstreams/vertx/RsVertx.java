@@ -1,6 +1,6 @@
 package io.github.bckfnn.reactstreams.vertx;
 
-import org.vertx.java.core.Vertx;
+import io.vertx.core.Vertx;
 
 public class RsVertx {
 	private Vertx vertx;

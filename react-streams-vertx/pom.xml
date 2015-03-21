@@ -24,11 +24,6 @@
         </dependency>
 
         <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-platform</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>io.github.bckfnn</groupId>
             <artifactId>react-streams-core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
@@ -37,7 +32,8 @@
         <!-- testing -->
         <dependency>
             <groupId>io.vertx</groupId>
-            <artifactId>testtools</artifactId>
+            <artifactId>vertx-core</artifactId>
+            <type>test-jar</type>
         </dependency>
 
         <dependency>

@@ -203,6 +203,7 @@ public class Database {
         Result.Query q = new Result.Query();
         q.query = query;
         q.bindVars = bindVars;
+        q.batchSize = 500;
         return process(post(url, q, Result.CursorResult.class));
     }
     /*
