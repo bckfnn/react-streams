@@ -873,7 +873,7 @@ public class SimpleTest {
         .chain(keep)
         .start(1);
 
-        keep.assertEquals(1, 44, 2, 44, 3, 44);
+        keep.assertEquals(44, 1, 44, 2, 44, 3);
     }
 
     /**
@@ -889,7 +889,7 @@ public class SimpleTest {
         .chain(keep)
         .start(1);
 
-        keep.assertException(new Exception("abc"), 1);
+        keep.assertException(new Exception("abc"));
     }
 
     /**
