@@ -240,6 +240,7 @@ public class Result {
         public boolean hasMore;
         public long count;
         public List<Document> result;
+        public String id;
         public Map<String, Object> extra;
     }
     
